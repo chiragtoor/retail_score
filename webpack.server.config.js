@@ -4,7 +4,7 @@ module.exports = {
     component: "./web/static/js/containers/index.js",
   },
   output: {
-    path: "./priv/static/server/js",
+    path: "./priv/static/js",
     filename: "reph.js",
     library: "reph",
     libraryTarget: "commonjs2"
