@@ -1,4 +1,5 @@
 // webpack.server.config.js
+console.log("Running SSR Config");
 module.exports = {  
   entry: {
     component: "./web/static/js/containers/index.js",
@@ -25,3 +26,4 @@ module.exports = {
     modulesDirectories: ["node_modules", __dirname + "/web/static/js"]
   }
 };
+console.log("Done Running SSR Config");

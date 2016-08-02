@@ -11,27 +11,29 @@ config :retail_score, RetailScore.Endpoint,
   debug_errors: true,
   code_reloader: true,
   check_origin: false,
-  watchers: [
-    {"node", [
-      "node_modules/webpack/bin/webpack.js",
-      "--watch-stdin",
-      "--colors"
-    ]},
-    {"node", [
-      "node_modules/webpack/bin/webpack.js",
-      "--watch-stdin",
-      "--colors",
-      "--config",
-      "webpack.server.config.js"
-    ]}
-  ]
+  watchers: [{Path.expand("webpack.devserver.js"), [cd: Path.expand("../", __DIR__)]},
+             {"node", [
+                "node_modules/webpack/bin/webpack.js",
+                "--watch-stdin",
+                "--colors",
+                cd: Path.expand("../", __DIR__)
+              ]},
+              {"node", [
+                "node_modules/webpack/bin/webpack.js",
+                "--watch-stdin",
+                "--colors",
+                "--config",
+                "webpack.server.config.js",
+                cd: Path.expand("../", __DIR__)
+              ]}
+            ]
 
 
 # Watch static and templates for browser reloading.
 config :retail_score, RetailScore.Endpoint,
   live_reload: [
     patterns: [
-      ~r{priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$},
+      # ~r{priv/static/.*(js|css|png|jpeg|jpg|gif|svg)$},
       ~r{priv/gettext/.*(po)$},
       ~r{web/views/.*(ex)$},
       ~r{web/templates/.*(eex)$}
