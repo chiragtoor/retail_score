@@ -1,6 +1,4 @@
 // webpack.server.config.js
-console.log("RUNNING webpack.server.config.js");
-
 module.exports = {  
   entry: {
     component: "./web/static/js/containers/index.js",
@@ -27,5 +25,3 @@ module.exports = {
     modulesDirectories: ["node_modules", __dirname + "/web/static/js"]
   }
 };
-
-console.log("DONE webpack.server.config.js");

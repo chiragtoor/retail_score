@@ -1,11 +1,18 @@
-// web/static/js/routes/index.js
 import React from "react";
 import { Route, IndexRoute } from "react-router";
 
-import AppContainer from "../containers/App";
-import Main from "../components/Main";
+import Base from "../containers/Base";
 
+import HomepageContainer from "../containers/Homepage";
+import PDPContainer from "../containers/PDP";
+import SRPContainer from "../containers/SRP";
 
-export default (<Route path="/" component={AppContainer}>
-  <IndexRoute component={Main} />
-</Route>);
+export default (
+<Route path="/" component={Base}>
+  <IndexRoute component={HomepageContainer} />
+
+  <Route path="/srp" component={SRPContainer} />
+  <Route path="/pdp" component={PDPContainer} />
+
+</Route>
+);

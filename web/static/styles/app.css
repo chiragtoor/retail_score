@@ -102,6 +102,44 @@ a {
 hr {
   border-top: 1px solid #e4eaec; }
 
+/* CUSTOM STYLES */
+.fullHeight {
+  height: 100%;
+}
+
+.content-height {
+  min-height: -webkit-calc(100% - 110px);
+}
+
+.srpDesktopHeight {
+  height: -webkit-calc(100% - 50px);
+  padding-left: 0px;
+}
+
+.horizontalPDPTiles {
+    flex: none;
+    -webkit-flex: none;
+    height: 200px;
+    margin: 8px;
+    padding: 10px 31px;
+    background: #fff;
+    overflow: auto;
+    box-shadow: 2px 1px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+}
+
+.propertyImageSize {
+  width: 100% !important;
+  height: 300px !important;
+  object-fit: contain;
+}
+
+.propertyImageSizeSmall {
+  width: 100% !important;
+  height: 225px !important;
+  object-fit: contain;
+}
+
 [data-now] {
   display: inline-block; }
 
@@ -318,12 +356,14 @@ html {
   touch-action: manipulation; }
 
 html, body, #app {
-  height: 100%; }
+  height: 100%;
+  margin: 0px;
+  padding: 0px; }
 
 .wrapper {
   position: relative;
   width: 100%;
-  height: auto;
+  height: 100%;
   min-height: 100%;
   overflow-x: hidden; }
   .wrapper.ng-leave {
@@ -377,6 +417,7 @@ html, body, #app {
 .content-wrapper {
   padding: 15px;
   width: 100%;
+  height: 100%;
   border-top: 1px solid rgba(0, 0, 0, 0.15);
   margin-top: -1px; }
   .content-wrapper > .unwrap {

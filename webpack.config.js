@@ -1,5 +1,3 @@
-console.log("RUNNING webpack.config.js");
-
 var path = require('path');
 var webpack = require('webpack');
 // var CompressionPlugin = require("compression-webpack-plugin");
@@ -125,5 +123,3 @@ module.exports = {
     }
   }
 };
-
-console.log("DONE webpack.config.js");

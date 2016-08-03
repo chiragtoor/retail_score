@@ -1,11 +1,13 @@
 {
   "dependencies": {
+    "axios": "^0.13.1",
     "bootstrap": "^3.3.7",
+    "c3": "^0.4.11",
     "phoenix": "file:deps/phoenix",
+    "react": "^15.3.0",
     "react-addons-css-transition-group": "^15.2.1",
     "react-bootstrap": "^0.30.0-rc.2",
     "react-bootstrap-typeahead": "^0.7.1",
-    "react": "^15.3.0",
     "react-dom": "^15.3.0",
     "react-redux": "^4.4.5",
     "react-router": "^2.6.1",

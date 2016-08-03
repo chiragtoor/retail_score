@@ -1,6 +1,4 @@
 #!/usr/bin/env node
-console.log("RUNNING webpack.devserver.js");
-
 var webpack = require('webpack');
 var WebpackDevServer = require('webpack-dev-server');
 var config = require('./webpack.config');
@@ -24,5 +22,3 @@ process.stdin.resume()
 process.stdin.on('end', function () {
   process.exit(0)
 });
-
-console.log("DONE webpack.devserver.js");

@@ -17,6 +17,8 @@ defmodule RetailScore.Router do
     pipe_through :browser # Use the default browser stack
 
     get "/", PageController, :index
+    get "/srp", PageController, :index
+    get "/pdp", PageController, :index
   end
 
   # Other scopes may use custom stacks.
