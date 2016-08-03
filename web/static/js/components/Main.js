@@ -17,13 +17,13 @@ class Main extends React.Component {
         </div>
       </div>
       <div className="row marketing">
-        <div className="col-lg-4">
+        <div className="col-sm-4">
           <h3>Total: {visitors.total}</h3>
         </div>
-        <div className="col-lg-4">
+        <div className="col-sm-4">
           <h3>Max. online: {visitors.max_online}</h3>
         </div>
-        <div className="col-lg-4">
+        <div className="col-sm-4">
           <h3>Online: {visitors.online}</h3>
         </div>
       </div>
