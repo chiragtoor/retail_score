@@ -2,7 +2,7 @@ defmodule RetailScore.PageController do
   use RetailScore.Web, :controller
 
   def index(conn, _params) do
-    initial_state = %{"visitors" => %{"max_online" => 25, "total" => 15, "online" => 15}}
+    initial_state = %{"visitors" => %{"max_online" => 30, "total" => 15, "online" => 15}}
     props = %{
       "location" => conn.request_path,
       "initial_state" => initial_state
