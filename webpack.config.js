@@ -41,7 +41,7 @@ if(prod) {
   loaders = ['react-hot', 'babel?presets[]=es2015,presets[]=stage-2,presets[]=react'];
 }
 
-module.exports = {
+module.exports = [{
   devtool: prod ? null : 'eval-sourcemaps',
   color: true,
   entry: prod ? entry : [
@@ -78,6 +78,32 @@ module.exports = {
   resolve: {
     extensions: ['', '.js', '.jsx', '.css']
   }
-};
+},
+{  
+  entry: {
+    component: "./web/static/js/containers/index.js",
+  },
+  output: {
+    path: "./priv/static/js",
+    filename: "server.js",
+    library: "server",
+    libraryTarget: "commonjs2"
+  },
+  module: {
+    loaders: [{
+      test: /\.js$/,
+      exclude: /node_modules/,
+      loader: "babel",
+      query: {
+        plugins: ["transform-decorators-legacy"],
+        presets: ["react", "es2015", "stage-2"],
+      }
+    }],
+  },
+  resolve: {
+    extensions: ["", ".js"],
+    modulesDirectories: ["node_modules", __dirname + "/web/static/js"]
+  }
+}];
 
 console.log("DONE webpack.config.js");
