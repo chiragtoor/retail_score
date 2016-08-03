@@ -9,7 +9,7 @@ defmodule RetailScore.PageController do
     }
 
     result = RetailScore.ReactIO.json_call!(%{
-      component: "./priv/static/js/reph.js",
+      component: "./priv/static/js/server.js",
       props: props,
     })
 

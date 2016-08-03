@@ -1,13 +1,14 @@
 // webpack.server.config.js
-console.log("Running SSR Config");
+console.log("RUNNING webpack.server.config.js");
+
 module.exports = {  
   entry: {
     component: "./web/static/js/containers/index.js",
   },
   output: {
     path: "./priv/static/js",
-    filename: "reph.js",
-    library: "reph",
+    filename: "server.js",
+    library: "server",
     libraryTarget: "commonjs2"
   },
   module: {
@@ -26,4 +27,5 @@ module.exports = {
     modulesDirectories: ["node_modules", __dirname + "/web/static/js"]
   }
 };
-console.log("Done Running SSR Config");
+
+console.log("DONE webpack.server.config.js");

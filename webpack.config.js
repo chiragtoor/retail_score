@@ -1,3 +1,5 @@
+console.log("RUNNING webpack.config.js");
+
 var path = require('path');
 var webpack = require('webpack');
 // var CompressionPlugin = require("compression-webpack-plugin");
@@ -43,9 +45,9 @@ module.exports = {
   devtool: prod ? null : 'eval-sourcemaps',
   color: true,
   entry: prod ? entry : [
-    'webpack-dev-server/client?' + publicPath,
-    'webpack/hot/only-dev-server'
-  ].concat(entry),
+      'webpack-dev-server/client?' + publicPath,
+      'webpack/hot/only-dev-server'
+    ].concat(entry),
   output: {
     path: path.join(__dirname, './priv/static/js'),
     filename: 'app.js',
@@ -77,3 +79,5 @@ module.exports = {
     extensions: ['', '.js', '.jsx', '.css']
   }
 };
+
+console.log("DONE webpack.config.js");

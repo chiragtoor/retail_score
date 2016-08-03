@@ -1,7 +1,9 @@
 #!/usr/bin/env node
-var webpack = require('webpack')
-var WebpackDevServer = require('webpack-dev-server')
-var config = require('./webpack.config')
+console.log("RUNNING webpack.devserver.js");
+
+var webpack = require('webpack');
+var WebpackDevServer = require('webpack-dev-server');
+var config = require('./webpack.config');
 
 new WebpackDevServer(webpack(config), {
   contentBase: 'http://localhost:4001',
@@ -21,4 +23,6 @@ new WebpackDevServer(webpack(config), {
 process.stdin.resume()
 process.stdin.on('end', function () {
   process.exit(0)
-})
+});
+
+console.log("DONE webpack.devserver.js");
