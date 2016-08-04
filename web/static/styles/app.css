@@ -103,6 +103,41 @@ hr {
   border-top: 1px solid #e4eaec; }
 
 /* CUSTOM STYLES */
+.popover-badge {
+    position: absolute;
+    left: 10px;
+    width: 36px;
+    height: 36px;
+    border-radius: 500px;
+    line-height: 36px;
+    font-size: 1em;
+    text-align: center;
+    color: #fff;
+    background-color: #999;
+    z-index: 100; }
+    .popover-badge.primary {
+      background-color: #5d9cec; }
+    .popover-badge.success {
+      background-color: #27c24c; }
+    .popover-badge.warning {
+      background-color: #ff902b; }
+    .popover-badge.danger {
+      background-color: #f05050; }
+    .popover-badge.info {
+      background-color: #23b7e5; }
+    .popover-badge.inverse {
+      background-color: #131e26; }
+    .popover-badge.green {
+      background-color: #37bc9b; }
+    .popover-badge.pink {
+      background-color: #f532e5; }
+    .popover-badge.purple {
+      background-color: #7266ba; }
+    .popover-badge.dark {
+      background-color: #3a3f51; }
+    .popover-badge.yellow {
+      background-color: #fad732; }
+
 .fullHeight {
   height: 100%;
 }
