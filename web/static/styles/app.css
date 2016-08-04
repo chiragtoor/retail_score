@@ -142,25 +142,35 @@ hr {
   height: 100%;
 }
 
+
+.noPaddingOrMargin {
+  padding: 0px;
+  margin: 0px;
+}
+
 .content-height {
   min-height: -webkit-calc(100% - 110px);
 }
 
 .srpDesktopHeight {
-  height: -webkit-calc(100% - 50px);
+  height: 100%;
   padding-left: 0px;
 }
 
 .horizontalPDPTiles {
     flex: none;
     -webkit-flex: none;
-    height: 200px;
+    height: 150px;
     margin: 8px;
     padding: 10px 31px;
     background: #fff;
     overflow: auto;
     box-shadow: 2px 1px 4px rgba(0, 0, 0, 0.2);
     border-radius: 3px;
+}
+
+.smallGoogleMap {
+  height: -webkit-calc(100% - 250px);
 }
 
 .propertyImageSize {
@@ -170,8 +180,8 @@ hr {
 }
 
 .propertyImageSizeSmall {
-  width: 100% !important;
-  height: 225px !important;
+  width: 120px !important;
+  height: 125px !important;
   object-fit: contain;
 }
 

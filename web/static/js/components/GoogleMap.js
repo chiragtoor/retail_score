@@ -20,6 +20,7 @@ export default class GoogleMap extends Component {
     var map = new google.maps.Map(document.getElementById(this.props.id), {
       center: new google.maps.LatLng(37.733679, -121.431132),
       zoom: 6,
+      streetViewControl: false,
       mapTypeControl: false
     });
 
