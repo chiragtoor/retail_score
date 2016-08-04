@@ -10,59 +10,86 @@ import { Grid, Row, Col, Panel, Button, FormGroup, ControlLabel, FormControl, In
 // const C3Chart = isBrowser ? require('react-c3') : undefined;
 import Chart from '../components/Chart';
 import GoogleMap from '../components/GoogleMap';
+import MobilePropertyList from '../components/MobilePropertyList';
+
 
 var properties = [
-{
-    streetAddress: "30345 Sierra Madre Dr.",
-    cityState: "Temecula, CA",
-    retailScore: "85",
-    squareFeet: "2,900 sqft.",
-    monthlyRent: "$4,000",
-    pictures: [
-      "http://x.lnimg.com/photo/poster_1920/993a9a5967c844408cccb85593acd3fc.jpg",
-      "http://x.lnimg.com/photo/poster_1920/ed354036d8654b3bb4e85532de5f6447.jpg",
-      "http://x.lnimg.com/photo/poster_1920/6b4080d0ecdc491baa65a18e3147fe37.jpg"
-    ]
-},
-{
-    streetAddress: "30345 Sierra Madre Dr.",
-    cityState: "Temecula, CA",
-    retailScore: "85",
-    squareFeet: "2,900 sqft.",
-    monthlyRent: "$4,000",
-    pictures: [
-      "http://x.lnimg.com/photo/poster_1920/993a9a5967c844408cccb85593acd3fc.jpg",
-      "http://x.lnimg.com/photo/poster_1920/ed354036d8654b3bb4e85532de5f6447.jpg",
-      "http://x.lnimg.com/photo/poster_1920/6b4080d0ecdc491baa65a18e3147fe37.jpg"
-    ]
-},
-{
-    streetAddress: "30345 Sierra Madre Dr.",
-    cityState: "Temecula, CA",
-    retailScore: "85",
-    squareFeet: "2,900 sqft.",
-    monthlyRent: "$4,000",
-    pictures: [
-      "http://x.lnimg.com/photo/poster_1920/993a9a5967c844408cccb85593acd3fc.jpg",
-      "http://x.lnimg.com/photo/poster_1920/ed354036d8654b3bb4e85532de5f6447.jpg",
-      "http://x.lnimg.com/photo/poster_1920/6b4080d0ecdc491baa65a18e3147fe37.jpg"
-    ]
-},
-{
-    streetAddress: "30345 Sierra Madre Dr.",
-    cityState: "Temecula, CA",
-    retailScore: "85",
-    squareFeet: "2,900 sqft.",
-    monthlyRent: "$4,000",
-    pictures: [
-      "http://x.lnimg.com/photo/poster_1920/993a9a5967c844408cccb85593acd3fc.jpg",
-      "http://x.lnimg.com/photo/poster_1920/ed354036d8654b3bb4e85532de5f6447.jpg",
-      "http://x.lnimg.com/photo/poster_1920/6b4080d0ecdc491baa65a18e3147fe37.jpg"
-    ]
-}
+  {
+      streetAddress: "13900 Francisquito",
+      city: "Baldwin Park",
+      state: "CA",
+      zipCode: "91706",
+      retailScore: "95",
+      squareFeet: 764,
+      price: 1495.00156667,
+      lat: 34.0674545,
+      lng: -117.9731211,
+      image_lat: 34.0676669,
+      image_lng: -117.9729022,
+      image_heading: 220.488380302844,
+      id: 48
+  },
+  {
+      streetAddress: "30105 Agoura Road",
+      city: "Agoura Hills",
+      state: "CA",
+      zipCode: "91301",
+      retailScore: "98",
+      squareFeet: 1200,
+      price: 2220,
+      lat: 34.1453367,
+      lng: -118.7786372,
+      image_lat: 34.145094,
+      image_lng: -118.7786185,
+      image_heading: 356.351318523258,
+      id: 4
+  },
+  {
+      streetAddress: "28708 Roadside Drive",
+      city: "Agoura Hills",
+      state: "CA",
+      zipCode: "91301",
+      retailScore: "94",
+      squareFeet: 1100,
+      price: 1870,
+      lat: 34.1434257,
+      lng: -118.7512937,
+      image_lat: 34.1440405,
+      image_lng: -118.7511329,
+      image_heading: 192.214181555281,
+      id: 5
+  },
+  {
+      streetAddress: "28115 Dorothy Drive",
+      city: "Agoura Hills",
+      state: "CA",
+      zipCode: "91301",
+      retailScore: "67",
+      squareFeet: 2447,
+      price: 4999.99588333,
+      lat: 34.1427622,
+      lng: -118.7389287,
+      image_lat: 34.1424231,
+      image_lng: -118.7389484,
+      image_heading: 2.75276461428855,
+      id: 6
+  }
 ]
 
 class SRP extends React.Component {
+
+
+    constructor(props) {
+      super(props);
+
+      this.tileClick = this.tileClick.bind(this);
+
+    }
+
+    tileClick(propertyId) {
+      this.props.history.push('pdp');
+    }
+
     render() {
         return (
             <div style={{height:"100%"}}>
@@ -145,25 +172,10 @@ class SRP extends React.Component {
                         </div>
                       </div>
 
-                      <div style={{overflowX: "scroll", overflowY: "hidden", display: "flex", width: "100%", height:"150px", backgroundColor:"#ecf0f1"}}>
-                        {properties.map((property, index) => {
-                          return <div key={index} className="panel b text-center horizontalPDPTiles" style={{display:"inline-block", height:"130px", width:"85%", padding:"0px"}}>
-                              <div>
-                               <Carousel indicators={false} controls={false}>
-                                  <CarouselItem style={{backgroundColor:"#2ecc71", padding:"0px", margin:"0px"}}  onClick={() => this.props.history.push('pdp')}>
-                                    <div style={{width:"40%", height:"130px", float:"left", backgroundColor:"#16a085"}}>
-                                    </div>
-                                    <div style={{width:"60%", height:"130px", float:"right"}}>
-                                      <div style={{textAlign:"center", width:"100%", fontSize:"16px", marginTop:"10px", fontWeight:"200"}}>{property.streetAddress}</div>
-                                      <div style={{textAlign:"center", width:"45%", float:"left", fontSize:"14px", fontWeight:"100"}}>{property.monthlyRent}</div>
-                                      <div style={{textAlign:"center", width:"45%", float:"right", fontSize:"14px", marginBottom:"5px", fontWeight:"100"}}>{property.squareFeet}</div>
-                                    </div>
-                                  </CarouselItem>
-                                </Carousel>
-                              </div>
-                          </div>
-                        })}
+                      <div style={{width: "100%", height:"150px"}}>
+                        <MobilePropertyList properties={properties} tileClick={this.tileClick} />
                       </div>
+                      
                     </Col>
                 </Row>
             </div>
