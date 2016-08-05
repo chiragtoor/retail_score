@@ -178,7 +178,7 @@ class SRP extends React.Component {
                     <Col className="hidden-md hidden-lg" sm={12} xs={12}>
 
                       <div style={{width:"100%", height:"50px"}}>
-                        <div style={{height:"100%", padding:"15px",float:"left", color:"#95a5a6", width:"50%", fontSize:"16px"}}>262 properties for lease</div>
+                        <div style={{height:"100%", padding:"15px",float:"left", color:"#95a5a6", width:"50%", fontSize:"16px"}}>{properties.length} properties for lease</div>
                         <div style={{height:"100%",padding:"5px", float:"right"}}>
                             <Button style={{backgroundColor:"#FFFFFF",color:"#49A3DC", border:"#49A3DC",fontSize:"16px", fontWeight:"400"}}>Filters</Button>
                         </div>
