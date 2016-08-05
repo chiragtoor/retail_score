@@ -6,13 +6,15 @@ export default class GoogleMap extends Component {
   constructor(props) {
     super(props);
 
-    this.routeCities = this.routeCities.bind(this);
+
+    this.drawPropertyWithIcon = this.drawPropertyWithIcon.bind(this);
+    this.drawPropertyMarkers = this.drawPropertyMarkers.bind(this);
+    this.drawCurrentPropertyMarker = this.drawCurrentPropertyMarker.bind(this);
 
     this.state = {
       map: null,
-      directionsService: null,
-      directionsRenderer: null,
-      cities: []
+      markers: {},
+      currentProperty: null
     };
   }
 
@@ -34,50 +36,97 @@ export default class GoogleMap extends Component {
     });
 
     this.state.map = map;
-    this.state.directionsService = new google.maps.DirectionsService();
-    this.state.directionsRenderer = new google.maps.DirectionsRenderer();
-    this.state.directionsRenderer.setMap(this.state.map);
+
+    this.setState(this.state);
+
+    if(this.props.properties) {
+      this.drawPropertyMarkers(this.props.properties);
+    }
+
+    if(this.props.currentPropertyMarker){
+      this.drawCurrentPropertyMarker(this.props.currentPropertyMarker);
+    }
+  }
+
+  drawCurrentPropertyMarker(property) {
+
+    var icon = {
+          url: "https://s3-us-west-2.amazonaws.com/zamatics-images/propertyicon50x50.png",
+          scaledSize: new google.maps.Size(60, 60)
+      };
+
+    this.drawPropertyWithIcon(property, icon);
+
+
+    //remove the previously large one and replace it with a smaller size
+    if(this.state.currentProperty) {
+
+      var smallIcon = {
+        url: "https://s3-us-west-2.amazonaws.com/zamatics-images/propertyicon50x50.png", // url
+        scaledSize: new google.maps.Size(50, 50)
+      };
+
+      this.drawPropertyWithIcon(this.state.currentProperty, smallIcon);
+    }
+
+    if(this.state.markers[property.id] && this.state.map && this.state.map.getBounds()) {
+      if(!this.state.map.getBounds().contains(this.state.markers[property.id].getPosition())) {
+        this.state.map.panTo(this.state.markers[property.id].getPosition());
+      }
+    }
+    
+    this.state.currentProperty = property;
+    this.setState(this.state);
+  }
+
+  drawPropertyWithIcon(property, icon) {
+
+    if(this.state.markers[property.id]) {
+      this.state.markers[property.id].setMap(null);
+    }
+
+    var me = this;
+
+    var marker = new google.maps.Marker({
+        position: {lat: property.lat, lng: property.lng},
+        zIndex:1,
+        map: me.state.map,
+        icon: icon});
+
+    marker.addListener('click', function(){
+      
+      if(me.props.pinClick) {
+        me.props.pinClick(property.id);
+      }
+    });
+
+    this.state.markers[property.id] = marker;
 
     this.setState(this.state);
   }
 
-  clearRoute() {
-    this.state.directionsRenderer.setMap(null);
+  drawPropertyMarkers(properties) {
+
+    properties.map((property) => {
+
+      var icon = {
+          url: "https://s3-us-west-2.amazonaws.com/zamatics-images/propertyicon50x50.png",
+          scaledSize: new google.maps.Size(50, 50)
+      };
+
+      this.drawPropertyWithIcon(property, icon);
+    });
   }
 
-  routeCities() {
-    var length = this.props.cities.length;
-    if(length < 2) return;
-
-    var origin = this.props.cities[0];
-    var destination = this.props.cities[length - 1];
-
-    var waypts = [];
-    for(var i = 1; i < (length - 1); i++) {
-      waypts.push({
-        location: this.props.cities[i],
-        stopover: true
-      });
+  componentWillReceiveProps(nextProps) 
+  {
+    if(nextProps.properties) {
+      this.drawPropertyMarkers(nextProps.properties);
     }
 
-    var directionsRenderer = this.state.directionsRenderer;
-    var routeCallback = this.props.routeCallback;
-    this.state.directionsService.route({
-      origin: origin,
-      destination: destination,
-      waypoints: waypts,
-      travelMode: google.maps.TravelMode.DRIVING,
-    }, function(response, status) {
-      if (status === google.maps.DirectionsStatus.OK) {
-        directionsRenderer.setDirections(response);
-        routeCallback(response.routes[0]);
-      }
-    });
-
-  }
-
-  componentWillReceiveProps(nextProps) {
-    this.state.cities = nextProps.cities;
+    if(nextProps.currentPropertyMarker){
+      this.drawCurrentPropertyMarker(nextProps.currentPropertyMarker);
+    }
   }
 
   render () {

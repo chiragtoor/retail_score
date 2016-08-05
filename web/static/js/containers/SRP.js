@@ -74,20 +74,32 @@ var properties = [
       image_heading: 2.75276461428855,
       id: 6
   }
-]
+];
 
 class SRP extends React.Component {
 
-
     constructor(props) {
-      super(props);
 
+      super(props);
       this.tileClick = this.tileClick.bind(this);
+      this.setCurrentProperty = this.setCurrentProperty.bind(this);
+
+      this.state = {
+        currentProperty: null
+      };
 
     }
 
     tileClick(propertyId) {
       this.props.history.push('pdp');
+    }
+
+    setCurrentProperty(property){
+
+      if(!this.state.currentProperty || this.state.currentProperty.id != property.id) {
+        this.state.currentProperty = property;
+        this.setState(this.state);
+      }
     }
 
     render() {
@@ -153,13 +165,13 @@ class SRP extends React.Component {
 
                     <Col md={7} style={{height:"100%", paddingLeft:"0px"}} className="hidden-xs hidden-sm">
                       <div className="fullHeight hidden-sm hidden-xs">
-                        <GoogleMap id={"desktop"}/>
+                        <GoogleMap id={"desktop"} properties={properties} pinClick={this.tileClick}/>
                       </div>
                     </Col>
 
                     <Col xs={12} className="smallGoogleMap hidden-md hidden-lg">
                       <div style={{height:"100%"}} className="hidden-md hidden-lg">
-                        <GoogleMap id={"mobile"}/>
+                        <GoogleMap id={"mobile"} properties={properties} pinClick={this.tileClick} currentPropertyMarker={this.state.currentProperty}/>
                       </div>
                     </Col>
 
@@ -168,12 +180,12 @@ class SRP extends React.Component {
                       <div style={{width:"100%", height:"50px"}}>
                         <div style={{height:"100%", padding:"15px",float:"left", color:"#95a5a6", width:"50%", fontSize:"16px"}}>262 properties for lease</div>
                         <div style={{height:"100%",padding:"5px", float:"right"}}>
-                            <Button style={{backgroundColor:"#49A3DC",color:"#FFFFFF", border:"none",fontSize:"16px", fontWeight:"400"}}><i className="fa fa-filter"/></Button>
+                            <Button style={{backgroundColor:"#FFFFFF",color:"#49A3DC", border:"#49A3DC",fontSize:"16px", fontWeight:"400"}}>Filters</Button>
                         </div>
                       </div>
 
                       <div style={{width: "100%", height:"150px"}}>
-                        <MobilePropertyList properties={properties} tileClick={this.tileClick} />
+                        <MobilePropertyList properties={properties} tileClick={this.tileClick} visibilityChanged={this.setCurrentProperty} />
                       </div>
                       
                     </Col>
