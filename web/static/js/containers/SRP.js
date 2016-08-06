@@ -86,9 +86,17 @@ class SRP extends React.Component {
       this.searchClick = this.searchClick.bind(this);
       this.setCurrentProperty = this.setCurrentProperty.bind(this);
 
+      var thisCity = this.props.params.city;
+      thisCity = thisCity.replace("%20", " ");
+
+      //if the city doesnt contain the state it wont match against the cities in the array
+      if(!thisCity.includes(',')) {
+        thisCity = thisCity + ", CA";
+      }
+      
       this.state = {
         currentProperty: null,
-        city: "Los Angeles, CA"
+        city: thisCity
       };
 
     }
@@ -98,9 +106,11 @@ class SRP extends React.Component {
     }
 
     searchClick(city) {
+      var cityString = city.split(',')[0];
+      cityString.replace(' ','-');
       this.state.city  = city;
       this.setState(this.state);
-      // this.props.history.push('srp');
+      this.props.history.push('/retail-space-for-lease/' + cityString);
     }
 
     setCurrentProperty(property){

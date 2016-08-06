@@ -142,6 +142,10 @@ hr {
   height: 100%;
 }
 
+.searchBar {
+  height: 100%;
+  width: -webkit-calc(100% - 60px);
+}
 
 .noPaddingOrMargin {
   padding: 0px;
