@@ -10,6 +10,7 @@ import { Grid, Row, Col, Panel, Button, FormGroup, ControlLabel, FormControl, In
 // const C3Chart = isBrowser ? require('react-c3') : undefined;
 import Chart from '../components/Chart';
 import GoogleMap from '../components/GoogleMap';
+import SearchBar from '../components/SearchBar';
 import MobilePropertyList from '../components/MobilePropertyList';
 
 
@@ -82,16 +83,24 @@ class SRP extends React.Component {
 
       super(props);
       this.tileClick = this.tileClick.bind(this);
+      this.searchClick = this.searchClick.bind(this);
       this.setCurrentProperty = this.setCurrentProperty.bind(this);
 
       this.state = {
-        currentProperty: null
+        currentProperty: null,
+        city: "Los Angeles, CA"
       };
 
     }
 
     tileClick(propertyId) {
       this.props.history.push('pdp');
+    }
+
+    searchClick(city) {
+      this.state.city  = city;
+      this.setState(this.state);
+      // this.props.history.push('srp');
     }
 
     setCurrentProperty(property){
@@ -103,6 +112,7 @@ class SRP extends React.Component {
     }
 
     render() {
+
         return (
             <div style={{height:"100%"}}>
 
@@ -110,21 +120,10 @@ class SRP extends React.Component {
 
                     <Col md={5} xs={12}>
 
-                      <div style={{height:"50px"}}>
-                        <FormGroup style={{border:"none"}}>
-                          <InputGroup style={{border:"none"}}>
-                            <Row className="noPaddingOrMargin">
-                              <Col xs={10} className="noPaddingOrMargin">
-                                <FormControl style={{height:"50px", border:"none"}} type="text"/>
-                              </Col>
-                              <Col xs={2} className="noPaddingOrMargin">
-                                <InputGroup.Button>
-                                  <Button style={{backgroundColor:"#49A3DC", width:"100%", color:"#FFFFFF", border:"none", height:"50px"}}><i className="fa fa-search"/></Button>
-                                </InputGroup.Button>
-                              </Col>
-                            </Row>
-                          </InputGroup>
-                        </FormGroup>
+                      <div style={{height:"50px", width:"100%"}}>
+                        <SearchBar 
+                          searchClick={this.searchClick} 
+                          city={this.state.city} />
                       </div>
 
                       <div style={{paddingLeft:"15px", paddingRight:"15px", overflow:"auto"}} className="hidden-sm hidden-xs">
@@ -165,13 +164,23 @@ class SRP extends React.Component {
 
                     <Col md={7} style={{height:"100%", paddingLeft:"0px"}} className="hidden-xs hidden-sm">
                       <div className="fullHeight hidden-sm hidden-xs">
-                        <GoogleMap id={"desktop"} properties={properties} pinClick={this.tileClick}/>
+                        <GoogleMap 
+                          id={"desktop"} 
+                          properties={properties} 
+                          pinClick={this.tileClick} 
+                          currentPropertyMarker={this.state.currentProperty}
+                          city={this.state.city}/>
                       </div>
                     </Col>
 
                     <Col xs={12} className="smallGoogleMap hidden-md hidden-lg">
                       <div style={{height:"100%"}} className="hidden-md hidden-lg">
-                        <GoogleMap id={"mobile"} properties={properties} pinClick={this.tileClick} currentPropertyMarker={this.state.currentProperty}/>
+                        <GoogleMap 
+                          id={"mobile"} 
+                          properties={properties} 
+                          pinClick={this.tileClick} 
+                          currentPropertyMarker={this.state.currentProperty}
+                          city={this.state.city}/>
                       </div>
                     </Col>
 
@@ -185,7 +194,10 @@ class SRP extends React.Component {
                       </div>
 
                       <div style={{width: "100%", height:"150px"}}>
-                        <MobilePropertyList properties={properties} tileClick={this.tileClick} visibilityChanged={this.setCurrentProperty} />
+                        <MobilePropertyList 
+                          properties={properties} 
+                          tileClick={this.tileClick} 
+                          visibilityChanged={this.setCurrentProperty} />
                       </div>
                       
                     </Col>

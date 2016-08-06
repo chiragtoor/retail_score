@@ -14,14 +14,15 @@ export default class GoogleMap extends Component {
     this.state = {
       map: null,
       markers: {},
-      currentProperty: null
+      currentProperty: null,
+      city: null
     };
   }
 
   componentDidMount() {
     var map = new google.maps.Map(document.getElementById(this.props.id), {
-      center: new google.maps.LatLng(37.733679, -121.431132),
-      zoom: 6,
+      center: new google.maps.LatLng(34.0522, -118.2437),
+      zoom: 13,
       streetViewControl: false,
       mapTypeControl: false
     });
@@ -122,6 +123,24 @@ export default class GoogleMap extends Component {
   {
     if(nextProps.properties) {
       this.drawPropertyMarkers(nextProps.properties);
+    }
+
+    if(nextProps.city && (this.state.city != nextProps.city)){
+
+      this.state.city = nextProps.city;
+      this.setState(this.state);
+
+      var geocoder = new google.maps.Geocoder();
+      var me = this;
+
+      geocoder.geocode({
+          'address': nextProps.city
+      }, function(results, status) {
+          if (status == google.maps.GeocoderStatus.OK) {
+            me.state.map.setCenter(results[0].geometry.location);
+            me.setState(me.state);
+          }
+      });
     }
 
     if(nextProps.currentPropertyMarker){

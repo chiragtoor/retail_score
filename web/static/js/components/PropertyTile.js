@@ -57,8 +57,7 @@ export default class PropertyTile extends Component {
               }
 
               <div style={{width:"40%", height:"130px",position:"absolute",  zIndex:"1", float:"left", backgroundColor:"rgba(0,0,0,0.25)"}}>
-                <div style={{fontSize:"15px", textAlign:"center", fontWeight:"400", color:"#FFFFFF"}}>RetailScore</div>
-                <span style={{marginTop:"0" ,fontSize:"75px", textAlign:"center", fontWeight:"400", color:"#FFFFFF"}}>{property.retailScore}</span>
+                <div style={{marginTop:"10px" ,fontSize:"75px", textAlign:"center", fontWeight:"400", color:"#FFFFFF"}}>{property.retailScore}</div>
               </div>
               <div style={{width:"60%", height:"130px", float:"right"}}>
                 <div style={{textAlign:"center", width:"100%", fontSize:"16px", marginTop:"10px", fontWeight:"200"}}>{property.streetAddress}</div>
