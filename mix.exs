@@ -19,7 +19,7 @@ defmodule RetailScore.Mixfile do
   def application do
     [mod: {RetailScore, []},
      applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :postgrex, :std_json_io]]
+                    :phoenix_ecto, :postgrex, :std_json_io, :httpoison]]
   end
 
   # Specifies which paths to compile per environment.
@@ -38,7 +38,9 @@ defmodule RetailScore.Mixfile do
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:gettext, "~> 0.11"},
      {:cowboy, "~> 1.0"},
-     {:std_json_io, "~> 0.1"}]
+     {:std_json_io, "~> 0.1"},
+     {:httpoison, "~> 0.9.0"},
+     {:mailgun, "~> 0.1.2"}]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.

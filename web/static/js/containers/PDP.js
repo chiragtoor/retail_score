@@ -15,7 +15,8 @@ let data = {
   columns: [
     ['Male', 250],
     ['Female', 500],
-    ['Other', 100]
+    ['Other', 100],
+    ['Test', 0]
   ]
 };
 

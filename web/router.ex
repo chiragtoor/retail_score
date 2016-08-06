@@ -24,7 +24,11 @@ defmodule RetailScore.Router do
   end
 
   # Other scopes may use custom stacks.
-  # scope "/api", RetailScore do
-  #   pipe_through :api
-  # end
+  scope "/api", RetailScore do
+    pipe_through :api
+
+    resources "/agents", AgentController, except: [:new, :edit]
+    resources "/properties", PropertyController, except: [:new, :edit]
+    resources "/messages", MessageController, except: [:new, :edit]
+  end
 end
