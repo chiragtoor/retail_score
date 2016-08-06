@@ -87,13 +87,13 @@ class SRP extends React.Component {
       this.setCurrentProperty = this.setCurrentProperty.bind(this);
 
       var thisCity = this.props.params.city;
-      thisCity = thisCity.replace("%20", " ");
+      thisCity = thisCity.replace("-", " ");
 
       //if the city doesnt contain the state it wont match against the cities in the array
       if(!thisCity.includes(',')) {
         thisCity = thisCity + ", CA";
       }
-      
+
       this.state = {
         currentProperty: null,
         city: thisCity
@@ -102,7 +102,7 @@ class SRP extends React.Component {
     }
 
     tileClick(propertyId) {
-      this.props.history.push('pdp');
+      this.props.history.push('/properties/' + propertyId);
     }
 
     searchClick(city) {
