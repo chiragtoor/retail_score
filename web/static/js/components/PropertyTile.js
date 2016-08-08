@@ -46,12 +46,12 @@ export default class PropertyTile extends Component {
               
               {isBrowser ? 
                 <VisibilitySensor onChange={this.visibilityChanged} >
-                  <div style={{width:"40%", height:"130px", position:"absolute", zIndex:"0", float:"left", backgroundColor:"#16a085"}}>
+                  <div style={{width:"40%", height:"130px", position:"absolute", zIndex:"0", float:"left", backgroundColor:"#FFFFFF"}}>
                     <img style={{height:"100%", width:"100%"}} src={this.getImageUrl(property.image_lat, property.image_lng, property.image_heading)} />
                   </div>
                 </VisibilitySensor> 
               : 
-                <div style={{width:"40%", height:"130px", position:"absolute", zIndex:"0", float:"left", backgroundColor:"#16a085"}}>
+                <div style={{width:"40%", height:"130px", position:"absolute", zIndex:"0", float:"left", backgroundColor:"#FFFFFF"}}>
                   <img style={{height:"100%", width:"100%"}} src={this.getImageUrl(property.image_lat, property.image_lng, property.image_heading)} />
                 </div>
               }

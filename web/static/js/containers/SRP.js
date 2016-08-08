@@ -12,6 +12,7 @@ import Chart from '../components/Chart';
 import GoogleMap from '../components/GoogleMap';
 import SearchBar from '../components/SearchBar';
 import MobilePropertyList from '../components/MobilePropertyList';
+import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 
 var properties = [
@@ -85,6 +86,8 @@ class SRP extends React.Component {
       this.tileClick = this.tileClick.bind(this);
       this.searchClick = this.searchClick.bind(this);
       this.setCurrentProperty = this.setCurrentProperty.bind(this);
+      this.showFilters = this.showFilters.bind(this);
+      this.hideFilters = this.hideFilters.bind(this);
 
       var thisCity = this.props.params.city;
       thisCity = thisCity.replace("-", " ");
@@ -96,13 +99,29 @@ class SRP extends React.Component {
 
       this.state = {
         currentProperty: null,
-        city: thisCity
+        city: thisCity,
+        filters: null,
+        dimDiv: null,
       };
 
     }
 
     tileClick(propertyId) {
       this.props.history.push('/properties/' + propertyId);
+    }
+
+    showFilters(){
+      this.state.filters = <div style={{height:"350px", width:"100%", backgroundColor:"#FFFFFF", position:"absolute", zIndex:"3", bottom:"0", right:"0"}}>
+                            <Button onClick={this.hideFilters} style={{backgroundColor:"#FFFFFF",color:"#49A3DC", border:"#49A3DC",fontSize:"16px", fontWeight:"400"}}>Done</Button>
+                           </div>;
+      this.state.dimDiv = <div className="dimDiv"></div>
+      this.setState(this.state);
+    }
+
+    hideFilters(){
+      this.state.filters = null;
+      this.state.dimDiv = null;
+      this.setState(this.state);
     }
 
     searchClick(city) {
@@ -122,6 +141,18 @@ class SRP extends React.Component {
     }
 
     render() {
+
+        var filterTransitionOptions = {
+          transitionName: "filterFade",
+          transitionEnterTimeout: 500,
+          transitionLeaveTimeout: 500
+        };
+
+        var dimDivTransitionOptions = {
+          transitionName: "dimFade",
+          transitionEnterTimeout: 500,
+          transitionLeaveTimeout: 500
+        };
 
         return (
             <div style={{height:"100%"}}>
@@ -199,7 +230,7 @@ class SRP extends React.Component {
                       <div style={{width:"100%", height:"50px"}}>
                         <div style={{height:"100%", padding:"15px",float:"left", color:"#95a5a6", width:"50%", fontSize:"16px"}}>{properties.length} properties for lease</div>
                         <div style={{height:"100%",padding:"5px", float:"right"}}>
-                            <Button style={{backgroundColor:"#FFFFFF",color:"#49A3DC", border:"#49A3DC",fontSize:"16px", fontWeight:"400"}}>Filters</Button>
+                            <Button onClick={this.showFilters} style={{backgroundColor:"#FFFFFF",color:"#49A3DC", border:"#49A3DC",fontSize:"16px", fontWeight:"400"}}>Filters</Button>
                         </div>
                       </div>
 
@@ -210,6 +241,15 @@ class SRP extends React.Component {
                           visibilityChanged={this.setCurrentProperty} />
                       </div>
                       
+                    </Col>
+
+                    <Col className="hidden-md hidden-lg">
+                      <ReactCSSTransitionGroup {...dimDivTransitionOptions} >
+                        {this.state.dimDiv}
+                      </ReactCSSTransitionGroup>
+                      <ReactCSSTransitionGroup {...filterTransitionOptions} >
+                        {this.state.filters}
+                      </ReactCSSTransitionGroup>
                     </Col>
                 </Row>
             </div>

@@ -7,7 +7,8 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Retail Score</title>
+
+    <title>Retail Score - Find the perfect property for your business</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/latest/css/bootstrap.min.css">
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
 

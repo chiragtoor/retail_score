@@ -11,7 +11,6 @@ export default (
 <Route path="/" component={Base}>
   <IndexRoute component={HomepageContainer} />
 
-  <Route path="/srp" component={SRPContainer} />
   <Route path="/pdp" component={PDPContainer} />
   <Route path='/properties/:propertyId' component={PDPContainer} />
   <Route path='/retail-space-for-lease/:city' component={SRPContainer} />

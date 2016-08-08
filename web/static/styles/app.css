@@ -147,48 +147,6 @@ hr {
   width: -webkit-calc(100% - 60px);
 }
 
-.noPaddingOrMargin {
-  padding: 0px;
-  margin: 0px;
-}
-
-.content-height {
-  min-height: -webkit-calc(100% - 110px);
-}
-
-.srpDesktopHeight {
-  height: 100%;
-  padding-left: 0px;
-}
-
-.horizontalPDPTiles {
-    flex: none;
-    -webkit-flex: none;
-    height: 150px;
-    margin: 8px;
-    padding: 10px 31px;
-    background: #fff;
-    overflow: auto;
-    box-shadow: 2px 1px 4px rgba(0, 0, 0, 0.2);
-    border-radius: 3px;
-}
-
-.smallGoogleMap {
-  height: -webkit-calc(100% - 250px);
-}
-
-.propertyImageSize {
-  width: 100% !important;
-  height: 300px !important;
-  object-fit: contain;
-}
-
-.propertyImageSizeSmall {
-  width: 120px !important;
-  height: 125px !important;
-  object-fit: contain;
-}
-
 [data-now] {
   display: inline-block; }
 
@@ -243,6 +201,100 @@ hr {
 .nav-tabs-elements {
   padding-left: 20px;
 }
+
+/*
+MOVE TO SRP.CSS AFTER
+*/
+.noPaddingOrMargin {
+  padding: 0px;
+  margin: 0px;
+}
+
+.content-height {
+  min-height: -webkit-calc(100% - 110px);
+}
+
+.filterFade-enter {
+  top: 100%;
+}
+
+.filterFade-enter-active {
+  top: -webkit-calc(100% - 350px);
+  transition: 0.5s ease-in all;
+}
+
+.filterFade-leave {
+  top: -webkit-calc(100% - 350px);
+}
+
+.filterFade-leave-active {
+  top: 100%;
+  transition: 0.5s ease-in all;
+}
+
+.srpDesktopHeight {
+  height: 100%;
+  padding-left: 0px;
+}
+
+.dimDiv {
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0,0,0,0.5);
+  position: absolute;
+  top: 0px;
+  z-index: 2;
+  right: 0px;
+}
+
+.dimFade-enter {
+  background-color: rgba(0,0,0,0.0);
+}
+
+.dimFade-enter-active {
+  background-color: rgba(0,0,0,0.5);
+  transition: 0.5s ease-in all;
+}
+
+.dimFade-leave {
+  background-color: rgba(0,0,0,0.5);
+}
+
+.dimFade-leave-active {
+  background-color: rgba(0,0,0,0.0);
+  transition: 0.5s ease-in all;
+}
+
+
+.horizontalPDPTiles {
+    flex: none;
+    -webkit-flex: none;
+    height: 150px;
+    margin: 8px;
+    padding: 10px 31px;
+    background: #fff;
+    overflow: auto;
+    box-shadow: 2px 1px 4px rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+}
+
+.smallGoogleMap {
+  height: -webkit-calc(100% - 250px);
+}
+
+.propertyImageSize {
+  width: 100% !important;
+  height: 300px !important;
+  object-fit: contain;
+}
+
+.propertyImageSizeSmall {
+  width: 120px !important;
+  height: 125px !important;
+  object-fit: contain;
+}
+
+/**/
 
 .tab-content {
   padding: 10px 20px;
