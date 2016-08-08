@@ -11,9 +11,15 @@ import { Grid, Row, Col, Panel, Button, FormGroup, ControlLabel, FormControl, In
 import Chart from '../components/Chart';
 import GoogleMap from '../components/GoogleMap';
 import SearchBar from '../components/SearchBar';
+import Filters from '../components/Filters';
 import MobilePropertyList from '../components/MobilePropertyList';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
+const PRICE_MIN = 0;
+const PRICE_MAX = 50000;
+
+const SQ_MIN = 0;
+const SQ_MAX = 10000;
 
 var properties = [
   {
@@ -88,6 +94,7 @@ class SRP extends React.Component {
       this.setCurrentProperty = this.setCurrentProperty.bind(this);
       this.showFilters = this.showFilters.bind(this);
       this.hideFilters = this.hideFilters.bind(this);
+      this.saveFilters = this.saveFilters.bind(this);
 
       var thisCity = this.props.params.city;
       thisCity = thisCity.replace("-", " ");
@@ -102,6 +109,10 @@ class SRP extends React.Component {
         city: thisCity,
         filters: null,
         dimDiv: null,
+        priceMin: PRICE_MIN,
+        priceMax: PRICE_MAX,
+        sqftMin: SQ_MIN,
+        sqftMax: SQ_MAX
       };
 
     }
@@ -112,9 +123,14 @@ class SRP extends React.Component {
 
     showFilters(){
       this.state.filters = <div style={{height:"350px", width:"100%", backgroundColor:"#FFFFFF", position:"absolute", zIndex:"3", bottom:"0", right:"0"}}>
-                            <Button onClick={this.hideFilters} style={{backgroundColor:"#FFFFFF",color:"#49A3DC", border:"#49A3DC",fontSize:"16px", fontWeight:"400"}}>Done</Button>
+                            <Filters 
+                              saveFilters={this.saveFilters} 
+                              priceMin={this.state.priceMin} 
+                              priceMax={this.state.priceMax}
+                              sqftMax={this.state.sqftMax}
+                              sqftMin={this.state.sqftMin} />
                            </div>;
-      this.state.dimDiv = <div className="dimDiv"></div>
+      this.state.dimDiv = <div className="dimDiv" onClick={this.hideFilters}></div>
       this.setState(this.state);
     }
 
@@ -122,6 +138,16 @@ class SRP extends React.Component {
       this.state.filters = null;
       this.state.dimDiv = null;
       this.setState(this.state);
+    }
+
+    saveFilters(priceMin, priceMax, sqftMin, sqftMax) {
+      this.state.priceMin = priceMin;
+      this.state.priceMax = priceMax;
+      this.state.sqftMin = sqftMin;
+      this.state.sqftMax = sqftMax;
+      this.setState(this.state);
+
+      this.hideFilters();
     }
 
     searchClick(city) {
@@ -153,6 +179,21 @@ class SRP extends React.Component {
           transitionEnterTimeout: 500,
           transitionLeaveTimeout: 500
         };
+
+        var filteredProperties = [];
+
+        for(var i = 0; i < properties.length; i++) {
+          var property = properties[i];
+
+          if(!property.price && !property.square_feet) {
+            filteredProperties.push(property);
+          } else if (property.price <= this.state.priceMax && 
+              property.squareFeet <= this.state.sqftMax && 
+              property.squareFeet >= this.state.sqftMin &&
+              property.price >= this.state.priceMin) {
+            filteredProperties.push(property);
+          }
+        }
 
         return (
             <div style={{height:"100%"}}>
@@ -228,7 +269,7 @@ class SRP extends React.Component {
                     <Col className="hidden-md hidden-lg" sm={12} xs={12}>
 
                       <div style={{width:"100%", height:"50px"}}>
-                        <div style={{height:"100%", padding:"15px",float:"left", color:"#95a5a6", width:"50%", fontSize:"16px"}}>{properties.length} properties for lease</div>
+                        <div style={{height:"100%", padding:"15px",float:"left", color:"#95a5a6", width:"50%", fontSize:"16px"}}>{filteredProperties.length} properties for lease</div>
                         <div style={{height:"100%",padding:"5px", float:"right"}}>
                             <Button onClick={this.showFilters} style={{backgroundColor:"#FFFFFF",color:"#49A3DC", border:"#49A3DC",fontSize:"16px", fontWeight:"400"}}>Filters</Button>
                         </div>
@@ -236,7 +277,7 @@ class SRP extends React.Component {
 
                       <div style={{width: "100%", height:"150px"}}>
                         <MobilePropertyList 
-                          properties={properties} 
+                          properties={filteredProperties} 
                           tileClick={this.tileClick} 
                           visibilityChanged={this.setCurrentProperty} />
                       </div>

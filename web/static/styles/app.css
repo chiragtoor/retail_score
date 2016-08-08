@@ -436,6 +436,118 @@ fieldset {
   .glyphicon.glyphicon-folder-open:before {
     content: ""; }
 
+
+/*
+------------------------------------INPUT GROUP CSSS------
+*/
+.InputRange-slider {
+  -webkit-appearance: none;
+     -moz-appearance: none;
+          appearance: none;
+  background: #FFFFFF;
+  border: 1px solid #828282;
+  border-radius: 100%;
+  cursor: pointer;
+  display: block;
+  height: 2rem;
+  margin-left: -1.0rem;
+  margin-top: -1.3rem;
+  outline: none;
+  position: absolute;
+  top: 50%;
+  transition: -webkit-transform 0.3s ease-out, box-shadow 0.3s ease-out;
+  transition: transform 0.3s ease-out, box-shadow 0.3s ease-out;
+  width: 2rem; 
+}
+.InputRange-slider:active {
+  -webkit-transform: scale(1.1);
+          transform: scale(1.1); 
+}
+.InputRange-slider:focus {
+  box-shadow: 0 0 0 5px rgba(63, 81, 181, 0.2); 
+}
+.InputRange.is-disabled .InputRange-slider {
+  background: #cccccc;
+  border: 1px solid #cccccc;
+  box-shadow: none;
+  -webkit-transform: none;
+          transform: none; 
+}
+
+.InputRange-sliderContainer {
+  transition: left 0.3s ease-out; 
+}
+
+.InputRange-label {
+  color: #565A5C;
+  font-size: 0rem; 
+}
+
+.InputRange-label--min,
+.InputRange-label--max {
+  bottom: -2.8rem;
+  position: absolute; 
+  display: none;
+}
+
+.InputRange-label--min {
+  left: 15px; 
+}
+
+.InputRange-label--max {
+  right: 15px; 
+}
+
+.InputRange-label--value {
+  position: absolute;
+  top: 0.6rem; 
+  right: -3.0rem;
+}
+
+.InputRange-labelContainer {
+  left: -50%;
+  position: relative; 
+}
+.InputRange-label--max .InputRange-labelContainer {
+  left: 50%; 
+}
+
+.InputRange-track {
+  background: #eeeeee;
+  border-radius: 0.3rem;
+  display: block;
+  height: 0.3rem;
+  position: relative;
+  transition: left 0.3s ease-out, width 0.3s ease-out; 
+}
+.InputRange.is-disabled .InputRange-track {
+  background: #eeeeee; 
+}
+
+.InputRange-track--container {
+  left: 0;
+  margin-top: -0.15rem;
+  position: absolute;
+  right: 0;
+  top: 50%; }
+
+.InputRange-track--active {
+  background: #49A3DC; 
+}
+
+.InputRange {
+  cursor: pointer;
+  height: 1rem;
+  position: relative;
+  width: 100%; 
+}
+/*
+---------- END OF INPUT GROUP CSS
+*/
+
+
+
+
 /* ========================================================================
      Component: typo
  ========================================================================== */
