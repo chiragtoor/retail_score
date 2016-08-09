@@ -19,7 +19,7 @@ export default class PropertyTile extends Component {
    var width = isBrowser ? window.innerWidth : 400;
    width = (width * (0.85) * (0.4)).toFixed(0);
 
-    return `https://maps.googleapis.com/maps/api/streetview?size=130x${width}&location=${lat},${lng}&heading=${heading}&key=AIzaSyASv9f24GcF78YIKRsX3uCRkj58JzZ8NaA`;
+    return `https://maps.googleapis.com/maps/api/streetview?size=${width}x130&location=${lat},${lng}&heading=${heading}&key=AIzaSyASv9f24GcF78YIKRsX3uCRkj58JzZ8NaA`;
   }
 
   tileClick() {

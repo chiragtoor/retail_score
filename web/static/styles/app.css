@@ -214,6 +214,25 @@ MOVE TO SRP.CSS AFTER
   min-height: -webkit-calc(100% - 110px);
 }
 
+
+.contactFade-enter {
+  top: 100%;
+}
+
+.contactFade-enter-active {
+  top: -webkit-calc(100% - 300px);
+  transition: 0.5s ease-in all;
+}
+
+.contactFade-leave {
+  top: -webkit-calc(100% - 300px);
+}
+
+.contactFade-leave-active {
+  top: 100%;
+  transition: 0.5s ease-in all;
+}
+
 .filterFade-enter {
   top: 100%;
 }
@@ -246,6 +265,17 @@ MOVE TO SRP.CSS AFTER
   z-index: 2;
   right: 0px;
 }
+
+.PDPDimDiv {
+  min-height: 100%;
+  width: 100%;
+  background-color: rgba(0,0,0,0.5);
+  position: fixed;
+  bottom: 0px;
+  z-index: 2;
+  right: 0px;
+}
+
 
 .dimFade-enter {
   background-color: rgba(0,0,0,0.0);
@@ -285,7 +315,8 @@ MOVE TO SRP.CSS AFTER
 
 .propertyImageSize {
   width: 100% !important;
-  height: 300px !important;
+  height: 250px !important;
+  margin-top: 5px;
   object-fit: contain;
 }
 

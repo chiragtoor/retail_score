@@ -6,6 +6,34 @@ export default class ContactModal extends Component {
 
   constructor(props) {
     super(props);
+
+    this.submitContact = this.submitContact.bind(this);
+
+    this.state = {
+      name: "",
+      email: "",
+      message: ""
+    };
+  }
+
+  updateName(name) {
+    this.state.name = name.target.value;
+    this.setState(this.state);
+  }
+
+  updateEmail(email) {
+    this.state.email = email.target.value;
+    this.setState(this.state);
+  }
+
+  updateMessage(message) {
+    this.state.message = message.target.value;
+    this.setState(this.state);
+  }
+
+  submitContact() {
+    console.log("submot contact with: " + this.state.name + " " + this.state.email + " " + this.state.message);
+    this.props.submitContact();
   }
 
   render () {
@@ -33,29 +61,26 @@ export default class ContactModal extends Component {
                                   <FormGroup controlId="formControlsText">
                                     <FormControl 
                                       type="text" 
-                                      placeholder="Your Name" 
-                                      value={this.props.brokerName}
-                                      onChange={(e) => false}/>
+                                      placeholder="Your Name"
+                                      value={this.state.name}
+                                      onChange={(e) => this.updateName(e)}/>
                                   </FormGroup>
                                   <FormGroup controlId="formControlsText">
                                     <FormControl 
                                       type="text" 
                                       placeholder="Your E-mail" 
-                                      value={this.props.brokerName}
-                                      onChange={(e) => false}/>
-                                  </FormGroup>
-                                  <FormGroup controlId="formControlsText">
-                                    <FormControl 
-                                      type="text" 
-                                      placeholder="Your Phone #" 
-                                      value={this.props.brokerName}
-                                      onChange={(e) => false}/>
+                                      value={this.state.email}
+                                      onChange={(e) => this.updateEmail(e)}/>
                                   </FormGroup>
                                   <FormGroup controlId="formControlsTextarea">
-                                    <FormControl componentClass="textarea" placeholder="Optional Message ..." />
+                                    <FormControl 
+                                      componentClass="textarea" 
+                                      placeholder="Optional Message ..." 
+                                      value={this.state.message}
+                                      onChange={(e) => this.updateMessage(e)}/>
                                   </FormGroup>
                                   <center>
-                                    <Button bsClass="btn btn-labeled btn-success mr">
+                                    <Button onClick={this.submitContact} bsClass="btn btn-labeled btn-success mr">
                                       <span className="btn-label"><i className="fa fa-comment"></i></span>Submit
                                     </Button>
                                   </center>
