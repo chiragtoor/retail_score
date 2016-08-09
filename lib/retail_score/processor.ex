@@ -9,6 +9,7 @@ defmodule RetailScore.Processor do
       |> Poison.decode!
       # |> IO.inspect
 
+      IO.puts "Adding geo information"
       processed_with_geo = properties
       |> convert_raw_to_form
       |> add_geo_params_to_properties
@@ -73,7 +74,7 @@ defmodule RetailScore.Processor do
       IO.puts "Inserting #{file} properties into the DB"
 
       properties = RetailScore.S3.download("processed/#{file}")
-      |> IO.inspect
+      # |> IO.inspect
       |> Poison.decode!
       |> Enum.map(fn(dataSet) ->
         %{"property" => propertyParams, "demographics" => demographics, "propertySpaces" => propertySpaces, "agent" => agentParams} = dataSet

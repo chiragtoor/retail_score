@@ -19,6 +19,8 @@ defmodule RetailScore.PropertyController do
     |> Repo.all
     |> Repo.preload(:spaces)
 
+    IO.puts "GETTING API DATA"
+
     render(conn, "srp.json", properties: properties)
   end
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from "react-redux";
 
-import * as Actions from '../actions/ubgo_actions';
+import * as Actions from '../actions';
 
 import ContentWrapper from '../components/Base/ContentWrapper';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';

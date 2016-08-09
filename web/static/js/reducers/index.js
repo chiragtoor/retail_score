@@ -2,9 +2,13 @@
 import { combineReducers } from "redux";
 import { routerReducer } from "react-router-redux";
 
-import visitors from "./visitors";
+import properties from "./properties";
+import property from "./property";
+import server_side from "./server_side";
 
 export default combineReducers({
   routing: routerReducer,
-  visitors
+  server_side,
+  properties,
+  property
 });

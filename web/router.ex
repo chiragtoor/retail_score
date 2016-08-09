@@ -18,8 +18,8 @@ defmodule RetailScore.Router do
 
     get "/", PageController, :index
     get "/pdp", PageController, :index
-    get "/retail-space-for-lease/:city", PageController, :index
-    get "/properties/:propertyId", PageController, :index
+    get "/retail-space-for-lease/:city", PageController, :srp_page
+    get "/properties/:propertyId", PageController, :pdp_page
   end
 
   # Other scopes may use custom stacks.

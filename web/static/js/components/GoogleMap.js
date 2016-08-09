@@ -119,8 +119,7 @@ export default class GoogleMap extends Component {
     });
   }
 
-  componentWillReceiveProps(nextProps) 
-  {
+  componentWillReceiveProps(nextProps){
     if(nextProps.properties) {
       this.drawPropertyMarkers(nextProps.properties);
     }

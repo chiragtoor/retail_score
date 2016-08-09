@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from "react-redux";
 
-import * as Actions from '../actions/ubgo_actions';
+import * as Actions from '../actions';
 
 import ContentWrapper from '../components/Base/ContentWrapper';
 import { Grid, Row, Col, Panel, Button, FormGroup, ControlLabel, FormControl, InputGroup, Carousel, CarouselItem, DropdownButton, MenuItem } from 'react-bootstrap';
@@ -37,51 +37,6 @@ var properties = [
       image_lng: -117.9729022,
       image_heading: 220.488380302844,
       id: 48
-  },
-  {
-      streetAddress: "30105 Agoura Road",
-      city: "Agoura Hills",
-      state: "CA",
-      zipCode: "91301",
-      retailScore: "98",
-      squareFeet: 1200,
-      price: 2220,
-      lat: 34.1453367,
-      lng: -118.7786372,
-      image_lat: 34.145094,
-      image_lng: -118.7786185,
-      image_heading: 356.351318523258,
-      id: 4
-  },
-  {
-      streetAddress: "28708 Roadside Drive",
-      city: "Agoura Hills",
-      state: "CA",
-      zipCode: "91301",
-      retailScore: "94",
-      squareFeet: 1100,
-      price: 1870,
-      lat: 34.1434257,
-      lng: -118.7512937,
-      image_lat: 34.1440405,
-      image_lng: -118.7511329,
-      image_heading: 192.214181555281,
-      id: 5
-  },
-  {
-      streetAddress: "28115 Dorothy Drive",
-      city: "Agoura Hills",
-      state: "CA",
-      zipCode: "91301",
-      retailScore: "67",
-      squareFeet: 2447,
-      price: 4999.99588333,
-      lat: 34.1427622,
-      lng: -118.7389287,
-      image_lat: 34.1424231,
-      image_lng: -118.7389484,
-      image_heading: 2.75276461428855,
-      id: 6
   }
 ];
 
@@ -180,7 +135,16 @@ class SRP extends React.Component {
       }
     }
 
+    componentDidMount() {
+      var cityString = this.state.city.split(',')[0];
+      this.props.loadProperties(cityString, "CA");
+    }
+
     render() {
+      var properties = this.props.properties;
+      console.log("TEST");
+
+      console.log(properties[0]);
 
         var filterTransitionOptions = {
           transitionName: "filterFade",
@@ -355,6 +319,8 @@ class SRP extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
+    server_side: state.server_side,
+    properties: state.properties
   };
 };
 export default connect(mapStateToProps, Actions)(SRP);

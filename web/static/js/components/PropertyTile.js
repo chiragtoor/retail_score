@@ -38,8 +38,8 @@ export default class PropertyTile extends Component {
 
     var property = this.props.property;
 
-    var priceString = '$' + property.price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' /mo' ;
-    var sqftString =  property.squareFeet.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " sqft";
+    var priceString = '$' ;//+ property.price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' /mo' ;
+    var sqftString = ''; //property.squareFeet.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " sqft";
 
     return (
             <div className="panel b text-center horizontalPDPTiles" style={{display:"inline-block", position:"relative", height:"130px", width:"85%", padding:"0px", overflowY:"hidden"}} onClick={this.tileClick}>
@@ -49,7 +49,7 @@ export default class PropertyTile extends Component {
                   <div style={{width:"40%", height:"130px", position:"absolute", zIndex:"0", float:"left", backgroundColor:"#FFFFFF"}}>
                     <img style={{height:"100%", width:"100%"}} src={this.getImageUrl(property.image_lat, property.image_lng, property.image_heading)} />
                   </div>
-                </VisibilitySensor> 
+                </VisibilitySensor>
               : 
                 <div style={{width:"40%", height:"130px", position:"absolute", zIndex:"0", float:"left", backgroundColor:"#FFFFFF"}}>
                   <img style={{height:"100%", width:"100%"}} src={this.getImageUrl(property.image_lat, property.image_lng, property.image_heading)} />
