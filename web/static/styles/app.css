@@ -577,7 +577,232 @@ fieldset {
 ---------- END OF INPUT GROUP CSS
 */
 
+/*HOMPAGE*/
+html, body {
+    height: 100%;
+}
 
+.fullHeight {
+  height: 100%;
+}
+
+.fullWidth {
+  width: 100%;
+}
+
+.noPaddingOrMargin {
+  padding: 0px;
+  margin: 0px;
+}
+
+.scrollVertical {
+  overflow: auto;
+}
+
+/* Homepage Container */
+.container-div {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+}
+
+.homepageImageContainer {
+  z-index: 0;
+  position: absolute;
+  margin-top: 0px;
+  width: 100%;
+}
+
+.FooterLogo {
+  height: 80px;
+}
+
+.homepageLargeImage {
+  margin-top: -100px;
+}
+
+.homepageMediumImage {
+  margin-top: -50px;
+}
+
+.homepageSmallImage {
+  margin-top: 0px;
+}
+
+.homepageXSmallImage {
+  margin-top: 0px;
+}
+
+.homepageGlassContainer {
+  width: 100%;
+  height: 600px;
+  position: absolute;
+  z-index: 1;
+  background-color: rgba(44, 62, 80,0.4);
+}
+
+.homepageTopBarContainer {
+  margin: 5px 5px 0px 5px;
+}
+
+.homepageTopBarImage {
+  height: 60px;
+}
+
+.homepageFormContainer {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 427px;
+}
+
+.verticalCenter {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.productDescriptionSpan {
+  color: #FFFFFF; 
+  margin-top: 10px;
+  font-size: 18px;
+  font-weight: 550;
+}
+
+.productDescriptionSpanSm {
+  color: #FFFFFF; 
+  font-size: 14px;
+  font-weight: 550;
+}
+
+.descriptionDivLg {
+  margin-top: 250px;
+}
+
+.descriptionDivSm {
+  margin-top: 150px;
+}
+
+.homepageMottoText {
+  color: #FFFFFF;
+  font-size: 48px;
+  font-weight: 600;
+  padding: 0px;
+  margin: 0px 0px 0px 0px;
+}
+
+.homepageMottoTextSm {
+  color: #FFFFFF;
+  font-size: 28px;
+  font-weight: 600;
+  padding: 0px;
+  margin: 0px 0px 0px 0px;
+}
+
+.homepageMidSectionContainer {
+  width: 100%;
+  margin-top: 600px;
+  position: absolute;
+  z-index: 0;
+  background-color: #FFFFFF;
+  padding-top: 10px;
+}
+
+.homepageMidSectionSpacer {
+  height: 50px;
+}
+
+.homepageMidSectionPadding {
+  padding-left: 40px;
+  padding-right: 40px;
+}
+
+.homepageLocationSpacerSm {
+  height: 15px;
+}
+
+.homepageLocationTile {
+  width: 100%;
+  height: 250px;
+}
+
+.homepageLocationTileLg {
+  width: 100%;
+  height: 300px;
+}
+
+.homepageLocationTileMd {
+  width: 100%;
+  height: 250px;
+}
+
+.homepageLocationTileSm {
+  width: 100%;
+  height: 250px;
+}
+
+.homepageInfoBoxes {
+  width: 100%;
+}
+
+.homepageInfoBoxText {
+  margin: 20px 20px 20px 20px;
+  text-align: justify;
+}
+
+.homepageFooter {
+  padding-top: 20px;
+  padding-bottom: 20px;
+  background-color: rgba(44, 62, 80,0.8);
+}
+
+.homepageFooterEmailLink {
+  font-weight: 600;
+  margin-top: 10px;
+  color: #FFFFFF;
+}
+
+/* Homepage Location Tiles */
+.homepageTile-container {
+  height: 100%;
+  width: 100%;
+  position: relative;
+}
+
+.homepageTile {
+  height: 100%;
+  width: 100%;
+  background-color: rgba(44, 62, 80,0.5);
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+}
+
+.homepageTile:hover {
+  height: 100%;
+  width: 100%;
+  background-color: rgba(44, 62, 80,0.05);
+  position: absolute;
+}
+
+.homepageTileText {
+  width: 100%; 
+  text-align: center;
+  font-size:26px; 
+  color: #FFFFFF;
+}
+
+.homepageTileImage {
+  width: 100%;
+  height: 100%;
+}
+
+.homepageSearchBar {
+  height: 100%;
+  width: 100%;
+}
+/*END OF HOMEPAGE*/
 
 
 /* ========================================================================
