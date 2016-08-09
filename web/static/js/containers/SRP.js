@@ -112,7 +112,8 @@ class SRP extends React.Component {
         priceMin: PRICE_MIN,
         priceMax: PRICE_MAX,
         sqftMin: SQ_MIN,
-        sqftMax: SQ_MAX
+        sqftMax: SQ_MAX,
+        sortIndex: 1
       };
 
     }
@@ -128,7 +129,9 @@ class SRP extends React.Component {
                               priceMin={this.state.priceMin} 
                               priceMax={this.state.priceMax}
                               sqftMax={this.state.sqftMax}
-                              sqftMin={this.state.sqftMin} />
+                              sqftMin={this.state.sqftMin}
+                              sortIndex={this.state.sortIndex}
+                              sortChanged={this.sortChanged} />
                            </div>;
       this.state.dimDiv = <div className="dimDiv" onClick={this.hideFilters}></div>
       this.setState(this.state);
@@ -140,11 +143,12 @@ class SRP extends React.Component {
       this.setState(this.state);
     }
 
-    saveFilters(priceMin, priceMax, sqftMin, sqftMax) {
+    saveFilters(priceMin, priceMax, sqftMin, sqftMax, sortIndex) {
       this.state.priceMin = priceMin;
       this.state.priceMax = priceMax;
       this.state.sqftMin = sqftMin;
       this.state.sqftMax = sqftMax;
+      this.state.sortIndex = sortIndex;
       this.setState(this.state);
 
       this.hideFilters();
@@ -194,6 +198,45 @@ class SRP extends React.Component {
             filteredProperties.push(property);
           }
         }
+
+        var sortBy;
+
+        switch (this.state.sortIndex) {
+          case 1: sortBy = function compare(a,b) {
+                              if (a.price < b.price)
+                                return -1;
+                              if (a.price > b.price)
+                                return 1;
+                              return 0;
+                            }
+            break;
+          case 2: sortBy = function compare(a,b) {
+                              if (a.squareFeet < b.squareFeet)
+                                return 1;
+                              if (a.squareFeet > b.squareFeet)
+                                return -1;
+                              return 0;
+                            }
+            break;
+          case 3: sortBy = function compare(a,b) {
+                              if (a.retailScore < b.retailScore)
+                                return 1;
+                              if (a.retailScore > b.retailScore)
+                                return -1;
+                              return 0;
+                            }
+            break;
+          default: sortBy = function compare(a,b) {
+                              if (a.price < b.price)
+                                return -1;
+                              if (a.price > b.price)
+                                return 1;
+                              return 0;
+                            }
+            break
+        }
+
+        filteredProperties.sort(sortBy);
 
         return (
             <div style={{height:"100%"}}>

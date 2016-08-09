@@ -38,8 +38,8 @@ export default class PropertyTile extends Component {
 
     var property = this.props.property;
 
-    var priceString = "$" + property.price.toFixed(0) + " /mo";
-    var sqftString =  property.squareFeet.toFixed(0) + " sqft";
+    var priceString = '$' + property.price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' /mo' ;
+    var sqftString =  property.squareFeet.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " sqft";
 
     return (
             <div className="panel b text-center horizontalPDPTiles" style={{display:"inline-block", position:"relative", height:"130px", width:"85%", padding:"0px", overflowY:"hidden"}} onClick={this.tileClick}>

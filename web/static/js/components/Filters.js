@@ -1,5 +1,5 @@
 import {default as React, Component} from "react";
-import {Glyphicon,Modal, Button, FormGroup, ControlLabel, FormControl, InputGroup, Panel, Nav, NavItem} from "react-bootstrap";
+import {Glyphicon,Modal, Button,ButtonGroup, FormGroup, ControlLabel, FormControl, InputGroup, Panel, Nav, NavItem, NavBar} from "react-bootstrap";
 import InputRange from 'react-input-range';
 
 
@@ -17,21 +17,23 @@ export default class Filters extends Component {
     this.updatePrice = this.updatePrice.bind(this);
     this.updateSqft = this.updateSqft.bind(this);
     this.saveFilters = this.saveFilters.bind(this);
+    this.sortIndexChanged = this.sortIndexChanged.bind(this);
 
     this.state = {
       priceMin: PRICE_MIN,
       priceMax: PRICE_MAX,
       sqftMin: SQ_MIN,
-      sqftMax: SQ_MAX
+      sqftMax: SQ_MAX,
+      sortIndex: 1
     };
   }
 
   componentDidMount() {
-    console.log("priceMin: " + this.props.priceMin + " priceMax " + this.props.priceMax + " sqftmin " + this.props.sqftMin + " sqftMax " + this.props.sqftMax);
     this.state.priceMin = this.props.priceMin;
     this.state.priceMax = this.props.priceMax;
     this.state.sqftMin = this.props.sqftMin;
     this.state.sqftMax = this.props.sqftMax;
+    this.state.sortIndex  = this.props.sortIndex;
     this.setState(this.state);
   }
 
@@ -47,19 +49,46 @@ export default class Filters extends Component {
     this.setState(this.state);
   }
 
-  saveFilters(){
-    console.log("save Filters in filter component priceMin: " + this.state.priceMin + " priceMax " + this.state.priceMax + " sqftmin " + this.state.sqftMin + " sqftMax " + this.state.sqftMax);
+  sortIndexChanged(e, selectedKey) {
+    this.state.sortIndex = selectedKey;
+    this.setState(this.state);
 
-    this.props.saveFilters(this.state.priceMin, this.state.priceMax, this.state.sqftMin, this.state.sqftMax);
+  }
+
+  saveFilters(){
+    this.props.saveFilters(this.state.priceMin, this.state.priceMax, this.state.sqftMin, this.state.sqftMax, this.state.sortIndex);
   }
 
   render () {
 
+
+    var styledPriceMin = '$' + this.state.priceMin.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' /mo';
+    var styledPriceMax = '$' + this.state.priceMax.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' /mo';
+    var styledSqftMin = this.state.sqftMin.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' sqft';
+    var styledSqftMax = this.state.sqftMax.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' sqft';
+
+    var priceBackground = this.state.sortIndex == 1 ? "#49A3DC" : "#FFFFFF";
+    var priceColor = this.state.sortIndex == 1 ? "#FFFFFF" : "#95a5a6";
+    var sqftBackground = this.state.sortIndex == 2 ? "#49A3DC" : "#FFFFFF";
+    var sqftColor = this.state.sortIndex == 2 ? "#FFFFFF" : "#95a5a6";
+    var retailScoreBackground = this.state.sortIndex == 3 ? "#49A3DC" : "#FFFFFF";
+    var retailScoreColor = this.state.sortIndex == 3 ? "#FFFFFF" : "#95a5a6";
+
     return (
       <div style={{height:"100%", width:"100%", backgroundColor:"#FFFFFF"}}>
+
+        <div style={{width:"100%", textAlign:"center", fontSize:"18px", marginTop:"10px"}}>Sort By:</div> 
+
+        <center>
+          <ButtonGroup style={{width:"80%", marginTop:"5px"}}>
+              <Button onClick={e => this.sortIndexChanged(e, 1)} style={{width:"33%", height:"40px", backgroundColor:(priceBackground), color:(priceColor)}}>Price</Button>
+              <Button onClick={e => this.sortIndexChanged(e, 2)} style={{width:"33%", height:"40px", backgroundColor:(sqftBackground), color:(sqftColor)}}>Square Feet</Button>
+              <Button onClick={e => this.sortIndexChanged(e, 3)} style={{width:"33%", height:"40px", backgroundColor:(retailScoreBackground), color:(retailScoreColor)}}>RetailScore</Button>
+          </ButtonGroup>
+        </center>
         
-        <div style={{width:"100%", textAlign:"center", fontSize:"18px", marginTop:"5px"}}>Price</div>
-        <div style={{width:"80%", marginLeft:"10%", marginTop:"30px"}}>
+        <div style={{width:"100%", textAlign:"center", fontSize:"18px", marginTop:"15px"}}>Price</div>
+        <div style={{width:"80%", marginLeft:"10%", marginTop:"5px", height:"25px"}}>
           <InputRange
               maxValue={PRICE_MAX}
               minValue={PRICE_MIN}
@@ -67,12 +96,12 @@ export default class Filters extends Component {
               onChange={this.updatePrice} />
         </div>
         <div style={{height:"15px", width:"90%",color:"#95a5a6",  marginLeft:"5%", marginTop:"10px"}}>
-          <div style={{float:"left"}}>{this.state.priceMin}</div>
-          <div style={{float:"right"}}>{this.state.priceMax}</div>
+          <div style={{float:"left"}}>{styledPriceMin}</div>
+          <div style={{float:"right"}}>{styledPriceMax}</div>
         </div>
 
-        <div style={{width:"100%", textAlign:"center", fontSize:"18px", marginTop:"5px"}}>Square Feet</div>
-        <div style={{width:"80%", marginLeft:"10%", marginTop:"30px"}}>
+        <div style={{width:"100%", textAlign:"center", fontSize:"18px", marginTop:"10px"}}>Square Feet</div>
+        <div style={{width:"80%", marginLeft:"10%", marginTop:"5px", height:"25px"}}>
           <InputRange
               maxValue={SQ_MAX}
               minValue={SQ_MIN}
@@ -80,14 +109,12 @@ export default class Filters extends Component {
               onChange={this.updateSqft} />
         </div>
         <div style={{height:"15px", width:"90%", color:"#95a5a6", marginLeft:"5%", marginTop:"10px"}}>
-          <div style={{float:"left"}}>{this.state.sqftMin}</div>
-          <div style={{float:"right"}}>{this.state.sqftMax}</div>
+          <div style={{float:"left"}}>{styledSqftMin}</div>
+          <div style={{float:"right"}}>{styledSqftMax}</div>
         </div>
 
-        <div style={{width:"100%", textAlign:"center", fontSize:"18px", marginTop:"5px"}}>Sort By</div>
 
-
-        <Button onClick={this.saveFilters} style={{backgroundColor:"#49A3DC",color:"#FFFFFF", border:"solid thin #49A3DC", width:"60%", marginLeft:"20%", fontSize:"18px", fontWeight:"400px"}}>Save</Button>
+        <Button onClick={this.saveFilters} style={{backgroundColor:"#49A3DC",color:"#FFFFFF", marginTop:"30px", border:"solid thin #49A3DC", width:"60%", marginLeft:"20%", fontSize:"18px", fontWeight:"400px"}}>Save</Button>
       </div>
     );
   }
