@@ -40,7 +40,8 @@ defmodule RetailScore.Mixfile do
      {:cowboy, "~> 1.0"},
      {:std_json_io, "~> 0.1"},
      {:httpoison, "~> 0.9.0"},
-     {:mailgun, "~> 0.1.2"}]
+     {:mailgun, "~> 0.1.2"},
+     {:ex_aws, "~> 0.5.0"}]
   end
 
   # Aliases are shortcuts or tasks specific to the current project.

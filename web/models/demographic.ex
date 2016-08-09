@@ -22,12 +22,21 @@ defmodule RetailScore.Demographic do
   end
 
   # Esri Account Credentials
-  @esri_client_id "X2D0a0XjqCBnEFcC"
-  @esri_client_secret "201dd1516e9648a68e693f7abe70a02c"
+  @esri_client_id "lpCIeD2LSd3f0NSK"
+  @esri_client_secret "750385b9fd9e4093ad995fdb21c48c1a"
   # Esri Query URL Specific Info
   @esri_url "http://geoenrich.arcgis.com/arcgis/rest/services/World/geoenrichmentserver/Geoenrichment/Enrich?"
   @study_areas ~s(studyAreas=[{%22areaType%22:%22RingBuffer%22,%22bufferUnits%22:%22esriMiles%22,%22bufferRadii%22:[1],%22geometry%22:)
   @study_area_options ~s(studyAreaOptions=[{%22areaType%22:%22RingBuffer%22,%22bufferUnits%22:%22esriMiles%22,%22bufferRadii%22:[1]}])
+  @rs_study_areas ~s(studyAreas=[{%22areaType%22:%22RingBuffer%22,%22bufferUnits%22:%22esriKilometers%22,%22bufferRadii%22:[0.5],%22geometry%22:)
+  @rs_study_area_options ~s(studyAreaOptions=[{%22areaType%22:%22RingBuffer%22,%22bufferUnits%22:%22esriKilometers%22,%22bufferRadii%22:[0.5]}])
+  @rs_variables [
+              {"X5001_X", "clothing.X5001_X"},
+              {"X1131_X", "food.X1131_X"},
+              {"X10001_X", "HealthPersonalCareCEX.X10001_X"},
+              {"X9001_X", "entertainment.X9001_X"}
+  ]
+  @idCode "myId"
   @variables [ # Income Demographic Variables
               {"HINC0_CY", "householdincome.HINC0_CY"},
               {"HINC15_CY", "householdincome.HINC15_CY"},
@@ -902,6 +911,216 @@ defmodule RetailScore.Demographic do
       _ ->
         {:error, "ERROR Retreiving Esri Attributes"}
     end
+  end
+
+  def get_esri_data_for_lat_lng(lat, lng) do
+    variables = @variables
+    |> Enum.map(fn({_, queryVariable}) ->
+      queryVariable
+    end)
+    |> Enum.join("%22,%22")
+
+    query_url = @esri_url <>
+      "token=" <> get_esri_token <>
+      "&" <> get_study_area_for_lat_lng(lat, lng) <>
+      @study_area_options <> "&f=pjson&forStorage=true" <>
+      "&analysisVariables=[%22" <> variables <> "%22]" 
+
+    case HTTPoison.post(query_url, "", [], [{:timeout, :infinity}, {:recv_timeout, :infinity}]) do
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+        extract_esri_variables(Poison.Parser.parse!(body))
+        |> Enum.map(fn({variable, value}) ->
+          %{"esri_variable" => variable, "distance" => 1.0, "value" => value}
+        end)
+      _ ->
+        {:error, "ERROR Retreiving Esri Attributes"}
+    end
+  end
+
+  def get_esri_data_for_lat_lng_batch(properties) do
+    latLngWithCodes = properties
+    |> Enum.with_index
+    |> Enum.map(fn({property, index}) ->
+      %{"property" => %{"lat" => lat, "lng" => lng}} = property
+
+      {"point#{(index + 1)}", {lat, lng}}
+    end)
+
+    propertyMap = properties
+    |> Enum.map(fn(property) ->
+      %{"property" => %{"lat" => lat, "lng" => lng}} = property
+
+      {{lat, lng}, property}
+    end)
+    |> Enum.into(%{})
+
+    studyAreas = latLngWithCodes
+    |> Enum.map(fn({code, {lat, lng}}) ->
+      "{%22geometry%22:{%22x%22:#{lng},%22y%22:#{lat}},%22attributes%22:{%22#{@idCode}%22:%22#{code}%22}}"
+    end)
+    |> Enum.join(",")
+
+    latLngWithCodes = latLngWithCodes
+    |> Enum.into(%{})
+
+    variables = @variables
+    |> Enum.map(fn({_, queryVariable}) ->
+      queryVariable
+    end)
+    |> Enum.join("%22,%22")
+
+    query_url = "#{@esri_url}&token=#{get_esri_token}&studyAreas=[#{studyAreas}]&#{@study_area_options}"
+      <> "&f=pjson&forStorage=true&analysisVariables=[%22#{variables}%22]"
+
+    case HTTPoison.post(query_url, "", [], [{:timeout, :infinity}, {:recv_timeout, :infinity}]) do
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+
+        %{"results" => [%{"value" => %{"FeatureSet" => [%{"features" => results}]}}]} = Poison.Parser.parse!(body)
+
+        results
+        |> Enum.map(fn(attributes) ->
+          variableTuples = extract_esri_variables_batch(attributes)
+
+          %{"attributes" => %{"myId" => latLngCode}} = attributes
+
+          {lat, lng} = Map.get(latLngWithCodes, latLngCode)
+          property = Map.get(propertyMap, {lat, lng})
+
+          {property, variableTuples}
+        end)
+        |> Enum.map(fn({property, variableTuples}) ->
+          demographics = variableTuples
+          |> Enum.map(fn({variable, value}) ->
+            %{"distance" => 1.0, "value" => value, "esri_variable" => variable}
+          end)
+
+          Map.merge(property, %{"demographics" => demographics})
+        end)
+      _ ->
+        nil
+    end
+  end
+
+  def extract_esri_variables_batch(attributes) do
+    @variables
+    |> Enum.map(fn({variable, _}) -> 
+      %{"attributes" => %{^variable => value}} = attributes
+      {variable, value}
+    end)
+  end
+
+  def get_esri_data_for_lat_lng_rs_batch(properties) do
+    latLngWithCodes = properties
+    |> Enum.with_index
+    |> Enum.map(fn({property, index}) ->
+      %{"property" => %{"lat" => lat, "lng" => lng}} = property
+
+      {"point#{(index + 1)}", {lat, lng}}
+    end)
+
+    propertyMap = properties
+    |> Enum.map(fn(property) ->
+      %{"property" => %{"lat" => lat, "lng" => lng}} = property
+
+      {{lat, lng}, property}
+    end)
+    |> Enum.into(%{})
+
+    studyAreas = latLngWithCodes
+    |> Enum.map(fn({code, {lat, lng}}) ->
+      "{%22geometry%22:{%22x%22:#{lng},%22y%22:#{lat}},%22attributes%22:{%22#{@idCode}%22:%22#{code}%22}}"
+    end)
+    |> Enum.join(",")
+
+    latLngWithCodes = latLngWithCodes
+    |> Enum.into(%{})
+
+    variables = @rs_variables
+    |> Enum.map(fn({returnVariable, queryVariable}) ->
+      queryVariable
+    end)
+    |> Enum.join("%22,%22")
+
+    query_url = "#{@esri_url}&token=#{get_esri_token}&studyAreas=[#{studyAreas}]&#{@rs_study_area_options}"
+      <> "&f=pjson&forStorage=true&analysisVariables=[%22#{variables}%22]"
+
+    case HTTPoison.post(query_url, "", [], [{:timeout, :infinity}, {:recv_timeout, :infinity}]) do
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+
+        %{"results" => [%{"value" => %{"FeatureSet" => [%{"features" => results}]}}]} = Poison.Parser.parse!(body)
+
+        results
+        |> Enum.map(fn(attributes) ->
+          variableTuples = extract_esri_variables_rs_batch(attributes)
+
+          %{"attributes" => %{"myId" => latLngCode}} = attributes
+
+          {lat, lng} = Map.get(latLngWithCodes, latLngCode)
+          property = Map.get(propertyMap, {lat, lng})
+
+          {property, variableTuples}
+        end)
+        |> Enum.map(fn({property, variableTuples}) ->
+          add_demographics = variableTuples
+          |> Enum.map(fn({variable, value}) ->
+            %{"distance" => 0.31, "value" => value, "esri_variable" => variable}
+          end)
+
+          old_demographics = Map.get(property, "demographics")
+
+          property = Map.merge(property, %{"demographics" => old_demographics ++ add_demographics})
+
+          [{"X5001_X", clothing}, {"X1131_X", food}, {"X10001_X", personal}, {"X9001_X", entertainment}] = variableTuples
+          sum = clothing + food + personal + entertainment
+
+          Map.merge(property, %{"rs_data" => %{"sum" => sum}})
+        end)
+      _ ->
+        nil
+    end
+  end
+
+  def extract_esri_variables_rs_batch(attributes) do
+    @rs_variables
+    |> Enum.map(fn({variable, _}) -> 
+      %{"attributes" => %{^variable => value}} = attributes
+      {variable, value}
+    end)
+  end
+
+  def get_esri_data_for_lat_lng_rs(lat, lng) do
+    variables = @rs_variables
+    |> Enum.map(fn({_, queryVariable}) ->
+      queryVariable
+    end)
+    |> Enum.join("%22,%22")
+
+    query_url = @esri_url <>
+      "token=" <> get_esri_token <>
+      "&" <> get_study_area_for_lat_lng_rs(lat, lng) <>
+      @rs_study_area_options <> "&f=pjson&forStorage=true" <>
+      "&analysisVariables=[%22" <> variables <> "%22]" 
+
+    case HTTPoison.post(query_url, "", [], [{:timeout, :infinity}, {:recv_timeout, :infinity}]) do
+      {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
+        extract_esri_variables_rs(Poison.Parser.parse!(body))
+        |> Enum.map(fn({variable, value}) ->
+          %{"esri_variable" => variable, "distance" => 0.31, "value" => value}
+        end)
+      _ ->
+        {:error, "ERROR Retreiving Esri Attributes"}
+    end
+  end
+
+  defp get_study_area_for_lat_lng_rs(lat, lng) do
+    @rs_study_areas <> "{%22x%22:" <> "#{lng}" <> ",%22y%22:" <> "#{lat}" <> "}}]"
+  end
+
+  defp extract_esri_variables_rs(%{"results" => [%{"value" => %{"FeatureSet" => [%{"features" => [%{"attributes" => esriAttributes}]}]}}]}) do
+    @rs_variables
+    |> Enum.map(fn({variable, _}) -> 
+      {variable, Map.get(esriAttributes, variable)}
+    end)
   end
 
   defp get_study_area_for_lat_lng(lat, lng) do

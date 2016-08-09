@@ -6,7 +6,7 @@ defmodule RetailScore.Repo.Migrations.CreatePropertySpace do
       add :name, :string
       add :sq_feet, :integer
       add :price_sq_feet, :float
-      add :monthly_rate, :integer
+      add :monthly_rate, :float
       add :lease_type, :string
       add :property_id, references(:properties, on_delete: :nothing)
 

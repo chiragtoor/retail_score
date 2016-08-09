@@ -7,7 +7,7 @@ defmodule RetailScore.PropertySpace do
     field :name, :string
     field :sq_feet, :integer
     field :price_sq_feet, :float
-    field :monthly_rate, :integer
+    field :monthly_rate, :float
     field :lease_type, :string
     belongs_to :property, RetailScore.Property
 

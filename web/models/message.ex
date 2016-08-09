@@ -17,11 +17,11 @@ defmodule RetailScore.Message do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, [:contact_name, :contact_phone_number, :contact_email_address, :body, :property_id])
-    |> cast_require_phone_number_or_email_address
+    |> require_phone_number_or_email_address
     |> validate_required(:contact_name)
   end
 
-  defp cast_require_phone_number_or_email_address(changeset) do
+  defp require_phone_number_or_email_address(changeset) do
     case get_field(changeset, :contact_phone_number) do
       phone_number ->
         changeset

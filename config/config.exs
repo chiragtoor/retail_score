@@ -28,6 +28,8 @@ config :mailgun,
        mailgun_domain: "https://api.mailgun.net/v3/zamatics.com",
        mailgun_key: "key-b360d1b22418c4c9007f4617f1faf53e"
 
+config :ex_aws, region: "us-west-2"
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{Mix.env}.exs"

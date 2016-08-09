@@ -25,3 +25,5 @@ erl_crash.dump
 
 .env
 notes.txt
+.DS_Store
+*.beam
