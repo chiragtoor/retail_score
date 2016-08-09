@@ -63,9 +63,11 @@ export class Homepage extends React.Component {
 	            {/* Top bar container with the Logo */}
 	            <div className="row homepageTopBarContainer">
 	              <div className="hidden-sm hidden-xs" style={{width:"50%", float:"left"}}>
+	              	<img className="homepageTopBarImage" src={"https://s3-us-west-2.amazonaws.com/homepage-image-assets/retail_score_logo_white.png"} />
 	              </div>
 	              <div className="hidden-lg hidden-md">
 	                <center>
+	                	<img className="homepageTopBarImage" src={"https://s3-us-west-2.amazonaws.com/homepage-image-assets/retail_score_logo_white.png"} />
 	                </center>
 	              </div>
 	              <div className="hidden-sm hidden-xs" style={{color:"#FFFFFF", fontWeight:"300px", float:"right"}}>
@@ -316,6 +318,7 @@ export class Homepage extends React.Component {
 	            {/* Footer Section */}
 	            <div className="row homepageFooter">
 	              <center>
+	              	<img className="FooterLogo" src="https://s3-us-west-2.amazonaws.com/homepage-image-assets/retail_score_logo_white.png" />
 	                <p><a className="homepageFooterEmailLink" href="mailto:support@company.com">sudjeev@zamatics.com</a></p>
 	              </center>
 	            </div>
