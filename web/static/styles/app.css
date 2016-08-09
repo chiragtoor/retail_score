@@ -280,6 +280,7 @@ MOVE TO SRP.CSS AFTER
 
 .smallGoogleMap {
   height: -webkit-calc(100% - 250px);
+  position: relative;
 }
 
 .propertyImageSize {

@@ -38,7 +38,7 @@ const styles = {
     fontSize:"14px",
     borderWidth:"2px",
     position:"absolute",
-    zIndex:"1"
+    zIndex:"2"
   }
 }
 

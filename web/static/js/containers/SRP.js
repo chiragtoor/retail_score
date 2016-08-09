@@ -14,6 +14,7 @@ import SearchBar from '../components/SearchBar';
 import Filters from '../components/Filters';
 import MobilePropertyList from '../components/MobilePropertyList';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import RetailScoreExplanation from '../components/RetailScoreExplanation';
 
 const PRICE_MIN = 0;
 const PRICE_MAX = 50000;
@@ -95,6 +96,7 @@ class SRP extends React.Component {
       this.showFilters = this.showFilters.bind(this);
       this.hideFilters = this.hideFilters.bind(this);
       this.saveFilters = this.saveFilters.bind(this);
+      this.showRetailScoreExplanation = this.showRetailScoreExplanation.bind(this);
 
       var thisCity = this.props.params.city;
       thisCity = thisCity.replace("-", " ");
@@ -107,7 +109,7 @@ class SRP extends React.Component {
       this.state = {
         currentProperty: null,
         city: thisCity,
-        filters: null,
+        modal: null,
         dimDiv: null,
         priceMin: PRICE_MIN,
         priceMax: PRICE_MAX,
@@ -123,7 +125,7 @@ class SRP extends React.Component {
     }
 
     showFilters(){
-      this.state.filters = <div style={{height:"350px", width:"100%", backgroundColor:"#FFFFFF", position:"absolute", zIndex:"3", bottom:"0", right:"0"}}>
+      this.state.modal= <div style={{height:"350px", width:"100%", backgroundColor:"#FFFFFF", position:"absolute", zIndex:"3", bottom:"0", right:"0"}}>
                             <Filters 
                               saveFilters={this.saveFilters} 
                               priceMin={this.state.priceMin} 
@@ -133,12 +135,12 @@ class SRP extends React.Component {
                               sortIndex={this.state.sortIndex}
                               sortChanged={this.sortChanged} />
                            </div>;
-      this.state.dimDiv = <div className="dimDiv" onClick={this.hideFilters}></div>
+      this.state.dimDiv = <div className="dimDiv" onClick={this.hideFilters}></div>;
       this.setState(this.state);
     }
 
     hideFilters(){
-      this.state.filters = null;
+      this.state.modal = null;
       this.state.dimDiv = null;
       this.setState(this.state);
     }
@@ -152,6 +154,14 @@ class SRP extends React.Component {
       this.setState(this.state);
 
       this.hideFilters();
+    }
+
+    showRetailScoreExplanation() {
+      this.state.modal = <div style={{height:"350px", width:"100%", backgroundColor:"#FFFFFF", position:"absolute", zIndex:"3", bottom:"0", right:"0"}}>
+                    <RetailScoreExplanation helpful={this.hideFilters} notHelpful={this.hideFilters} />
+                   </div>;
+      this.state.dimDiv = <div className="dimDiv" onClick={this.hideFilters}></div>;
+      this.setState(this.state);
     }
 
     searchClick(city) {
@@ -299,6 +309,7 @@ class SRP extends React.Component {
                     </Col>
 
                     <Col xs={12} className="smallGoogleMap hidden-md hidden-lg">
+                      <Button onClick={this.showRetailScoreExplanation} style={{fontSize:"20px", backgroundColor:"#7f8c8d", color:"#FFFFFF",borderRadius:"20px", position:"fixed", top:"65px", right:"5px", zIndex:"1"}}><em className="fa fa-question-circle"></em></Button>
                       <div style={{height:"100%"}} className="hidden-md hidden-lg">
                         <GoogleMap 
                           id={"mobile"} 
@@ -332,7 +343,7 @@ class SRP extends React.Component {
                         {this.state.dimDiv}
                       </ReactCSSTransitionGroup>
                       <ReactCSSTransitionGroup {...filterTransitionOptions} >
-                        {this.state.filters}
+                        {this.state.modal}
                       </ReactCSSTransitionGroup>
                     </Col>
                 </Row>
