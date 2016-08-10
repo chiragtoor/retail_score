@@ -22,15 +22,30 @@ export default class MobilePropertySummary extends Component {
     var styledPrice;
     var styledSqft;
 
-    if(this.props.property) {
-      styledSqft = this.props.property.squareFeet.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-      styledPrice = "$" + this.props.property.price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    if(this.props.property.min_sq_feet) {
+
+      if(this.props.property.min_sq_feet == this.props.property.max_sq_feet) {
+        styledSqft = this.props.property.min_sq_feet.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      } else {
+        styledSqft = this.props.property.min_sq_feet.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " - " + this.props.property.max_sq_feet.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",") ;
+      }
+
+    }
+
+    if(this.props.property.rental_rate_min) {
+
+      if(this.props.property.rental_rate_min == this.props.property.rental_rate_max) {
+        styledPrice = "$" + this.props.property.rental_rate_min.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      } else {
+        styledPrice = "$" + this.props.property.rental_rate_min.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " - " + "$" + this.props.property.rental_rate_max.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+      }
+
     }
 
     return (
       <div style={{height:"100%", width:"100%"}}>
         <center style={{fontSize:"24px", textAlign:"center", marginTop:"5px"}}>
-          {this.props.property ? this.props.property.streetAddress : null}
+          {this.props.property ? this.props.property.street_address : null}
           <span style={{fontSize:"18px"}} >{ this.props.property? ", " + this.props.property.city + ", " + this.props.property.state : null}</span> 
         </center>
         <img className="propertyImageSize" src={this.getImageUrl(this.props.property.image_lat, this.props.property.image_lng, this.props.property.image_heading)} />

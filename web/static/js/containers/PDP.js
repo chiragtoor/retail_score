@@ -17,22 +17,6 @@ import { Grid, Row, Col, Panel, Button, ButtonGroup, FormGroup, ControlLabel, Fo
 // const isBrowser = typeof window !== 'undefined';
 // const C3Chart = isBrowser ? require('react-c3') : undefined;
 
-const property = {
-      streetAddress: "13900 Francisquito",
-      city: "Baldwin Park",
-      state: "CA",
-      zipCode: "91706",
-      retailScore: "95",
-      squareFeet: 764,
-      price: 1495.00156667,
-      lat: 34.0674545,
-      lng: -117.9731211,
-      image_lat: 34.0676669,
-      image_lng: -117.9729022,
-      image_heading: 220.488380302844,
-      id: 48
-  };
-
 
 class PDP extends React.Component {
 
@@ -72,7 +56,17 @@ class PDP extends React.Component {
       this.setState(this.state);
     }
 
+    componentDidMount(){
+      // this.props.loadProperty(this.props.params.propertyId);
+    }
+
     render() {
+
+        var property = this.props.property;
+
+        var demographics = this.props.property.demographics;
+
+        console.log("this is the property " + JSON.stringify(property));
 
         var filterTransitionOptions = {
           transitionName: "contactFade",
@@ -91,14 +85,15 @@ class PDP extends React.Component {
         return (
             <ContentWrapper unwrap>
                 <div className="hidden-md hidden-lg" style={{width:"100%", height:"350px"}}>
-                  <MobilePropertySummary property={property} />
+                  { property ? <MobilePropertySummary property={property} /> : null}
                 </div>
 
                 <div className="p-lg">
                     <Row>
                         <Col lg={ 12 }>
                           <RetailScorePanel showModal={this.showRetailScoreExpalanation} property={property} />
-                          <DemographicPanel />
+                          <DemographicPanel data={demographics} />
+
                         </Col>
                         
                         <Col className="hidden-md hidden-lg">
@@ -120,6 +115,8 @@ class PDP extends React.Component {
 
 const mapStateToProps = (state) => {
   return {
+    server_side: state.server_side,
+    property: state.property
   };
 };
 export default connect(mapStateToProps, Actions)(PDP);

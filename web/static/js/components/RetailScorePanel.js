@@ -26,7 +26,7 @@ export default class RetailScorePanel extends Component {
                        </div>
                        <div className="media-body media-middle">
                         <center>
-                          <h2 className="media-heading m0 text-bold">Retail Score: {this.props.property.retailScore}</h2>
+                          <h2 className="media-heading m0 text-bold">Retail Score: {this.props.property.retail_score}</h2>
                         </center>
                        </div>
                     </div>

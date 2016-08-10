@@ -45,7 +45,7 @@ export function receiveProperties(properties) {
 
 export function loadProperty(propertyId) {
   return function(dispatch) {
-    return axios.get(`${load_property_endpoint}/${propertyId}`).then(response => {
+    return axios.get(`${load_properties_endpoint}/${propertyId}`).then(response => {
       dispatch(receiveProperty(response.data.property));
     }).catch(response => {
       console.error(response);
