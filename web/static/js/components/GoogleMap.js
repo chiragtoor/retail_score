@@ -52,8 +52,9 @@ export default class GoogleMap extends Component {
   drawCurrentPropertyMarker(property) {
 
     var icon = {
-          url: "https://s3-us-west-2.amazonaws.com/zamatics-images/propertyicon50x50.png",
-          scaledSize: new google.maps.Size(60, 60)
+          url: "https://s3-us-west-2.amazonaws.com/homepage-image-assets/competition_pin.png",
+          scaledSize: new google.maps.Size(70, 70),
+          zIndex: 1
       };
 
     this.drawPropertyWithIcon(property, icon);
@@ -64,7 +65,8 @@ export default class GoogleMap extends Component {
 
       var smallIcon = {
         url: "https://s3-us-west-2.amazonaws.com/zamatics-images/propertyicon50x50.png", // url
-        scaledSize: new google.maps.Size(50, 50)
+        scaledSize: new google.maps.Size(50, 50),
+        zIndex: 0
       };
 
       this.drawPropertyWithIcon(this.state.currentProperty, smallIcon);
@@ -90,7 +92,7 @@ export default class GoogleMap extends Component {
 
     var marker = new google.maps.Marker({
         position: {lat: property.lat, lng: property.lng},
-        zIndex:1,
+        zIndex:0,
         map: me.state.map,
         icon: icon});
 
@@ -112,7 +114,8 @@ export default class GoogleMap extends Component {
 
       var icon = {
           url: "https://s3-us-west-2.amazonaws.com/zamatics-images/propertyicon50x50.png",
-          scaledSize: new google.maps.Size(50, 50)
+          scaledSize: new google.maps.Size(50, 50),
+          zIndex: 0
       };
 
       this.drawPropertyWithIcon(property, icon);

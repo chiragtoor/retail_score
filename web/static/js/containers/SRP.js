@@ -17,10 +17,10 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import RetailScoreExplanation from '../components/RetailScoreExplanation';
 
 const PRICE_MIN = 0;
-const PRICE_MAX = 50000;
+const PRICE_MAX = 100000;
 
 const SQ_MIN = 0;
-const SQ_MAX = 10000;
+const SQ_MAX = 30000;
 
 var properties = [
   {
@@ -141,10 +141,8 @@ class SRP extends React.Component {
     }
 
     render() {
-      var properties = this.props.properties;
-      console.log("TEST");
 
-      console.log(properties[0]);
+      var properties = this.props.properties;
 
         var filterTransitionOptions = {
           transitionName: "filterFade",
@@ -160,57 +158,77 @@ class SRP extends React.Component {
 
         var filteredProperties = [];
 
-        for(var i = 0; i < properties.length; i++) {
-          var property = properties[i];
+         for(var i = 0; i < properties.length; i++) {
+           var property = properties[i];
 
-          if(!property.price && !property.square_feet) {
-            filteredProperties.push(property);
-          } else if (property.price <= this.state.priceMax && 
-              property.squareFeet <= this.state.sqftMax && 
-              property.squareFeet >= this.state.sqftMin &&
-              property.price >= this.state.priceMin) {
-            filteredProperties.push(property);
+          if(!property.rental_rate_min) {
+            if(!property.min_sq_feet) {
+              filteredProperties.push(property);
+            } else if( (property.min_sq_feet <=  this.state.sqftMax && property.min_sq_feet >=  this.state.sqftMin) || (property.max_sq_feet <= this.state.sqftMax && property.max_sq_feet >= this.state.sqftMin) ) {
+              filteredProperties.push(property);
+            }
+          } 
+          else if( (property.rental_rate_min <=  this.state.priceMax && property.rental_rate_min >=  this.state.priceMin) || (property.rental_rate_max <=  this.state.priceMax && property.rental_rate_max >=  this.state.priceMin) ){
+            if(!property.min_sq_feet) {
+              filteredProperties.push(property);
+            } else if( (property.min_sq_feet <=  this.state.sqftMax && property.min_sq_feet >=  this.state.sqftMin) || (property.max_sq_feet <= this.state.sqftMax && property.max_sq_feet >= this.state.sqftMin) ){
+              filteredProperties.push(property);
+            }
           }
-        }
+         }
 
         var sortBy;
 
         switch (this.state.sortIndex) {
           case 1: sortBy = function compare(a,b) {
-                              if (a.price < b.price)
+                              if (a.rental_rate_min < b.rental_rate_min)
                                 return -1;
-                              if (a.price > b.price)
+                              if (a.rental_rate_min > b.rental_rate_min)
                                 return 1;
                               return 0;
                             }
             break;
           case 2: sortBy = function compare(a,b) {
-                              if (a.squareFeet < b.squareFeet)
+                              if (a.max_sq_feet < b.max_sq_feet)
                                 return 1;
-                              if (a.squareFeet > b.squareFeet)
+                              if (a.max_sq_feet > b.max_sq_feet)
                                 return -1;
                               return 0;
                             }
             break;
           case 3: sortBy = function compare(a,b) {
-                              if (a.retailScore < b.retailScore)
+                              if (a.retail_score < b.retail_score)
                                 return 1;
-                              if (a.retailScore > b.retailScore)
+                              if (a.retail_score > b.retail_score)
                                 return -1;
                               return 0;
                             }
             break;
           default: sortBy = function compare(a,b) {
-                              if (a.price < b.price)
+                              if (a.rental_rate_min < b.rental_rate_min)
                                 return -1;
-                              if (a.price > b.price)
+                              if (a.rental_rate_min > b.rental_rate_min)
                                 return 1;
                               return 0;
                             }
             break
         }
 
-        filteredProperties.sort(sortBy);
+        if(this.state.sortIndex == 1) {
+          var nonNullProps = filteredProperties.filter(function (a) {
+                      return (a.rental_rate_min != null);
+                 });
+
+          var nullProps = filteredProperties.filter(function (a) {
+                      return (a.rental_rate_min == null);
+                 });
+
+          nonNullProps.sort(sortBy);
+          filteredProperties = nonNullProps.concat(nullProps);
+
+        } else {
+          filteredProperties.sort(sortBy);
+        }
 
         return (
             <div style={{height:"100%"}}>

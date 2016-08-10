@@ -4,10 +4,10 @@ import InputRange from 'react-input-range';
 
 
 const PRICE_MIN = 0;
-const PRICE_MAX = 50000;
+const PRICE_MAX = 100000;
 
 const SQ_MIN = 0;
-const SQ_MAX = 10000;
+const SQ_MAX = 30000;
 
 export default class Filters extends Component {
 

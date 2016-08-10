@@ -38,8 +38,15 @@ export default class PropertyTile extends Component {
 
     var property = this.props.property;
 
-    var priceString = '$' ;//+ property.price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' /mo' ;
-    var sqftString = ''; //property.squareFeet.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " sqft";
+    var priceString;
+    var sqftString;
+
+    if(property.rental_rate_min) {
+      priceString = '$' + property.rental_rate_min.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' /mo' ;
+    }
+    if(property.max_sq_feet) {
+      sqftString = property.max_sq_feet.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",") + " sqft";
+    }
 
     return (
             <div className="panel b text-center horizontalPDPTiles" style={{display:"inline-block", position:"relative", height:"130px", width:"85%", padding:"0px", overflowY:"hidden"}} onClick={this.tileClick}>
@@ -57,10 +64,10 @@ export default class PropertyTile extends Component {
               }
 
               <div style={{width:"40%", height:"130px",position:"absolute",  zIndex:"1", float:"left", backgroundColor:"rgba(0,0,0,0.25)"}}>
-                <div style={{marginTop:"10px" ,fontSize:"75px", textAlign:"center", fontWeight:"400", color:"#FFFFFF"}}>{property.retailScore}</div>
+                <div style={{marginTop:"10px" ,fontSize:"75px", textAlign:"center", fontWeight:"400", color:"#FFFFFF"}}>{property.retail_score}</div>
               </div>
               <div style={{width:"60%", height:"130px", float:"right"}}>
-                <div style={{textAlign:"center", width:"100%", fontSize:"16px", marginTop:"10px", fontWeight:"200"}}>{property.streetAddress}</div>
+                <div style={{textAlign:"center", width:"100%", fontSize:"16px", marginTop:"10px", fontWeight:"200"}}>{property.street_address}</div>
                 <div style={{textAlign:"center", width:"45%", float:"left", fontSize:"14px", fontWeight:"100"}}>{priceString}</div>
                 <div style={{textAlign:"center", width:"45%", float:"right", fontSize:"14px", fontWeight:"100"}}>{sqftString}</div>
               </div>
