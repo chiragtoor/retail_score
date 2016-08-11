@@ -27,12 +27,13 @@ export default class CompetitionSearchBar extends Component {
   render () {
 
     return (
-      <div style={{height:"50px", width:"100%"}}>
-         <div style={{width:"85%", backgroundColor:"#FFFFFF", float:"left"}} >
-            <FormGroup controlId="formControlsText">
+      <div style={{height:"50px", width:"90%", marginLeft:"5%"}}>
+         <div style={{width:"85%", height:"40px", backgroundColor:"#FFFFFF", float:"left"}} >
+            <FormGroup controlId="formControlsText" style={{height:"40px"}}>
               <FormControl 
+                style={{height:"100%"}}
                 type="text" 
-                placeholder="Tell us what business you are starting and we'll find your competition!"
+                placeholder="What business are you starting?"
                 value={this.state.competition}
                 onChange={(e) => this.updateCompetition(e)}/>
             </FormGroup>

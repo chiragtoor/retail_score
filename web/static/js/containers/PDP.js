@@ -87,7 +87,7 @@ class PDP extends React.Component {
 
         return (
             <ContentWrapper unwrap>
-                <div className="hidden-md hidden-lg" style={{width:"100%", height:"350px", backgroundColor:"#ecf0f1"}}>
+                <div className="hidden-md hidden-lg" style={{width:"100%", backgroundColor:"#ecf0f1"}}>
                   { property ? <MobilePropertySummary property={property} /> : null}
                 </div>
 

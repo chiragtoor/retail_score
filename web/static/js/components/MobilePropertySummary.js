@@ -1,5 +1,6 @@
 import {default as React, Component} from "react";
 import {Glyphicon,Modal, Button, FormGroup, ControlLabel, FormControl, InputGroup, Panel, Nav, NavItem} from "react-bootstrap";
+import SpacesPanels from './SpacesPanels';
 
 const isBrowser = typeof window !== 'undefined';
 
@@ -22,7 +23,6 @@ export default class MobilePropertySummary extends Component {
     var styledPrice;
     var styledSqft;
 
-    var spacesDiv;
 
     if(this.props.property.min_sq_feet) {
 
@@ -44,26 +44,8 @@ export default class MobilePropertySummary extends Component {
 
     }
 
-    if(this.props.property.spaces && this.props.property.spaces.length > 1) {
-      var spaces = this.props.property.spaces;
 
-      spacesDiv = <div className="panel-body">
-                    <div className="row">
-                       <div className="col-lg-8">
-                            <p>
-                              {spaces.map((space, index) => {
-                               return <div>
-                                  <h5>{space.name}</h5>
-                                  <p>Square Feet: {space.sq_feet}</p>
-                                  <p>Monthly Rent: {space.monthly_rate}</p>
-                                  <p>Lease Type: {space.lease_type}</p>
-                               </div>;
-                              })}
-                            </p>
-                       </div>
-                    </div>
-                 </div>;
-    }
+    var showSpaces = this.props.property.spaces && (this.props.property.spaces.length > 1);
 
     return (
       <div style={{height:"100%", width:"100%"}}>
@@ -83,6 +65,7 @@ export default class MobilePropertySummary extends Component {
                   <p className="m0">Monthly Rent</p>
               </div>
           </div>
+          { showSpaces ? <SpacesPanels spaces={this.props.property.spaces} /> : null}
         </div>
       </div>
     );

@@ -145,7 +145,7 @@ export default class CompetitionGoogleMap extends Component {
     var contentString;
 
     if(place.rating) {
-      contentString = '<div id="content">'+ place.name + '</div> <div>' + place.rating +'</div>';
+      contentString = '<div id="content">'+ place.name + '</div> <div> Rating: ' + place.rating +'</div>';
     } else {
       contentString = '<div id="content">'+ place.name + '</div>';
     }
