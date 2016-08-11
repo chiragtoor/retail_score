@@ -44,11 +44,15 @@ export default class HomepageSearchBar extends Component {
   render () {
 
     return (
-      <div style={{height:"100%", width:"100%"}}>
-         <div className="homepageSearchBar" >
-            <CityAutoComplete selectedCity={this.state.city} cityChanged={this.cityChanged} citySelected={this.citySelected} />
-         </div>
-         <Button onClick={this.search} style={{float:"right", border:"none", backgroundColor:"#49A3DC", width:"50px", height:"50px", color:"#FFFFFF"}}><i className="fa fa-search"/></Button>
+      <div style={{width:"100%", backgroundColor:"#9b59b6"}}>
+        <FormGroup style={{width:"100%"}}>
+          <InputGroup style={{width:"100%", position:"relative"}}>
+           <div className="homepageSearchBar" > 
+               <CityAutoComplete selectedCity={this.state.city} cityChanged={this.cityChanged} citySelected={this.citySelected} />
+           </div>
+           <Button onClick={this.search} style={{borderRadius:"0px", position:"absolute", zIndex:"2", right:"0", border:"none", backgroundColor:"#49A3DC", width:"50px", height:"50px", color:"#FFFFFF"}}><i className="fa fa-search"/></Button>
+          </InputGroup>
+        </FormGroup>
       </div>
     );
   }

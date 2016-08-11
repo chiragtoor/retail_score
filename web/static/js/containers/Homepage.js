@@ -25,8 +25,10 @@ export class Homepage extends React.Component {
   constructor(props) {
     super(props);
 
+    this.searchClick = this.searchClick.bind(this);
+    this.tileClick = this.tileClick.bind(this);
+
     this.state = {
-      // empty string, null causes errors in BusinessAutoComplete
       value : "",
       city: ""
     };
@@ -34,7 +36,19 @@ export class Homepage extends React.Component {
 
   renderLocationTile(city) {
     var imageSource = imageMap[city];
-    return <HomepageTile img={imageSource} city={city} />;
+    return <HomepageTile img={imageSource} city={city} tileClick={this.tileClick} />;
+  }
+
+  searchClick(city) {
+	  var cityString = city;
+    cityString.replace(' ','-');
+    this.props.history.push('/retail-space-for-lease/' + cityString);
+  }
+
+  tileClick(city) {
+	  var cityString = city;
+    cityString.replace(' ','-');
+    this.props.history.push('/retail-space-for-lease/' + cityString);
   }
 
   render() {
@@ -92,19 +106,20 @@ export class Homepage extends React.Component {
 	                  <span className="productDescriptionSpanSm hidden-md hidden-lg" style={{color:"#FFFFFF", fontSize:"18px", fontWeight:"550"}} >{"With foot traffic, competition and demographic data for 1000+ properties, we'll help you find the perfect location for your business"}</span>
 	                </center>
 	              </div>
-	              <div style={{backgroundColor:"rgba(0, 0, 0, 0.5)", position:"absolute", bottom:"0"}}>
+	              <div style={{backgroundColor:"rgba(0, 0, 0, 0.5)", width:"100%", height:"80px", position:"absolute", bottom:"0"}}>
 	                  <div className="col-lg-3 col-md-3 col-sm-1 col-xs-1"></div>
 	                  <div className="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 col-sm-12 col-xs-12" style={{marginTop:"15"}}>
 
 	                        <div className="hidden-xs" style={{width:"100%", float:"left", position:"relative"}}>
-	                        	<HomepageSearchBar  />
+	                        	<HomepageSearchBar searchClick={this.searchClick} />
 	                        </div>
 
 	                      <div style={{width:"100%"}} className="hidden-lg hidden-md hidden-sm">
-	                        	<HomepageSearchBar  />
+	                        	<HomepageSearchBar searchClick={this.searchClick}  />
 	                      </div>
 
 	                  </div>
+	                  <div className="col-lg-3 col-md-3 col-sm-1 col-xs-1"></div>
 	              </div>
 	              <div/>
 	            </div>

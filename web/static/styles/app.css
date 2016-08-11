@@ -805,6 +805,7 @@ html, body {
 .homepageSearchBar {
   height: 100%;
   width: 100%;
+  float: left;
 }
 /*END OF HOMEPAGE*/
 

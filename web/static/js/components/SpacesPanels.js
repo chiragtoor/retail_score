@@ -19,6 +19,7 @@ export default class SpacesPanels extends Component {
     if(spaces&& spaces.length > 1) {
 
       spacesDiv = <div style={{height:(height)}}>
+                  <h3>Available Spaces</h3>
                   {spaces.map((space, index) => {
                       if(index % 2 == 0) {
                         return <div key={index} style={{height:"100px", marginTop:"10px", width:"45%", float:"right"}}>
@@ -61,7 +62,7 @@ export default class SpacesPanels extends Component {
     }
 
 
-    var height = (spaces.length % 2)*110 + 110;
+    var height = (spaces.length % 2)*110 + 150;
 
     return (
       <div style={{height:(height)}}>

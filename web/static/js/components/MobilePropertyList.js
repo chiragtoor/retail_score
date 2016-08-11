@@ -21,7 +21,6 @@ export default class MobilePropertyList extends Component {
 
   visibilityChanged(property, index) {
 
-      console.log("index is " + index + " and visibleIndex is " + this.state.visibleIndex);
       if(index != this.state.visibleIndex) {
         this.state.visibleIndex = index;
         this.setState(this.state);
@@ -31,7 +30,6 @@ export default class MobilePropertyList extends Component {
 
   emptyTileVisible(index) {
 
-      console.log("index is " + index + " and visibleIndex is " + this.state.visibleIndex);
       if(index != this.state.visibleIndex) {
         this.state.visibleIndex = index;
         this.setState(this.state);
@@ -52,8 +50,6 @@ export default class MobilePropertyList extends Component {
     if(minLoad < 0 ) {
       minLoad = 0;
     }
-
-    console.log("rendering");
 
     return (
         <div style={{overflowX: "scroll", overflowY: "hidden", display: "flex", width: "100%", height:"150px", backgroundColor:"#ecf0f1"}}>
