@@ -1,5 +1,5 @@
 import {default as React, Component} from "react";
-import {Glyphicon,Modal, Button, FormGroup, ControlLabel, FormControl, InputGroup, Panel, Nav, NavItem} from "react-bootstrap";
+import {Glyphicon,Modal, Button, FormGroup, ControlLabel, FormControl, InputGroup, Panel, Nav, NavItem, Badge} from "react-bootstrap";
 
 const isBrowser = typeof window !== 'undefined';
 
@@ -28,18 +28,23 @@ export default class RetailScorePanel extends Component {
                         <center>
                           <h2 className="media-heading m0 text-bold">Retail Score: {this.props.property.retail_score}</h2>
                         </center>
+                        <center>
+                          <h5 className="media-heading m0 text-bold">Monthly Sales Breakdown</h5>
+                        </center>
                        </div>
                     </div>
                  </div>
                  <div className="panel-body">
                     <div className="row">
-                       <div className="col-lg-8">
+                       <div className="col-lg-6">
                             <p>
-                                &nbsp;&nbsp; Monthly In-Store Retail Sales:  $9.2 M
+                                &nbsp;&nbsp; Clothing & Apparel: <Badge style={{backgroundColor:"#D4AF37", float:"right", fontSize:"15px", color:"#FFFFFF"}}>$9,200,000</Badge>
                                 <br/>
-                                &nbsp;&nbsp; Monthly Restaurant Food and Drink Sales: $5.4 M
                                 <br/>
-                                &nbsp;&nbsp; Monthly Entertainment and Recreation Sales: $2.3 M
+                                &nbsp;&nbsp;  Restaurants, Food & Drinks: <Badge style={{backgroundColor:"#C0C0C0", float:"right", fontSize:"15px", color:"#FFFFFF"}}>$5,400,000</Badge>
+                                <br/>
+                                <br/>
+                                &nbsp;&nbsp;  Entertainment & Recreation: <Badge style={{backgroundColor:"#CD7F32", float:"right", fontSize:"15px", color:"#FFFFFF"}}>$2,300,000</Badge>
                             </p>
                        </div>
                     </div>

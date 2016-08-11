@@ -56,7 +56,6 @@ const ChartComponent = React.createClass({
     },
 
     _generateChart: function(columns, type, element, options) {
-        console.log("generating fucking charts");
       let build = Object.assign({}, {
         bindto: '#' + element,
         data: {

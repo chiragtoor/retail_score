@@ -256,6 +256,10 @@ MOVE TO SRP.CSS AFTER
   padding-left: 0px;
 }
 
+.badgeShine {
+  background: -webkit-linear-gradient(left,  #D4AF37 0%,#D4AF37 33%,#D4AF37 66%,#D4AF37 100%);
+}
+
 .dimDiv {
   height: 100%;
   width: 100%;

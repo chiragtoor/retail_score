@@ -10,7 +10,8 @@ import ContactModal from '../components/ContactModal';
 import MobilePropertySummary from '../components/MobilePropertySummary';
 import RetailScorePanel from '../components/RetailScorePanel';
 import DemographicPanel from '../components/DemographicPanel';
-
+import PeoplePanel from '../components/PeoplePanel';
+import CompetitionPanel from '../components/CompetitionPanel';
 
 import { Grid, Row, Col, Panel, Button, ButtonGroup, FormGroup, ControlLabel, FormControl, InputGroup, Carousel, CarouselItem } from 'react-bootstrap';
 
@@ -35,11 +36,13 @@ class PDP extends React.Component {
     }
 
     showContactModal(){
-      this.state.modal = <div style={{height:"300px", width:"100%", backgroundColor:"#FFFFFF", position:"fixed", zIndex:"3", bottom:"0", right:"0"}}>
-                    <ContactModal submitContact={this.hideModals} />
-                   </div>;
-      this.state.dimDiv = <div className="PDPDimDiv" onClick={this.hideModals}></div>;
-      this.setState(this.state);
+      if(this.props.property.agents) {
+        this.state.modal = <div style={{height:"300px", width:"100%", backgroundColor:"#FFFFFF", position:"fixed", zIndex:"3", bottom:"0", right:"0"}}>
+                      <ContactModal submitContact={this.hideModals} agent={this.props.property.agents[0]} />
+                     </div>;
+        this.state.dimDiv = <div className="PDPDimDiv" onClick={this.hideModals}></div>;
+        this.setState(this.state);
+      }
     }
 
     showRetailScoreExpalanation() {
@@ -65,6 +68,7 @@ class PDP extends React.Component {
         var property = this.props.property;
 
         var demographics = this.props.property.demographics;
+        var tapestry = demographics.tapestry;
 
         console.log("this is the property " + JSON.stringify(property));
 
@@ -80,20 +84,20 @@ class PDP extends React.Component {
           transitionLeaveTimeout: 500
         };
 
-        var formattedAddress = property.streetAddress + ", " + property.city + ", " + property.state;
 
         return (
             <ContentWrapper unwrap>
-                <div className="hidden-md hidden-lg" style={{width:"100%", height:"350px"}}>
+                <div className="hidden-md hidden-lg" style={{width:"100%", height:"350px", backgroundColor:"#ecf0f1"}}>
                   { property ? <MobilePropertySummary property={property} /> : null}
                 </div>
 
-                <div className="p-lg">
+                <div style={{backgroundColor:"#ecf0f1"}} className="p-lg">
                     <Row>
                         <Col lg={ 12 }>
-                          <RetailScorePanel showModal={this.showRetailScoreExpalanation} property={property} />
-                          <DemographicPanel data={demographics} />
-
+                          {property ? <RetailScorePanel showModal={this.showRetailScoreExpalanation} property={property} /> : null }
+                          { demographics ? <DemographicPanel data={demographics} /> : null}
+                          {property ? <CompetitionPanel property={property} /> : null}
+                          { tapestry ? <PeoplePanel people={tapestry}/> : null}
                         </Col>
                         
                         <Col className="hidden-md hidden-lg">
@@ -104,8 +108,10 @@ class PDP extends React.Component {
                             {this.state.modal}
                           </ReactCSSTransitionGroup>
                         </Col>
+
+                        <div className="hidden-lg hidden-md" style={{width:"100%", height:"50px"}}/>
                     </Row>
-                    <Button onClick={this.showContactModal} style={{width:"100%", height:"50px", backgroundColor:"#49A3DC", color:"#FFFFFF", position:"fixed", bottom:"0", left:"0", zIndex:"1"}}>Contact Broker</Button>
+                    <Button onClick={this.showContactModal} style={{width:"100%", height:"50px", fontSize:"20px", fontWeight:"300px", backgroundColor:"#49A3DC", color:"#FFFFFF", position:"fixed", bottom:"0", left:"0", zIndex:"2"}}>I want more information</Button>
                 </div>
             </ContentWrapper>
             );

@@ -37,6 +37,9 @@ export default class ContactModal extends Component {
   }
 
   render () {
+
+    var agent = this.props.agent;
+
     return (
             <div style={{height:"100%", widht:"100%"}}>
               <div className="row-masonry row-masonry-lg-2">
@@ -45,12 +48,12 @@ export default class ContactModal extends Component {
                        <div className="panel-heading">
                           <div className="media mt0">
                              <div className="media-left">
-                              <img src="http://x.lnimg.com/xnet/mainsite/HttpHandlers/attachment/ServeAttachment.ashx?FileGuid=19FBC02A-86DD-4142-94FD-037D2E705AA8&Extension=jpg&Width=166&Height=189&PadImage=True&ClipImage=False&ExactDim=-1&UseThumbnailAsOriginal=False&UseStandardAsOriginal=False" alt="Image" className="media-object img-circle thumb48" />
+                              <img src="https://lh3.googleusercontent.com/-znTaTDKLflU/AAAAAAAAAAI/AAAAAAAAAAA/i5PcDmAQPF8/photo.jpg" alt="Image" className="media-object img-circle thumb48" />
                              </div>
                              <div className="media-body media-middle">
                               <center>
-                                <h5 className="media-heading m0 text-bold">Drew Glickman</h5>
-                                <small className="text-muted">Musselli Real Estate</small>
+                                <h5 className="media-heading m0 text-bold">{agent.name}</h5>
+                                <small className="text-muted">{agent.company_name}</small>
                               </center>
                              </div>
                           </div>

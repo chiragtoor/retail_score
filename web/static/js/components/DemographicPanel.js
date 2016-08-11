@@ -26,9 +26,24 @@ export default class DemographicPanel extends Component {
 
   constructor(props) {
     super(props);
+
+    this.setDemographicIndex = this.setDemographicIndex.bind(this);
+
+    this.state = {
+      demographicIndex: 0
+    };
+  }
+
+  setDemographicIndex(index) {
+    this.state.demographicIndex = index;
+    this.setState(this.state);
+    // console.log("just set the demographicIndex to " + this.state.demographicIndex);
   }
 
   render () {
+
+    var data;
+    var title;
 
     var maritalData = {
       columns: [
@@ -74,11 +89,62 @@ export default class DemographicPanel extends Component {
       ]
     };
 
+    var ethnicFont = "#333333";
+    var ethnicBackground = "#FFFFFF";
+    var incomeFont = "#333333";
+    var incomeBackground = "#FFFFFF";
+    var maritalFont = "#333333";
+    var maritalBackground = "#FFFFFF";
+    var ageFont = "#333333";
+    var ageBackground = "#FFFFFF";
+    var genderFont = "#333333";
+    var genderBackground = "#FFFFFF";
+
+    switch(this.state.demographicIndex){
+      case 0:
+          data = incomeData;
+          title = 'Household Income';
+          incomeFont = "#FFFFFF";
+          incomeBackground = "#49A3DC";
+        break;
+      case 1:
+          data = ethnicData;
+          title = 'Ethnicities';
+          ethnicFont = "#FFFFFF";
+          ethnicBackground = "#49A3DC";
+        break;
+      case 2:
+          data = maritalData;
+          title = 'Marriage';
+          maritalFont = "#FFFFFF";
+          maritalBackground = "#49A3DC";
+        break;
+      case 3:
+          data = ageData;
+          title = 'Age';
+          ageFont = "#FFFFFF";
+          ageBackground = "#49A3DC";
+        break;
+      case 4:
+          data = genderData;
+          title = 'Gender';
+          genderFont = "#FFFFFF";
+          genderBackground = "#49A3DC";
+        break;
+      default:
+          data = incomeData;
+          title = 'Household Income';
+          incomeFont = "#FFFFFF";
+          incomeBackground = "#49A3DC";
+        break;
+    }
+
     return (
       <div style={{height:"100%", width:"100%", marginTop:"10px"}}>
         <div className="row-masonry row-masonry-lg-2">
           <div className="col-masonry">
               <div className="panel b m0">
+
                  <div className="panel-heading">
                     <div className="media mt0">
                        <div style={{fontSize:"25px"}} className="media-left">
@@ -91,22 +157,27 @@ export default class DemographicPanel extends Component {
                        </div>
                     </div>
                  </div>
+
                  <div className="panel-body">
+                    <div style={{fontSize:"18px", fontWeight:"400", textAlign:"center"}}>{title}</div>
                     <div className="row">
-                       <div className="col-lg-8">
+                      <div className="col-lg-8">
                             <center>
                                 <div id="testchart" />
                             </center>
-                            <Chart data={ageData} element='testchart' type='pie' options={options}/>
-                            <center>
-                                <ButtonGroup>
-                                    <Button><em className="fa fa-usd">Income</em></Button>
-                                    <Button><em className="fa fa-globe">Ethnicity</em></Button>
-                                    <Button><em className="fa fa-heart">Marriage</em></Button>
-                                    <Button><em className="fa fa-user">Age</em></Button>
-                                </ButtonGroup>
-                            </center>
-                       </div>
+                            <Chart data={data} element='testchart' type='pie' options={options}/>
+                      </div>
+                      <div>
+                        <center>
+                            <ButtonGroup style={{border:"solid thin #333333", marginTop:"5px", borderRadius:"5px"}}>
+                                <Button style={{color:(incomeFont), width:"50px", backgroundColor:(incomeBackground),border:"none", borderRight:"solid thin #333333"}} onClick={e => this.setDemographicIndex(0)}><em className="fa fa-usd"></em></Button>
+                                <Button style={{color:(ethnicFont), width:"50px", backgroundColor:(ethnicBackground),border:"none", borderRight:"solid thin #333333"}} onClick={e => this.setDemographicIndex(1)}><em className="fa fa-globe"></em></Button>
+                                <Button style={{color:(maritalFont),width:"50px", backgroundColor:(maritalBackground), border:"none", borderRight:"solid thin #333333"}} onClick={e => this.setDemographicIndex(2)}><em className="fa fa-heart"></em></Button>
+                                <Button style={{color:(ageFont),width:"50px", backgroundColor:(ageBackground),border:"none", borderRight:"solid thin #333333"}} onClick={e => this.setDemographicIndex(3)}><em className="fa fa-user"></em></Button>
+                                <Button style={{color:(genderFont),width:"50px", backgroundColor:(genderBackground),border:"none"}} onClick={e => this.setDemographicIndex(4)}><em className="fa fa-venus-mars"></em></Button>
+                            </ButtonGroup>
+                          </center>
+                      </div>
                     </div>
                  </div>
               </div>

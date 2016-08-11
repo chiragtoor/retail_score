@@ -22,6 +22,8 @@ export default class MobilePropertySummary extends Component {
     var styledPrice;
     var styledSqft;
 
+    var spacesDiv;
+
     if(this.props.property.min_sq_feet) {
 
       if(this.props.property.min_sq_feet == this.props.property.max_sq_feet) {
@@ -42,13 +44,34 @@ export default class MobilePropertySummary extends Component {
 
     }
 
+    if(this.props.property.spaces && this.props.property.spaces.length > 1) {
+      var spaces = this.props.property.spaces;
+
+      spacesDiv = <div className="panel-body">
+                    <div className="row">
+                       <div className="col-lg-8">
+                            <p>
+                              {spaces.map((space, index) => {
+                               return <div>
+                                  <h5>{space.name}</h5>
+                                  <p>Square Feet: {space.sq_feet}</p>
+                                  <p>Monthly Rent: {space.monthly_rate}</p>
+                                  <p>Lease Type: {space.lease_type}</p>
+                               </div>;
+                              })}
+                            </p>
+                       </div>
+                    </div>
+                 </div>;
+    }
+
     return (
       <div style={{height:"100%", width:"100%"}}>
-        <center style={{fontSize:"24px", textAlign:"center", marginTop:"5px"}}>
+        <img className="propertyImageSize" src={this.getImageUrl(this.props.property.image_lat, this.props.property.image_lng, this.props.property.image_heading)} />
+        <center style={{fontSize:"24px", textAlign:"center", marginTop:"5px", backgroundColor:"#ecf0f1"}}>
           {this.props.property ? this.props.property.street_address : null}
           <span style={{fontSize:"18px"}} >{ this.props.property? ", " + this.props.property.city + ", " + this.props.property.state : null}</span> 
         </center>
-        <img className="propertyImageSize" src={this.getImageUrl(this.props.property.image_lat, this.props.property.image_lng, this.props.property.image_heading)} />
         <div className="text-center p-lg mb-sm" style={{backgroundColor:"#ecf0f1"}}>
           <div className="row row-table">
               <div className="col-xs-6 br">
@@ -57,7 +80,7 @@ export default class MobilePropertySummary extends Component {
               </div>
               <div className="col-xs-6">
                   <h3 className="m0">{styledPrice}</h3>
-                  <p className="m0">Monthly Rate</p>
+                  <p className="m0">Monthly Rent</p>
               </div>
           </div>
         </div>
