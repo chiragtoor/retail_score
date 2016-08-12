@@ -1,4 +1,67 @@
 defmodule RetailScore.Processor do
+  # def test do
+  #   properties = "{\"City\": \"Elk Grove\",\"MinSquareFeet\": 1200.0, \"ZipCode\": \"95757\", \"StreetAddress\": \"5640 Whitelock Parkway\", \"BrokerCompany\": \"CBRE, Inc.\",\"RentPerMonth\": 0.0,\"State\": \"CA\",\"BrokerPhone\": \"(916) 446-8795\",\"MaxSquareFeet\": 70000.0, \"Spaces\": [{\"AvailableDate\": \"2015-04-01T00:00:00\",\"RatePerMonth\": null, \"LeaseType\": \"NNN\", \"Area\": \"70000.0\"}],\"BrokerName\": \"Heath\",\"RatePerMonthPerUnitArea\": 0.0}" 
+  
+  #   properties = properties
+  #   |> Poison.decode!
+  #     # |> IO.inspect
+
+  #     IO.puts "Adding geo information"
+  #     processed_with_geo = [properties]
+  #     |> convert_raw_to_form
+  #     |> add_geo_params_to_properties
+  #     |> IO.inspect
+  #     totalCount = processed_with_geo
+  #     |> Enum.count
+  #     IO.puts "#{totalCount} properties to be inserted for this file"
+
+  #     IO.puts "Adding Demographics"
+  #     processed_with_demographics = processed_with_geo
+  #     |> Enum.chunk(50, 50, [])
+  #     |> Enum.map(fn(batch) ->
+  #       RetailScore.Demographic.get_esri_data_for_lat_lng_batch(batch)
+  #     end)
+  #     |> Enum.concat
+  #     |> Enum.filter(fn(property) ->
+  #       property != nil
+  #     end)
+  #     # |> IO.inspect
+  #      totalCount = processed_with_demographics
+  #     |> Enum.count
+  #     IO.puts "#{totalCount} properties to be inserted after getting demographics"
+
+  #     IO.puts "Adding RS Data"
+  #     processed_with_rs_data = processed_with_demographics
+  #     |> Enum.chunk(50, 50, [])
+  #     |> Enum.map(fn(batch) ->
+  #       RetailScore.Demographic.get_esri_data_for_lat_lng_rs_batch(batch)
+  #     end)
+  #     |> Enum.concat
+  #     |> Enum.filter(fn(property) ->
+  #       property != nil
+  #     end)
+  #     # |> IO.inspect
+  #      totalCount = processed_with_rs_data
+  #     |> Enum.count
+  #     IO.puts "#{totalCount} properties to be inserted after getting RS data"
+
+  #     IO.puts "Scoring properties by city"
+  #     finalData = processed_with_rs_data
+  #     |> score_rs_data_properties
+  #     # |> IO.inspect
+
+  #     IO.puts "Uploading final data to S3"
+  #     uploadData = finalData
+  #     |> Enum.map(fn(property) ->
+  #       Poison.encode!(property)
+  #     end)
+  #     |> Enum.join(",")
+
+  #     upload = "[" <> uploadData <> "]"
+
+  #     IO.inspect upload
+  # end
+
   def process_files(files) do
     files
     |> Enum.map(fn(file) ->
@@ -203,7 +266,7 @@ defmodule RetailScore.Processor do
       
       case propertyParams do
         nil ->
-          property
+          nil
         geoPropertyParams ->
           Map.put(property, "property", geoPropertyParams)
       end

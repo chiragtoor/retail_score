@@ -22,8 +22,8 @@ defmodule RetailScore.Demographic do
   end
 
   # Esri Account Credentials
-  @esri_client_id "lpCIeD2LSd3f0NSK"
-  @esri_client_secret "750385b9fd9e4093ad995fdb21c48c1a"
+  @client_id "XSjcp380W1NBXKRS"
+  @client_secret "b67a80d0ba1749bd9c0cc9034427070b"
   # Esri Query URL Specific Info
   @esri_url "http://geoenrich.arcgis.com/arcgis/rest/services/World/geoenrichmentserver/Geoenrichment/Enrich?"
   @study_areas ~s(studyAreas=[{%22areaType%22:%22RingBuffer%22,%22bufferUnits%22:%22esriMiles%22,%22bufferRadii%22:[1],%22geometry%22:)
@@ -896,7 +896,7 @@ defmodule RetailScore.Demographic do
     |> Enum.join("%22,%22")
 
     query_url = @esri_url <>
-      "token=" <> get_esri_token <>
+      "token=" <> get_esri_token(@client_id, @client_secret) <>
       "&" <> get_study_area_for_lat_lng(property.lat, property.lng) <>
       @study_area_options <> "&f=pjson&forStorage=true" <>
       "&analysisVariables=[%22" <> variables <> "%22]" 
@@ -913,7 +913,7 @@ defmodule RetailScore.Demographic do
     end
   end
 
-  def get_esri_data_for_lat_lng(lat, lng) do
+  def get_esri_data_for_lat_lng(lat, lng, client_id \\ @client_id, client_secret \\ @client_secret) do
     variables = @variables
     |> Enum.map(fn({_, queryVariable}) ->
       queryVariable
@@ -921,23 +921,30 @@ defmodule RetailScore.Demographic do
     |> Enum.join("%22,%22")
 
     query_url = @esri_url <>
-      "token=" <> get_esri_token <>
+      "token=" <> get_esri_token(client_id, client_secret) <>
       "&" <> get_study_area_for_lat_lng(lat, lng) <>
       @study_area_options <> "&f=pjson&forStorage=true" <>
-      "&analysisVariables=[%22" <> variables <> "%22]" 
+      "&analysisVariables=[%22" <> variables <> "%22]"
 
     case HTTPoison.post(query_url, "", [], [{:timeout, :infinity}, {:recv_timeout, :infinity}]) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
-        extract_esri_variables(Poison.Parser.parse!(body))
-        |> Enum.map(fn({variable, value}) ->
-          %{"esri_variable" => variable, "distance" => 1.0, "value" => value}
-        end)
+        case Poison.Parser.parse!(body) do
+          %{"error" => error} ->
+            new_client_id = String.strip(IO.gets "Enter a new client_id: ")
+            new_client_secret = String.strip(IO.gets "Enter a new client_secret: ")
+            get_esri_data_for_lat_lng(lat, lng, new_client_id, new_client_secret)
+          success ->
+            extract_esri_variables(success)
+            |> Enum.map(fn({variable, value}) ->
+              %{"esri_variable" => variable, "distance" => 1.0, "value" => value}
+            end)
+        end
       _ ->
         {:error, "ERROR Retreiving Esri Attributes"}
     end
   end
 
-  def get_esri_data_for_lat_lng_batch(properties) do
+  def get_esri_data_for_lat_lng_batch(properties, client_id \\ @client_id, client_secret \\ @client_secret) do
     latLngWithCodes = properties
     |> Enum.with_index
     |> Enum.map(fn({property, index}) ->
@@ -969,34 +976,45 @@ defmodule RetailScore.Demographic do
     end)
     |> Enum.join("%22,%22")
 
-    query_url = "#{@esri_url}&token=#{get_esri_token}&studyAreas=[#{studyAreas}]&#{@study_area_options}"
+    query_url = "#{@esri_url}&token=#{get_esri_token(client_id, client_secret)}&studyAreas=[#{studyAreas}]&#{@study_area_options}"
       <> "&f=pjson&forStorage=true&analysisVariables=[%22#{variables}%22]"
 
     case HTTPoison.post(query_url, "", [], [{:timeout, :infinity}, {:recv_timeout, :infinity}]) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
 
-        %{"results" => [%{"value" => %{"FeatureSet" => [%{"features" => results}]}}]} = Poison.Parser.parse!(body)
+        case Poison.Parser.parse!(body) do
+          %{"error" => error} ->
+            IO.puts "ERROR"
+            IO.inspect query_url
+            new_client_id = String.strip(IO.gets "Enter a new client_id: ")
+            new_client_secret = String.strip(IO.gets "Enter a new client_secret: ")
+            get_esri_data_for_lat_lng_batch(properties, new_client_id, new_client_secret)
+          success ->
+            %{"results" => [%{"value" => %{"FeatureSet" => [%{"features" => results}]}}]} = success
+            IO.puts "Got Results"
+            IO.inspect results
 
-        results
-        |> Enum.map(fn(attributes) ->
-          variableTuples = extract_esri_variables_batch(attributes)
+            results
+            |> Enum.map(fn(attributes) ->
+              variableTuples = extract_esri_variables_batch(attributes)
 
-          %{"attributes" => %{"myId" => latLngCode}} = attributes
+              %{"attributes" => %{"myId" => latLngCode}} = attributes
 
-          {lat, lng} = Map.get(latLngWithCodes, latLngCode)
-          property = Map.get(propertyMap, {lat, lng})
+              {lat, lng} = Map.get(latLngWithCodes, latLngCode)
+              property = Map.get(propertyMap, {lat, lng})
 
-          {property, variableTuples}
-        end)
-        |> Enum.map(fn({property, variableTuples}) ->
-          demographics = variableTuples
-          |> Enum.map(fn({variable, value}) ->
-            %{"distance" => 1.0, "value" => value, "esri_variable" => variable}
-          end)
+              {property, variableTuples}
+            end)
+            |> Enum.map(fn({property, variableTuples}) ->
+              demographics = variableTuples
+              |> Enum.map(fn({variable, value}) ->
+                %{"distance" => 1.0, "value" => value, "esri_variable" => variable}
+              end)
 
-          Map.merge(property, %{"demographics" => demographics})
-        end)
-      _ ->
+              Map.merge(property, %{"demographics" => demographics})
+            end)
+        end
+      error ->
         nil
     end
   end
@@ -1009,7 +1027,7 @@ defmodule RetailScore.Demographic do
     end)
   end
 
-  def get_esri_data_for_lat_lng_rs_batch(properties) do
+  def get_esri_data_for_lat_lng_rs_batch(properties, client_id \\ @client_id, client_secret \\ @client_secret) do
     latLngWithCodes = properties
     |> Enum.with_index
     |> Enum.map(fn({property, index}) ->
@@ -1041,40 +1059,48 @@ defmodule RetailScore.Demographic do
     end)
     |> Enum.join("%22,%22")
 
-    query_url = "#{@esri_url}&token=#{get_esri_token}&studyAreas=[#{studyAreas}]&#{@rs_study_area_options}"
+    query_url = "#{@esri_url}&token=#{get_esri_token(client_id, client_secret)}&studyAreas=[#{studyAreas}]&#{@rs_study_area_options}"
       <> "&f=pjson&forStorage=true&analysisVariables=[%22#{variables}%22]"
 
     case HTTPoison.post(query_url, "", [], [{:timeout, :infinity}, {:recv_timeout, :infinity}]) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
 
-        %{"results" => [%{"value" => %{"FeatureSet" => [%{"features" => results}]}}]} = Poison.Parser.parse!(body)
+        case Poison.Parser.parse!(body) do
+          %{"error" => error} ->
+            # IO.inspect query_url
+            new_client_id = String.strip(IO.gets "Enter a new client_id: ")
+            new_client_secret = String.strip(IO.gets "Enter a new client_secret: ")
+            get_esri_data_for_lat_lng_rs_batch(properties, new_client_id, new_client_secret)
+          success ->
+            %{"results" => [%{"value" => %{"FeatureSet" => [%{"features" => results}]}}]} = Poison.Parser.parse!(body)
 
-        results
-        |> Enum.map(fn(attributes) ->
-          variableTuples = extract_esri_variables_rs_batch(attributes)
+            results
+            |> Enum.map(fn(attributes) ->
+              variableTuples = extract_esri_variables_rs_batch(attributes)
 
-          %{"attributes" => %{"myId" => latLngCode}} = attributes
+              %{"attributes" => %{"myId" => latLngCode}} = attributes
 
-          {lat, lng} = Map.get(latLngWithCodes, latLngCode)
-          property = Map.get(propertyMap, {lat, lng})
+              {lat, lng} = Map.get(latLngWithCodes, latLngCode)
+              property = Map.get(propertyMap, {lat, lng})
 
-          {property, variableTuples}
-        end)
-        |> Enum.map(fn({property, variableTuples}) ->
-          add_demographics = variableTuples
-          |> Enum.map(fn({variable, value}) ->
-            %{"distance" => 0.31, "value" => value, "esri_variable" => variable}
-          end)
+              {property, variableTuples}
+            end)
+            |> Enum.map(fn({property, variableTuples}) ->
+              add_demographics = variableTuples
+              |> Enum.map(fn({variable, value}) ->
+                %{"distance" => 0.31, "value" => value, "esri_variable" => variable}
+              end)
 
-          old_demographics = Map.get(property, "demographics")
+              old_demographics = Map.get(property, "demographics")
 
-          property = Map.merge(property, %{"demographics" => old_demographics ++ add_demographics})
+              property = Map.merge(property, %{"demographics" => old_demographics ++ add_demographics})
 
-          [{"X5001_X", clothing}, {"X1131_X", food}, {"X10001_X", personal}, {"X9001_X", entertainment}] = variableTuples
-          sum = clothing + food + personal + entertainment
+              [{"X5001_X", clothing}, {"X1131_X", food}, {"X10001_X", personal}, {"X9001_X", entertainment}] = variableTuples
+              sum = clothing + food + personal + entertainment
 
-          Map.merge(property, %{"rs_data" => %{"sum" => sum}})
-        end)
+              Map.merge(property, %{"rs_data" => %{"sum" => sum}})
+            end)
+        end
       _ ->
         nil
     end
@@ -1096,7 +1122,7 @@ defmodule RetailScore.Demographic do
     |> Enum.join("%22,%22")
 
     query_url = @esri_url <>
-      "token=" <> get_esri_token <>
+      "token=" <> get_esri_token(@client_id, @client_secret) <>
       "&" <> get_study_area_for_lat_lng_rs(lat, lng) <>
       @rs_study_area_options <> "&f=pjson&forStorage=true" <>
       "&analysisVariables=[%22" <> variables <> "%22]" 
@@ -1134,8 +1160,8 @@ defmodule RetailScore.Demographic do
     end)
   end
 
-  def get_esri_token do
-    token_query = "https://www.arcgis.com/sharing/rest/oauth2/token?f=json&client_id=#{@esri_client_id}&client_secret=#{@esri_client_secret}&grant_type=client_credentials"
+  def get_esri_token(client_id, client_secret) do
+    token_query = "https://www.arcgis.com/sharing/rest/oauth2/token?f=json&client_id=#{client_id}&client_secret=#{client_secret}&grant_type=client_credentials"
   
     case HTTPoison.post(token_query, "") do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
