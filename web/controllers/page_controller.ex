@@ -20,7 +20,7 @@ defmodule RetailScore.PageController do
 
     render(conn, "index.html", html: result["html"], props: initial_state)
 
-    #render(conn, "index.html", html: [], props: %{})
+    # render(conn, "index.html", html: [], props: %{})
   end
 
   def pdp_page(conn, %{"propertyId" => id}) do

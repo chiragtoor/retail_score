@@ -141,6 +141,7 @@ export default class DemographicPanel extends Component {
 
     return (
       <div style={{height:"100%", width:"100%", marginTop:"10px"}}>
+        
         <div className="row-masonry row-masonry-lg-2">
           <div className="col-masonry">
               <div className="panel b m0">
@@ -183,6 +184,7 @@ export default class DemographicPanel extends Component {
               </div>
           </div>
         </div>
+
       </div>
     );
 

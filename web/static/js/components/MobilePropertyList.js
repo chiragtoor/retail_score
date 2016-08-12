@@ -1,7 +1,7 @@
 import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
-import PropertyTile from './PropertyTile.js';
-import EmptyTile from './EmptyTile.js';
+import MobilePropertyTile from './MobilePropertyTile.js';
+import MobileEmptyTile from './MobileEmptyTile.js';
 import { Grid, Row, Col, Panel, Button, FormGroup, ControlLabel, FormControl, InputGroup, Carousel, CarouselItem, DropdownButton, MenuItem } from 'react-bootstrap';
 
 export default class MobilePropertyList extends Component {
@@ -55,9 +55,9 @@ export default class MobilePropertyList extends Component {
         <div style={{overflowX: "scroll", overflowY: "hidden", display: "flex", width: "100%", height:"150px", backgroundColor:"#ecf0f1"}}>
           {properties.map((property, index) => {
             if(index <= maxLoad && index >= minLoad){
-              return <PropertyTile key={index} index={index} property={property} tileClick={this.props.tileClick} visibilityChanged={this.visibilityChanged} />;
+              return <MobilePropertyTile key={index} index={index} property={property} tileClick={this.props.tileClick} visibilityChanged={this.visibilityChanged} />;
             } else {
-              return <EmptyTile  key={index} index={index} visibilityChanged={this.emptyTileVisible} />;
+              return <MobileEmptyTile  key={index} index={index} visibilityChanged={this.emptyTileVisible} />;
             } 
           })}
         </div>

@@ -37,7 +37,7 @@ class PDP extends React.Component {
 
     showContactModal(){
       if(this.props.property.agents) {
-        this.state.modal = <div style={{height:"300px", width:"100%", backgroundColor:"#FFFFFF", position:"fixed", zIndex:"3", bottom:"0", right:"0"}}>
+        this.state.modal = <div className="" style={{height:"300px", width:"100%", backgroundColor:"#FFFFFF", position:"fixed", zIndex:"3", bottom:"0", right:"0"}}>
                       <ContactModal submitContact={this.hideModals} agent={this.props.property.agents[0]} />
                      </div>;
         this.state.dimDiv = <div className="PDPDimDiv" onClick={this.hideModals}></div>;
@@ -93,7 +93,7 @@ class PDP extends React.Component {
 
                 <div style={{backgroundColor:"#ecf0f1"}} className="p-lg">
                     <Row>
-                        <Col lg={ 12 }>
+                        <Col className="col-sm-offset-1" lg={ 12 } md={ 10 } sm={ 10 } xs={12}>
                           {property ? <RetailScorePanel showModal={this.showRetailScoreExpalanation} property={property} /> : null }
                           { demographics ? <DemographicPanel data={demographics} /> : null}
                           {property ? <CompetitionPanel property={property} /> : null}
@@ -108,9 +108,8 @@ class PDP extends React.Component {
                             {this.state.modal}
                           </ReactCSSTransitionGroup>
                         </Col>
-
-                        <div className="hidden-lg hidden-md" style={{width:"100%", height:"50px"}}/>
                     </Row>
+                    <div style={{width:"100%", height:"50px"}}/>
                     <Button onClick={this.showContactModal} style={{width:"100%", height:"50px", fontSize:"20px", fontWeight:"300px", backgroundColor:"#49A3DC", color:"#FFFFFF", position:"fixed", bottom:"0", left:"0", zIndex:"2"}}>I want more information</Button>
                 </div>
             </ContentWrapper>

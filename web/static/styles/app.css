@@ -324,6 +324,14 @@ MOVE TO SRP.CSS AFTER
   object-fit: contain;
 }
 
+.propertyImageSizeTablet {
+  width: 100% !important;
+  height: 300px !important;
+  margin-top: 5px;
+  object-fit: contain;
+}
+
+
 .propertyImageSizeSmall {
   width: 120px !important;
   height: 125px !important;

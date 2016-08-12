@@ -15,7 +15,9 @@ export default class MobilePropertySummary extends Component {
 
   getImageUrl(lat, lng, heading) {
    var width = isBrowser ? window.innerWidth : 640;
+
     return `https://maps.googleapis.com/maps/api/streetview?size=${width}x250&location=${lat},${lng}&heading=${heading}&key=AIzaSyASv9f24GcF78YIKRsX3uCRkj58JzZ8NaA`;
+   
   }
 
   render () {
@@ -49,7 +51,8 @@ export default class MobilePropertySummary extends Component {
 
     return (
       <div style={{height:"100%", width:"100%"}}>
-        <img className="propertyImageSize" src={this.getImageUrl(this.props.property.image_lat, this.props.property.image_lng, this.props.property.image_heading)} />
+        <img className="propertyImageSize hidden-sm" src={this.getImageUrl(this.props.property.image_lat, this.props.property.image_lng, this.props.property.image_heading)} />
+        <img className="propertyImageSizeTablet hidden-xs" src={this.getImageUrl(this.props.property.image_lat, this.props.property.image_lng, this.props.property.image_heading)} />
         <center style={{fontSize:"24px", textAlign:"center", marginTop:"5px", backgroundColor:"#ecf0f1"}}>
           {this.props.property ? this.props.property.street_address : null}
           <span style={{fontSize:"18px"}} >{ this.props.property? ", " + this.props.property.city + ", " + this.props.property.state : null}</span> 

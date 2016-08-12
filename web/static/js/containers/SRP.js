@@ -6,13 +6,14 @@ import * as Actions from '../actions';
 import ContentWrapper from '../components/Base/ContentWrapper';
 import { Grid, Row, Col, Panel, Button, FormGroup, ControlLabel, FormControl, InputGroup, Carousel, CarouselItem, DropdownButton, MenuItem } from 'react-bootstrap';
 
-// const isBrowser = typeof window !== 'undefined';
+const isBrowser = typeof window !== 'undefined';
 // const C3Chart = isBrowser ? require('react-c3') : undefined;
 import Chart from '../components/Chart';
 import GoogleMap from '../components/GoogleMap';
 import SearchBar from '../components/SearchBar';
 import Filters from '../components/Filters';
 import MobilePropertyList from '../components/MobilePropertyList';
+import TabletPropertyList from '../components/TabletPropertyList';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import RetailScoreExplanation from '../components/RetailScoreExplanation';
 
@@ -230,6 +231,22 @@ class SRP extends React.Component {
           filteredProperties.sort(sortBy);
         }
 
+        var propertyList;
+
+        if(isBrowser) {
+          if(window.innerWidth < 700) {
+            propertyList = <MobilePropertyList 
+                          properties={filteredProperties} 
+                          tileClick={this.tileClick} 
+                          visibilityChanged={this.setCurrentProperty} />;
+          } else if (window.innerWidth < 800) {
+            propertyList = <TabletPropertyList 
+                          properties={filteredProperties} 
+                          tileClick={this.tileClick} 
+                          visibilityChanged={this.setCurrentProperty} />;
+          }
+        }
+
         return (
             <div style={{height:"100%"}}>
 
@@ -312,12 +329,9 @@ class SRP extends React.Component {
                       </div>
 
                       <div style={{width: "100%", height:"150px"}}>
-                        <MobilePropertyList 
-                          properties={filteredProperties} 
-                          tileClick={this.tileClick} 
-                          visibilityChanged={this.setCurrentProperty} />
+                        {propertyList}
                       </div>
-                      
+
                     </Col>
 
                     <Col className="hidden-md hidden-lg">

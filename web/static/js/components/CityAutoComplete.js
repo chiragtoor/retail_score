@@ -1,6 +1,5 @@
 import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
-import PropertyTile from './PropertyTile.js'
 import Autocomplete from 'react-autocomplete';
 import * as Util from '../Util.js';
 
