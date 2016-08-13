@@ -753,7 +753,8 @@ defmodule RetailScore.Demographic do
       gender: get_gender_data(demographics),
       tapestry: get_tapestry_segment(demographics),
       marital_status: get_marital_status_data(demographics),
-      age: get_age_data(demographics)
+      age: get_age_data(demographics),
+      spending: get_spending_data(demographics)
     }
   end
 
@@ -764,6 +765,15 @@ defmodule RetailScore.Demographic do
       value ->
         value
     end
+  end
+
+  defp get_spending_data(demographics) do
+    %{
+      clothing: extract_demographic(demographics, "X5001_X"),
+      food: extract_demographic(demographics, "X1131_X"),
+      personal: extract_demographic(demographics, "X10001_X"),
+      entertainment: extract_demographic(demographics, "X9001_X")
+    }
   end
 
   defp get_gender_data(demographics) do
