@@ -19,7 +19,6 @@ export default class DesktopSpacesPanels extends Component {
     if(spaces&& spaces.length > 1) {
 
       spacesDiv = <div style={{height:(height)}}>
-                  <h5>Available Spaces</h5>
                   {spaces.map((space, index) => {
                       if(index % 2 == 0) {
                         return <div key={index} style={{height:"100px", marginTop:"10px", width:"45%", float:"right"}}>
@@ -66,9 +65,8 @@ export default class DesktopSpacesPanels extends Component {
 
     return (
         <div>
-          <h4>Available Spaces</h4>
           {spaces.map((space, index) => {
-                return <div key={index} style={{ marginTop:"10px", width:"45%", marginLeft:"3px", float:"left"}}>
+                return <div key={index} style={{ marginTop:"30px", width:"45%", marginLeft:"3px", float:"left"}}>
                   <div className="row-masonry">
                     <div className="col-masonry">
                         <div className="panel b m0">
