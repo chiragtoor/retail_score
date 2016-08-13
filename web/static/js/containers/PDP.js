@@ -8,8 +8,10 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import RetailScoreExplanation from '../components/RetailScoreExplanation';
 import ContactModal from '../components/ContactModal';
 import MobilePropertySummary from '../components/MobilePropertySummary';
+import DesktopPropertySummary from '../components/DesktopPropertySummary';
 import RetailScorePanel from '../components/RetailScorePanel';
 import DemographicPanel from '../components/DemographicPanel';
+import DesktopDemographicPanel from '../components/DesktopDemographicPanel';
 import PeoplePanel from '../components/PeoplePanel';
 import CompetitionPanel from '../components/CompetitionPanel';
 
@@ -87,13 +89,17 @@ class PDP extends React.Component {
 
         return (
             <ContentWrapper unwrap>
-                <div className="hidden-md hidden-lg" style={{width:"100%", backgroundColor:"#ecf0f1"}}>
-                  { property ? <MobilePropertySummary property={property} /> : null}
+                {/*MOBILE AND TABLET HTML*/}
+                <div className="hidden-md hidden-lg" style={{width:"100%", backgroundColor:"#FFFFFF"}}>
+                  <Row>
+                    <Col className="col-sm-offset-1" sm={ 10 } xs={12}>
+                      { property ? <MobilePropertySummary property={property} /> : null}
+                    </Col>
+                  </Row>
                 </div>
-
-                <div style={{backgroundColor:"#ecf0f1"}} className="p-lg">
+                <div className="hidden-md hidden-lg"  style={{backgroundColor:"#FFFFFF"}} className="p-lg">
                     <Row>
-                        <Col className="col-sm-offset-1" lg={ 12 } md={ 10 } sm={ 10 } xs={12}>
+                        <Col className="col-sm-offset-1 hidden-md hidden-lg" lg={ 12 } md={ 10 } sm={ 10 } xs={12}>
                           {property ? <RetailScorePanel showModal={this.showRetailScoreExpalanation} property={property} /> : null }
                           { demographics ? <DemographicPanel data={demographics} /> : null}
                           {property ? <CompetitionPanel property={property} /> : null}
@@ -109,9 +115,22 @@ class PDP extends React.Component {
                           </ReactCSSTransitionGroup>
                         </Col>
                     </Row>
-                    <div style={{width:"100%", height:"50px"}}/>
-                    <Button onClick={this.showContactModal} style={{width:"100%", height:"50px", fontSize:"20px", fontWeight:"300px", backgroundColor:"#49A3DC", color:"#FFFFFF", position:"fixed", bottom:"0", left:"0", zIndex:"2"}}>I want more information</Button>
+                    <div className="hidden-md hidden-lg" style={{width:"100%", height:"50px"}}/>
+                    <Button className="hidden-md hidden-lg" onClick={this.showContactModal} style={{width:"100%", height:"50px", fontSize:"20px", fontWeight:"300px", backgroundColor:"#49A3DC", color:"#FFFFFF", position:"fixed", bottom:"0", left:"0", zIndex:"2"}}>I want more information</Button>
                 </div>
+
+                {/*DESKTOP HTML*/}
+                <div className="hidden-xs hidden-sm " style={{width:"100%", backgroundColor:"#FFFFFF"}}>
+                  <Row>
+                    <Col className="col-lg-offset-1 col-md-offset-1" lg={ 10 } md={ 10 } >
+                      { property ? <DesktopPropertySummary property={property} /> : null}
+                    </Col>
+                    <Col className="col-lg-offset-1 col-md-offset-1" lg={ 10 } md={ 10 } >
+                      { property ? <DesktopDemographicPanel data={demographics} /> : null}
+                    </Col>
+                  </Row>
+                </div>
+
             </ContentWrapper>
             );
     }

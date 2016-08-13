@@ -53,11 +53,11 @@ export default class MobilePropertySummary extends Component {
       <div style={{height:"100%", width:"100%"}}>
         <img className="propertyImageSize hidden-sm" src={this.getImageUrl(this.props.property.image_lat, this.props.property.image_lng, this.props.property.image_heading)} />
         <img className="propertyImageSizeTablet hidden-xs" src={this.getImageUrl(this.props.property.image_lat, this.props.property.image_lng, this.props.property.image_heading)} />
-        <center style={{fontSize:"24px", textAlign:"center", marginTop:"5px", backgroundColor:"#ecf0f1"}}>
+        <center style={{fontSize:"24px", textAlign:"center", marginTop:"5px", backgroundColor:"#FFFFFF"}}>
           {this.props.property ? this.props.property.street_address : null}
           <span style={{fontSize:"18px"}} >{ this.props.property? ", " + this.props.property.city + ", " + this.props.property.state : null}</span> 
         </center>
-        <div className="text-center p-lg mb-sm" style={{backgroundColor:"#ecf0f1"}}>
+        <div className="text-center p-lg mb-sm" style={{backgroundColor:"#FFFFFF"}}>
           <div className="row row-table">
               <div className="col-xs-6 br">
                   <h3 className="m0">{styledSqft}</h3>

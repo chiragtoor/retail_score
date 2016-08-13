@@ -254,7 +254,7 @@ class SRP extends React.Component {
 
                     <Col md={5} xs={12}>
 
-                      <div style={{height:"50px", width:"100%"}}>
+                      <div className="hidden-md hidden-lg" style={{height:"50px", width:"100%"}}>
                         <SearchBar 
                           searchClick={this.searchClick} 
                           city={this.state.city} />
