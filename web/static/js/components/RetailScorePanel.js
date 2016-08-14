@@ -12,6 +12,17 @@ export default class RetailScorePanel extends Component {
 
   render () {
 
+
+    var clothingSales;
+    var foodSales;
+    var entertainmentSales;
+
+    if(this.props.property.demographics && this.props.property.demographics.spending) {
+     clothingSales = "$" + (this.props.property.demographics.spending.clothing/12).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+     foodSales = "$" + (this.props.property.demographics.spending.food/12).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+     entertainmentSales = "$" + (this.props.property.demographics.spending.entertainment/12).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
     return (
       <div style={{height:"100%", width:"100%", marginTop:"10px"}}>
         <div className="row-masonry row-masonry-lg-2">
@@ -38,13 +49,13 @@ export default class RetailScorePanel extends Component {
                     <div className="row">
                        <div className="col-lg-6">
                             <p>
-                                &nbsp;&nbsp; Clothing & Apparel: <Badge style={{backgroundColor:"#D4AF37", float:"right", fontSize:"15px", color:"#FFFFFF"}}>$9,200,000</Badge>
+                                &nbsp;&nbsp; Clothing & Apparel: <Badge style={{backgroundColor:"#D4AF37", float:"right", fontSize:"15px", color:"#FFFFFF"}}>{clothingSales}</Badge>
                                 <br/>
                                 <br/>
-                                &nbsp;&nbsp;  Restaurants, Food & Drinks: <Badge style={{backgroundColor:"#C0C0C0", float:"right", fontSize:"15px", color:"#FFFFFF"}}>$5,400,000</Badge>
+                                &nbsp;&nbsp;  Restaurants, Food & Drinks: <Badge style={{backgroundColor:"#C0C0C0", float:"right", fontSize:"15px", color:"#FFFFFF"}}>{foodSales}</Badge>
                                 <br/>
                                 <br/>
-                                &nbsp;&nbsp;  Entertainment & Recreation: <Badge style={{backgroundColor:"#CD7F32", float:"right", fontSize:"15px", color:"#FFFFFF"}}>$2,300,000</Badge>
+                                &nbsp;&nbsp;  Entertainment & Recreation: <Badge style={{backgroundColor:"#CD7F32", float:"right", fontSize:"15px", color:"#FFFFFF"}}>{entertainmentSales}</Badge>
                             </p>
                        </div>
                     </div>

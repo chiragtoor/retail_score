@@ -8,12 +8,22 @@ export default class DesktopContactPanel extends Component {
     super(props);
 
     this.submitContact = this.submitContact.bind(this);
+    this.updateName = this.updateName.bind(this);
+    this.updateEmail = this.updateEmail.bind(this);
+    this.updateMessage = this.updateMessage.bind(this);
+    this.updatePhone = this.updatePhone.bind(this);
 
     this.state = {
       name: "",
       email: "",
-      message: ""
+      message: "",
+      phone: ""
     };
+  }
+
+  updatePhone(phone) {
+    this.state.phone = phone.target.value;
+    this.setState(this.state);
   }
 
   updateName(name) {
@@ -41,9 +51,9 @@ export default class DesktopContactPanel extends Component {
     var agent = this.props.agent;
 
     return (
-            <div style={{height:"500px", width:"100%", margin:"0", padding:"0"}}>
-                  <div style={{height:"100%", width:"100%", margin:"0", padding:"0", borderTop:"none", borderLeft:"none"}} className="panel b m0">
-                     <div className="panel-heading" style={{margin:"0", padding:"0"}}>
+            <div style={{height:"500px", width:"100%", marginTop:"20px"}}>
+                  <div className="panel b m0">
+                     <div className="panel-heading" >
                         <div className="media mt0">
                            <center>
                             <img src="https://lh3.googleusercontent.com/-znTaTDKLflU/AAAAAAAAAAI/AAAAAAAAAAA/i5PcDmAQPF8/photo.jpg" alt="Image" className="media-object img-circle thumb48" />
@@ -57,7 +67,7 @@ export default class DesktopContactPanel extends Component {
                            </div>
                         </div>
                      </div>
-                     <div style={{height:"100%", width:"100%"}} className="panel-body">
+                     <div className="panel-body">
                        <div>
                             <FormGroup controlId="formControlsText">
                               <FormControl 
@@ -65,6 +75,13 @@ export default class DesktopContactPanel extends Component {
                                 placeholder="Your Name"
                                 value={this.state.name}
                                 onChange={(e) => this.updateName(e)}/>
+                            </FormGroup>
+                            <FormGroup controlId="formControlsText">
+                              <FormControl 
+                                type="text" 
+                                placeholder="Your Phone Number(optional)" 
+                                value={this.state.email}
+                                onChange={(e) => this.updatePhone(e)}/>
                             </FormGroup>
                             <FormGroup controlId="formControlsText">
                               <FormControl 
@@ -81,8 +98,8 @@ export default class DesktopContactPanel extends Component {
                                 onChange={(e) => this.updateMessage(e)}/>
                             </FormGroup>
                             <center>
-                              <Button onClick={this.submitContact} bsClass="btn btn-labeled btn-success mr">
-                                <span className="btn-label"><i className="fa fa-comment"></i></span>Submit
+                              <Button style={{color:"#FFFFFF", width:"100%", fontSize:"18px", backgroundColor:"#49A3DC", textAlign:"left"}} onClick={this.submitContact} bsClass="btn btn-labeled mr">
+                                <span className="btn-label"><i className="fa fa-comment"></i></span>Contact Agent
                               </Button>
                             </center>
                        </div>

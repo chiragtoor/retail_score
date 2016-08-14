@@ -150,27 +150,39 @@ export default class DesktopDemographicPanel extends Component {
                     </div>
                  </div>
 
-                 <div className="panel-body">
-                    <div style={{fontSize:"18px", fontWeight:"400", textAlign:"center"}}>
+                 <div className="panel-body" >
+
+                  <div style={{width:"50%",float:"right"}}>
+                    <div style={{fontSize:"22px", fontWeight:"400", textAlign:"center"}}>
                       {title}
                     </div>
-                    <div> 
-                      <right>
-                          <div id="desktoptestchart" />
-                      </right>
-                      <Chart data={data} element='desktoptestchart' type='pie' options={options}/>
+                    <div style={{textAlign:"center"}}> 
+                      <div id="desktoptestchart" />
+                      <Chart data={data} element={this.props.tag} type='pie' options={options}/>
                     </div>
-                      <div>
-                        <center>
-                            <ButtonGroup style={{border:"solid thin #333333", marginTop:"5px", borderRadius:"5px"}}>
-                                <Button style={{color:(incomeFont), width:"50px", backgroundColor:(incomeBackground),border:"none", borderRight:"solid thin #333333"}} onClick={e => this.setDemographicIndex(0)}><em className="fa fa-usd"></em></Button>
-                                <Button style={{color:(ethnicFont), width:"50px", backgroundColor:(ethnicBackground),border:"none", borderRight:"solid thin #333333"}} onClick={e => this.setDemographicIndex(1)}><em className="fa fa-globe"></em></Button>
-                                <Button style={{color:(maritalFont),width:"50px", backgroundColor:(maritalBackground), border:"none", borderRight:"solid thin #333333"}} onClick={e => this.setDemographicIndex(2)}><em className="fa fa-heart"></em></Button>
-                                <Button style={{color:(ageFont),width:"50px", backgroundColor:(ageBackground),border:"none", borderRight:"solid thin #333333"}} onClick={e => this.setDemographicIndex(3)}><em className="fa fa-user"></em></Button>
-                                <Button style={{color:(genderFont),width:"50px", backgroundColor:(genderBackground),border:"none"}} onClick={e => this.setDemographicIndex(4)}><em className="fa fa-venus-mars"></em></Button>
-                            </ButtonGroup>
-                          </center>
-                      </div>
+                    <div>
+                      <center>
+                          <ButtonGroup style={{border:"solid thin #333333", marginTop:"5px", borderRadius:"5px"}}>
+                              <Button style={{color:(incomeFont), width:"50px", backgroundColor:(incomeBackground),border:"none", borderRight:"solid thin #333333"}} onClick={e => this.setDemographicIndex(0)}><em className="fa fa-usd"></em></Button>
+                              <Button style={{color:(ethnicFont), width:"50px", backgroundColor:(ethnicBackground),border:"none", borderRight:"solid thin #333333"}} onClick={e => this.setDemographicIndex(1)}><em className="fa fa-globe"></em></Button>
+                              <Button style={{color:(maritalFont),width:"50px", backgroundColor:(maritalBackground), border:"none", borderRight:"solid thin #333333"}} onClick={e => this.setDemographicIndex(2)}><em className="fa fa-heart"></em></Button>
+                              <Button style={{color:(ageFont),width:"50px", backgroundColor:(ageBackground),border:"none", borderRight:"solid thin #333333"}} onClick={e => this.setDemographicIndex(3)}><em className="fa fa-user"></em></Button>
+                              <Button style={{color:(genderFont),width:"50px", backgroundColor:(genderBackground),border:"none"}} onClick={e => this.setDemographicIndex(4)}><em className="fa fa-venus-mars"></em></Button>
+                          </ButtonGroup>
+                        </center>
+                    </div>
+                  </div>
+
+                  <div style={{width:"50%", float:"left"}}>
+                    <div style={{fontSize:"22px", fontWeight:"400", textAlign:"center"}}>
+                      Who lives in this area?
+                    </div>
+                    <div style={{fontSize:"18px", fontWeight:"100", textAlign:"center"}}> 
+                      <br />
+                      {this.props.data.tapestry}
+                    </div>
+                  </div>
+
                  </div>
               </div>
           </div>

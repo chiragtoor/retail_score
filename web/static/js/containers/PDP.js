@@ -14,6 +14,7 @@ import DemographicPanel from '../components/DemographicPanel';
 import DesktopDemographicPanel from '../components/DesktopDemographicPanel';
 import PeoplePanel from '../components/PeoplePanel';
 import CompetitionPanel from '../components/CompetitionPanel';
+import DesktopCompetitionPanel from '../components/DesktopCompetitionPanel';
 
 import { Grid, Row, Col, Panel, Button, ButtonGroup, FormGroup, ControlLabel, FormControl, InputGroup, Carousel, CarouselItem } from 'react-bootstrap';
 
@@ -120,13 +121,31 @@ class PDP extends React.Component {
                 </div>
 
                 {/*DESKTOP HTML*/}
-                <div className="hidden-xs hidden-sm " style={{width:"100%", backgroundColor:"#FFFFFF"}}>
+
+                <div className="hidden-xs hidden-sm hidden-md" style={{width:"100%", backgroundColor:"#FFFFFF"}}>
                   <Row>
-                    <Col className="col-lg-offset-1 col-md-offset-1" lg={ 10 } md={ 10 } >
+                    <Col className="col-lg-offset-1 " lg={ 10 } >
                       { property ? <DesktopPropertySummary property={property} /> : null}
                     </Col>
-                    <Col className="col-lg-offset-1 col-md-offset-1" lg={ 10 } md={ 10 } >
-                      { property ? <DesktopDemographicPanel data={demographics} /> : null}
+                    <Col className="col-lg-offset-1 " lg={ 10 } >
+                      { property ? <DesktopDemographicPanel data={demographics} tag={"largeDemographics"} /> : null}
+                    </Col>
+                    <Col className="col-lg-offset-1 " lg={ 10 } >
+                      {property ? <DesktopCompetitionPanel property={property} tag={"largeCompetition"} /> : null}
+                    </Col>
+                  </Row>
+                </div>
+
+                <div className="hidden-xs hidden-sm hidden-lg" style={{width:"100%", backgroundColor:"#FFFFFF"}}>
+                  <Row>
+                    <Col md={ 12 } >
+                      { property ? <DesktopPropertySummary property={property} /> : null}
+                    </Col>
+                    <Col md={ 12 } >
+                      { property ? <DesktopDemographicPanel data={demographics} tag={"mediumDemographics"}/> : null}
+                    </Col>
+                    <Col md={ 12 } >
+                      {property ? <DesktopCompetitionPanel property={property} tag={"mediumCompetition"}/> : null}
                     </Col>
                   </Row>
                 </div>
