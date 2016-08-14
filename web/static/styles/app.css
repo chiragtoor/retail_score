@@ -253,7 +253,7 @@ MOVE TO SRP.CSS AFTER
 
 .srpDesktopHeight {
   height: 100%;
-  padding-left: 0px;
+  padding: 0px;
 }
 
 .badgeShine {
@@ -299,6 +299,24 @@ MOVE TO SRP.CSS AFTER
   transition: 0.5s ease-in all;
 }
 
+.desktopListings {
+  height: -webkit-calc(100% - 50px);
+  overflow: scroll;
+}
+
+.desktopMap {
+  height: -webkit-calc(100% - 50px);
+  padding: 0px;
+}
+
+.SRPPropertyTile {
+  height: 150px;
+  width: -webkit-calc(100% - 40px);
+  box-shadow: 2px 1px 4px rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+  margin-top:10px;
+  margin-left: 20px;
+}
 
 .horizontalPDPTiles {
     flex: none;

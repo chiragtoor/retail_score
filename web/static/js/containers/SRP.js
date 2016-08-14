@@ -14,6 +14,7 @@ import SearchBar from '../components/SearchBar';
 import Filters from '../components/Filters';
 import MobilePropertyList from '../components/MobilePropertyList';
 import TabletPropertyList from '../components/TabletPropertyList';
+import DesktopPropertyList from '../components/DesktopPropertyList';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import RetailScoreExplanation from '../components/RetailScoreExplanation';
 
@@ -252,51 +253,31 @@ class SRP extends React.Component {
 
                 <Row className="srpDesktopHeight">
 
-                    <Col md={5} xs={12}>
-
-                      <div className="hidden-md hidden-lg" style={{height:"50px", width:"100%"}}>
-                        <SearchBar 
-                          searchClick={this.searchClick} 
-                          city={this.state.city} />
-                      </div>
-
-                      <div style={{paddingLeft:"15px", paddingRight:"15px", overflow:"auto"}} className="hidden-sm hidden-xs">
-                        {properties.map((property, index) => {
-                          return <div key={index} className="panel b text-center">
-                             <div className="panel-body" style={{padding:"0"}}>
-                              <div>
-                               <Carousel indicators={false} controls={false}>
-                                 <CarouselItem style={{backgroundColor:"#000000"}}  onClick={() => this.props.history.push('pdp')}>
-                                    <center>
-                                        <img className="propertyImageSizeSmall" src="http://x.lnimg.com/photo/poster_1920/993a9a5967c844408cccb85593acd3fc.jpg" />
-                                      </center>
-                                    </CarouselItem>
-                                </Carousel>
-                              </div>
-                             </div>
-                             <div className="panel-body bt" style={{paddingTop:"5px", paddingBottom:"5px"}}  onClick={() => this.props.history.push('pdp')}>
-                                <Row>
-                                   <Col xs={4} className="br">
-                                      <strong>{property.retailScore}</strong>
-                                      <p className="m0">Retail Score</p>
-                                   </Col>
-                                   <Col xs={4} className="br">
-                                      <strong>{property.squareFeet}</strong>
-                                      <p className="m0">Square Feet</p>
-                                   </Col>
-                                   <Col xs={4}>
-                                      <strong>{property.monthlyRent}</strong>
-                                      <p className="m0">Monthly Rent</p>
-                                   </Col>
-                                </Row>
-                             </div>
-                          </div>
-                        })}
-                      </div>
-
+                    <Col sm={12} xs={12} className="hidden-md hidden-lg" style={{height:"50px", width:"100%"}}>
+                      <SearchBar 
+                        searchClick={this.searchClick} 
+                        city={this.state.city} />
                     </Col>
 
-                    <Col md={7} style={{height:"100%", paddingLeft:"0px"}} className="hidden-xs hidden-sm">
+                    <Col md={12} lg={12} className="hidden-sm hidden-xs" style={{height:"50px", width:"100%", backgroundColor:"#49A3DC"}}>
+                      
+                    </Col>
+
+                    <Col md={5} lg={5} className="desktopListings hidden-sm hidden-xs">
+                      <Row style={{marginLeft:"0px"}}>
+                        <div style={{backgroundColor:"#1abc9c", color:"#FFFFFF", height:"250px", width:"100%"}}>
+                          Filters
+                        </div>
+                        <div style={{backgroundColor:"#FFFFFF",width:"100%", height:"50px", color:"#FFFFFF"}}>
+                          <div style={{height:"100%", padding:"15px",float:"left", color:"#95a5a6", width:"50%", fontSize:"16px"}}>{filteredProperties.length} properties for lease</div>
+                        </div>
+                        <div style={{backgroundColor:"#f1c40f", width:"100%"}}>
+                          <DesktopPropertyList properties={filteredProperties} tileClick={this.tileClick} />
+                        </div>
+                      </Row>
+                    </Col>
+
+                    <Col md={7} lg={7} className="desktopMap hidden-xs hidden-sm">
                       <div className="fullHeight hidden-sm hidden-xs">
                         <GoogleMap 
                           id={"desktop"} 
@@ -307,7 +288,7 @@ class SRP extends React.Component {
                       </div>
                     </Col>
 
-                    <Col xs={12} className="smallGoogleMap hidden-md hidden-lg">
+                    <Col xs={12} sm={12} className="smallGoogleMap hidden-md hidden-lg">
                       <Button onClick={this.showRetailScoreExplanation} style={{fontSize:"20px", backgroundColor:"#7f8c8d", color:"#FFFFFF",borderRadius:"20px", position:"fixed", top:"65px", right:"5px", zIndex:"1"}}><em className="fa fa-question-circle"></em></Button>
                       <div style={{height:"100%"}} className="hidden-md hidden-lg">
                         <GoogleMap 
