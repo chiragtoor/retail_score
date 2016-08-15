@@ -41,7 +41,7 @@ export default class DesktopRetailScorePanel extends Component {
                           <h2 className="media-heading m0 text-bold">Retail Score: {this.props.property.retail_score}</h2>
                         </center>
                         <center>
-                          <h6 className="media-heading m0 text-bold">Monthly Sales Breakdown (0.5m radius)</h6>
+                          <h6 className="media-heading m0 text-bold">Monthly Sales Breakdown (0.3mi radius)</h6>
                         </center>
                        </div>
                     </div>

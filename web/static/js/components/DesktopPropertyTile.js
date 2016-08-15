@@ -62,9 +62,9 @@ export default class DesktopPropertyTile extends Component {
 
             <div style={{float:"right", width:"60%", height:"100%"}}>
               <div style={{textAlign:"center", width:"100%", fontSize:"20px", marginTop:"10px", fontWeight:"400"}}>{addressString}</div>
-              <div style={{textAlign:"center", width:"45%", float:"left", fontSize:"18px", fontWeight:"400"}}>{priceString}</div>
-              <div style={{textAlign:"center", width:"45%", float:"right", fontSize:"18px", fontWeight:"400"}}>{sqftString}</div>
-              <div style={{textAlign:"center", width:"100%",float:"left", fontSize:"18px", fontWeight:"100"}}>{spacesString}</div>
+              <div style={{textAlign:"center", width:"45%", float:"left", fontSize:"18px", marginTop:"10px", fontWeight:"400"}}>{priceString}</div>
+              <div style={{textAlign:"center", width:"45%", float:"right", fontSize:"18px", marginTop:"10px", fontWeight:"400"}}>{sqftString}</div>
+              <div style={{textAlign:"center", width:"100%",float:"left", fontSize:"18px", marginTop:"10px", fontWeight:"100"}}>{spacesString}</div>
             </div>
 
           </div>

@@ -12,6 +12,7 @@ import Chart from '../components/Chart';
 import GoogleMap from '../components/GoogleMap';
 import SearchBar from '../components/SearchBar';
 import Filters from '../components/Filters';
+import DesktopFilters from '../components/DesktopFilters';
 import MobilePropertyList from '../components/MobilePropertyList';
 import TabletPropertyList from '../components/TabletPropertyList';
 import DesktopPropertyList from '../components/DesktopPropertyList';
@@ -122,7 +123,7 @@ class SRP extends React.Component {
     }
 
     searchClick(city) {
-      var cityString = city.split(',')[0];
+      var cityString = city;
       cityString.replace(' ','-');
       this.state.city  = city;
       this.setState(this.state);
@@ -259,16 +260,26 @@ class SRP extends React.Component {
                         city={this.state.city} />
                     </Col>
 
-                    <Col md={12} lg={12} className="hidden-sm hidden-xs" style={{height:"50px", width:"100%", backgroundColor:"#49A3DC"}}>
-                      
+                    <Col md={12} lg={12} className="hidden-sm hidden-xs" style={{height:"50px", color:"#FFFFFF", width:"100%", backgroundColor:"#49A3DC"}}>
+                      <img className="homepageTopBarImage" style={{height:"48px", paddingTop:"1px", paddingLeft:"15px"}} src="https://s3-us-west-2.amazonaws.com/homepage-image-assets/retail_score_logo_white.png" />
                     </Col>
 
                     <Col md={5} lg={5} className="desktopListings hidden-sm hidden-xs">
                       <Row style={{marginLeft:"0px"}}>
                         <div style={{backgroundColor:"#1abc9c", color:"#FFFFFF", height:"250px", width:"100%"}}>
-                          Filters
+                         <DesktopFilters 
+                              saveFilters={this.saveFilters} 
+                              priceMin={this.state.priceMin} 
+                              priceMax={this.state.priceMax}
+                              sqftMax={this.state.sqftMax}
+                              sqftMin={this.state.sqftMin}
+                              sortIndex={this.state.sortIndex}
+                              sortChanged={this.sortChanged}
+                              searchClick={this.searchClick} 
+                              city={this.state.city} />
+                          
                         </div>
-                        <div style={{backgroundColor:"#FFFFFF",width:"100%", height:"50px", color:"#FFFFFF"}}>
+                        <div style={{backgroundColor:"#FFFFFF",width:"100%", height:"50px", color:"#FFFFFF", borderTop:"solid thin #DCE0E0"}}>
                           <div style={{height:"100%", padding:"15px",float:"left", color:"#95a5a6", width:"50%", fontSize:"16px"}}>{filteredProperties.length} properties for lease</div>
                         </div>
                         <div style={{backgroundColor:"#f1c40f", width:"100%"}}>
