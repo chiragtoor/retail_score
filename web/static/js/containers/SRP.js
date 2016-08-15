@@ -54,6 +54,8 @@ class SRP extends React.Component {
       this.showFilters = this.showFilters.bind(this);
       this.hideFilters = this.hideFilters.bind(this);
       this.saveFilters = this.saveFilters.bind(this);
+      this.saveTempFilters = this.saveTempFilters.bind(this);
+      this.upgradeTempFilters = this.upgradeTempFilters.bind(this);
       this.showRetailScoreExplanation = this.showRetailScoreExplanation.bind(this);
 
       var thisCity = this.props.params.city;
@@ -73,6 +75,12 @@ class SRP extends React.Component {
         priceMax: PRICE_MAX,
         sqftMin: SQ_MIN,
         sqftMax: SQ_MAX,
+        tempPriceMin: PRICE_MIN,
+        tempPriceMax: PRICE_MAX,
+        tempSqftMin: SQ_MIN,
+        tempSqftMax: SQ_MAX,
+        tempSortIndex: 1,
+        tempNeedsUpgrade: false,
         sortIndex: 1
       };
 
@@ -90,8 +98,7 @@ class SRP extends React.Component {
                               priceMax={this.state.priceMax}
                               sqftMax={this.state.sqftMax}
                               sqftMin={this.state.sqftMin}
-                              sortIndex={this.state.sortIndex}
-                              sortChanged={this.sortChanged} />
+                              sortIndex={this.state.sortIndex} />
                            </div>;
       this.state.dimDiv = <div className="dimDiv" onClick={this.hideFilters}></div>;
       this.setState(this.state);
@@ -112,6 +119,32 @@ class SRP extends React.Component {
       this.setState(this.state);
 
       this.hideFilters();
+    }
+
+    saveTempFilters(priceMin, priceMax, sqftMin, sqftMax, sortIndex) {
+
+      this.state.tempPriceMin = priceMin;
+      this.state.tempPriceMax = priceMax;
+      this.state.tempSqftMin = sqftMin;
+      this.state.tempSqftMax = sqftMax;
+      this.state.tempSortIndex = sortIndex;
+      this.state.tempNeedsUpgrade = true;
+
+      this.setState(this.state);
+
+    }
+
+    upgradeTempFilters() {
+
+      this.state.priceMin = this.state.tempPriceMin;
+      this.state.priceMax = this.state.tempPriceMax;
+      this.state.sqftMin = this.state.tempSqftMin;
+      this.state.sqftMax = this.state.tempSqftMax;
+      this.state.sortIndex = this.state.tempSortIndex
+      this.state.tempNeedsUpgrade = false;
+
+      this.setState(this.state);
+
     }
 
     showRetailScoreExplanation() {
@@ -249,6 +282,14 @@ class SRP extends React.Component {
           }
         }
 
+
+        var saveFilterColor = "#49A3DC"
+        var saveFilterBackground = "#FFFFFF";
+
+        if(this.state.tempNeedsUpgrade) {
+          saveFilterColor = "#FFFFFF";
+          saveFilterBackground = "#49A3DC";
+        }
         return (
             <div style={{height:"100%"}}>
 
@@ -264,27 +305,31 @@ class SRP extends React.Component {
                       <img style={{height:"46px", paddingTop:"2px", paddingLeft:"15px"}} src="https://s3-us-west-2.amazonaws.com/homepage-image-assets/retail_score_logo_white.png" />
                     </Col>
 
-                    <Col md={5} lg={5} className="desktopListings hidden-sm hidden-xs">
+                    <Col  md={5} lg={5} className="desktopListings hidden-sm hidden-xs">
                       <Row style={{marginLeft:"0px"}}>
-                        <div style={{backgroundColor:"#1abc9c", color:"#FFFFFF", height:"250px", width:"100%"}}>
-                         <DesktopFilters 
-                              saveFilters={this.saveFilters} 
-                              priceMin={this.state.priceMin} 
-                              priceMax={this.state.priceMax}
-                              sqftMax={this.state.sqftMax}
-                              sqftMin={this.state.sqftMin}
-                              sortIndex={this.state.sortIndex}
-                              sortChanged={this.sortChanged}
-                              searchClick={this.searchClick} 
-                              city={this.state.city} />
-                          
-                        </div>
-                        <div style={{backgroundColor:"#FFFFFF",width:"100%", height:"50px", color:"#FFFFFF", borderTop:"solid thin #DCE0E0"}}>
-                          <div style={{height:"100%", padding:"15px",float:"left", color:"#95a5a6", width:"50%", fontSize:"16px"}}>{filteredProperties.length} properties for lease</div>
-                        </div>
-                        <div style={{backgroundColor:"#f1c40f", width:"100%"}}>
-                          <DesktopPropertyList properties={filteredProperties} tileClick={this.tileClick} />
-                        </div>
+                          <div style={{backgroundColor:"#1abc9c", color:"#FFFFFF", height:"250px", width:"100%"}}>
+                           <DesktopFilters 
+                                saveFilters={this.saveTempFilters} 
+                                priceMin={this.state.tempPriceMin} 
+                                priceMax={this.state.tempPriceMax}
+                                sqftMax={this.state.tempSqftMax}
+                                sqftMin={this.state.tempSqftMin}
+                                sortIndex={this.state.sortIndex}
+                                searchClick={this.searchClick} 
+                                city={this.state.city} />
+                            
+                          </div>
+
+                          <div style={{backgroundColor:"#FFFFFF",width:"100%", height:"50px", color:"#FFFFFF", borderTop:"solid thin #DCE0E0"}}>
+                            <div style={{height:"100%", padding:"15px",float:"left", color:"#95a5a6", width:"50%", fontSize:"16px"}}>{filteredProperties.length} properties for lease</div>
+                            <div style={{height:"100%",float:"right", width:"50%", fontSize:"16px"}}>
+                              <Button onClick={this.upgradeTempFilters} style={{backgroundColor:(saveFilterBackground), marginTop:"5px", marginRight:"15px", float:"right", color:(saveFilterColor), border:"solid thin #49A3DC",fontSize:"16px", fontWeight:"400"}}>Save Filters</Button>
+                            </div>
+                          </div>
+
+                          <div style={{backgroundColor:"#f1c40f", width:"100%"}}>
+                            <DesktopPropertyList properties={filteredProperties} tileClick={this.tileClick} />
+                          </div>
                       </Row>
                     </Col>
 
