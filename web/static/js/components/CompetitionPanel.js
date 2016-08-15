@@ -53,10 +53,10 @@ export default class CompetitionPanel extends Component {
                     <div className="row" style={{height:"100%"}}>
                        <CompetitionSearchBar searchClick={this.searchClick} />
                        <div className="col-lg-8" style={{height:"85%"}}>
-                          <CompetitionGoogleMap 
+                          {this.props.property ? <CompetitionGoogleMap 
                             id={"competition"}
                             property={this.props.property}
-                            keyword={this.state.keyword}/>
+                            keyword={this.state.keyword}/> : null}
                        </div>
                     </div>
                  </div>

@@ -49,7 +49,7 @@ defmodule RetailScore.PropertyView do
   end
 
   def render("pdp.json", %{property: property}) do
-    %{id: Crypto.encrypt(property.id),
+    %{property: %{id: Crypto.encrypt(property.id),
       street_address: property.street_address,
       city: property.city,
       state: property.state,
@@ -67,6 +67,6 @@ defmodule RetailScore.PropertyView do
       min_sq_feet: PropertySpace.get_min_sq_feet(property.spaces),
       max_sq_feet: PropertySpace.get_max_sq_feet(property.spaces),
       rental_rate_min: PropertySpace.get_rental_rate_min(property.spaces),
-      rental_rate_max: PropertySpace.get_rental_rate_max(property.spaces)}
+      rental_rate_max: PropertySpace.get_rental_rate_max(property.spaces)}}
   end
 end

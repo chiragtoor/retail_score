@@ -65,7 +65,7 @@ export default class DesktopPropertySummary extends Component {
       <div style={{height:"100%", width:"100%", border:"solid thin #DCE0E0", borderRadius:"2px"}}>
         <Row style={{ padding:"0", margin:"0"}}>
           <Col lg={3} md={3} style={{backgroundColor:"#FFFFFF", height:"500px"}}>
-            <DesktopContactPanel agent={this.props.property.agents[0]} />
+            {this.props.property.agents ? <DesktopContactPanel agent={this.props.property.agents[0]} /> : null}
           </Col>
           <Col lg={9} md={9} style={{backgroundColor:"#FFFFFF",textAlign:"center", padding:"0", margin:"0"}}>
             <img style={{width:"100%", height:"400px"}} src={this.getImageUrl(this.props.property.image_lat, this.props.property.image_lng, this.props.property.image_heading)} />

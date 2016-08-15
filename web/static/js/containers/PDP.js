@@ -63,7 +63,8 @@ class PDP extends React.Component {
     }
 
     componentDidMount(){
-      // this.props.loadProperty(this.props.params.propertyId);
+      console.log("HERE");
+      this.props.loadProperty(this.props.params.propertyId);
     }
 
     render() {
@@ -71,7 +72,11 @@ class PDP extends React.Component {
         var property = this.props.property;
 
         var demographics = this.props.property.demographics;
-        var tapestry = demographics.tapestry;
+        var tapestry;
+
+        if(demographics) {
+          tapestry = demographics.tapestry;
+        }
 
         console.log("this is the property " + JSON.stringify(property));
 
@@ -142,7 +147,7 @@ class PDP extends React.Component {
                       { property ? <DesktopPropertySummary property={property} /> : null}
                     </Col>
                     <Col md={ 12 } >
-                      { property ? <DesktopDemographicPanel data={demographics} tag={"mediumDemographics"}/> : null}
+                      { demographics ? <DesktopDemographicPanel data={demographics} tag={"mediumDemographics"}/> : null}
                     </Col>
                     <Col md={ 12 } >
                       {property ? <DesktopCompetitionPanel property={property} tag={"mediumCompetition"}/> : null}
