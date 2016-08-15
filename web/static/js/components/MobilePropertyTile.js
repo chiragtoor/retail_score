@@ -30,7 +30,6 @@ export default class MobilePropertyTile extends Component {
   visibilityChanged(isVisible) {
 
     if(isVisible) {
-      console.log("a property tile is now visible");
       this.props.visibilityChanged(this.props.property, this.props.index);
     }
   }

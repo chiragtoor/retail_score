@@ -133,7 +133,7 @@ class PDP extends React.Component {
                       { property ? <DesktopPropertySummary property={property} /> : null}
                     </Col>
                     <Col className="col-lg-offset-1 " lg={ 10 } >
-                      { property ? <DesktopDemographicPanel data={demographics} tag={"largeDemographics"} /> : null}
+                      { demographics ? <DesktopDemographicPanel data={demographics} tag={"largeDemographics"} /> : null}
                     </Col>
                     <Col className="col-lg-offset-1 " lg={ 10 } >
                       {property ? <DesktopCompetitionPanel property={property} tag={"largeCompetition"} /> : null}
@@ -147,7 +147,7 @@ class PDP extends React.Component {
                       { property ? <DesktopPropertySummary property={property} /> : null}
                     </Col>
                     <Col md={ 12 } >
-                      { demographics ? <DesktopDemographicPanel data={demographics} tag={"mediumDemographics"}/> : null}
+                      { demographics != null ? <DesktopDemographicPanel data={demographics} tag={"mediumDemographics"}/> : null}
                     </Col>
                     <Col md={ 12 } >
                       {property ? <DesktopCompetitionPanel property={property} tag={"mediumCompetition"}/> : null}

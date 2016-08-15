@@ -261,7 +261,7 @@ class SRP extends React.Component {
                     </Col>
 
                     <Col md={12} lg={12} className="hidden-sm hidden-xs" style={{height:"50px", color:"#FFFFFF", width:"100%", backgroundColor:"#49A3DC"}}>
-                      <img className="homepageTopBarImage" style={{height:"48px", paddingTop:"1px", paddingLeft:"15px"}} src="https://s3-us-west-2.amazonaws.com/homepage-image-assets/retail_score_logo_white.png" />
+                      <img style={{height:"46px", paddingTop:"2px", paddingLeft:"15px"}} src="https://s3-us-west-2.amazonaws.com/homepage-image-assets/retail_score_logo_white.png" />
                     </Col>
 
                     <Col md={5} lg={5} className="desktopListings hidden-sm hidden-xs">
@@ -288,11 +288,11 @@ class SRP extends React.Component {
                       </Row>
                     </Col>
 
-                    <Col md={7} lg={7} className="desktopMap hidden-xs hidden-sm">
-                      <div className="fullHeight hidden-sm hidden-xs">
+                    <Col md={7} lg={7} style={{marginRight:"0px", paddingRight:"0px"}} className="desktopMap hidden-xs hidden-sm">
+                      <div style={{width:"100%"}} className="fullHeight hidden-sm hidden-xs">
                         <GoogleMap 
                           id={"desktop"} 
-                          properties={properties} 
+                          properties={filteredProperties} 
                           pinClick={this.tileClick} 
                           currentPropertyMarker={this.state.currentProperty}
                           city={this.state.city}/>
@@ -304,7 +304,7 @@ class SRP extends React.Component {
                       <div style={{height:"100%"}} className="hidden-md hidden-lg">
                         <GoogleMap 
                           id={"mobile"} 
-                          properties={properties} 
+                          properties={filteredProperties} 
                           pinClick={this.tileClick} 
                           currentPropertyMarker={this.state.currentProperty}
                           city={this.state.city}/>
