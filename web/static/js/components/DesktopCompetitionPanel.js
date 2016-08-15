@@ -26,8 +26,6 @@ export default class DesktopCompetitionPanel extends Component {
 
   render () {
 
-    console.log("This is the keyword dawg " + this.state.keyword);
-
     return (
       <div style={{height:"100%", width:"100%", marginTop:"10px"}}>
         <div className="row-masonry " >

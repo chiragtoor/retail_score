@@ -99,6 +99,8 @@ export default class GoogleMap extends Component {
 
     this.state.highlightedId = property.id;
 
+    this.state.map.setZoom(15);
+
     this.state.map.panTo({lat: property.lat, lng: property.lng});
 
     this.setState(this.state);

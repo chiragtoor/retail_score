@@ -7,7 +7,7 @@ export default class CompetitionGoogleMap extends Component {
     super(props);
 
     this.drawPropertyWithIcon = this.drawPropertyWithIcon.bind(this);
-    this.drawPlaceWithIcon = this.drawPlaceWithIcon.bind(this);
+    this.drawPlaces = this.drawPlaces.bind(this);
     this.removePlaces = this.removePlaces.bind(this);
 
     this.state = {
@@ -41,7 +41,7 @@ export default class CompetitionGoogleMap extends Component {
       }]
     });
 
-    map.setOptions({draggable: false, scrollwheel: false});
+    map.setOptions({ scrollwheel: false});
 
     var moonMapType = new google.maps.ImageMapType({
       getTileUrl: function(coord, zoom) {
@@ -81,14 +81,12 @@ export default class CompetitionGoogleMap extends Component {
   componentWillReceiveProps(nextProps) {
 
     if(nextProps.keyword != this.state.keyword) {
-      console.log("got a new keyword " + nextProps.keyword);
-
-      // if(this.state.keyword) {
-      //   this.removePlaces();
-      // }
-
       this.state.keyword = nextProps.keyword;
       this.setState(this.state);
+
+      if(this.state.places){
+        this.removePlaces();
+      }
 
       var service = new google.maps.places.PlacesService(document.createElement('div'));
 
@@ -107,23 +105,23 @@ export default class CompetitionGoogleMap extends Component {
       service.nearbySearch(request, function(results, status, pagination) {
         if (status == google.maps.places.PlacesServiceStatus.OK){
 
+          var places = [];
+
           for(var index = 0; index < results.length; index++) {
             var place = results[index];
 
             if(!place.permanently_closed){
-              var icon = {
-                            url: "https://s3-us-west-2.amazonaws.com/homepage-image-assets/competition_pin.png",
-                            scaledSize: new google.maps.Size(50, 50),
-                            zIndex: 0
-                        };
-
-              me.drawPlaceWithIcon(place, icon)
+              places.push(place);
             }
           }
 
           if(pagination.hasNextPage) {
+              me.drawPlaces(places);
               pagination.nextPage();
             }
+          else{
+            me.drawPlaces(places);
+          }
         } else {
           console.log("GOOGLE PLACES QUERY ERROR");
         }
@@ -134,75 +132,71 @@ export default class CompetitionGoogleMap extends Component {
 
   removePlaces() {
 
+    this.state.places.map(function(place){
+      place.setMap(null);
+    });
 
-    for(var i = 0; i < this.state.places.length; i++) {
-      if(this.state.places[i]){
-        this.state.places[i].setMap(null);
-      }
-      this.state.places.splice(i, 1);
-    }
-
-     this.state.infowindow.setMap(null);
-     this.state.infowindow = null;
-
+    this.state.places = [];
     this.setState(this.state);
-
-    console.log("done in remove places " + this.state.places);
   }
 
-  drawPlaceWithIcon(place, icon) {
+  drawPlaces(places) {
+
     var me = this;
 
-    var lat = place.geometry.location.lat();
-    var lng = place.geometry.location.lng()
+    places.map((place) => {
 
-    var marker = new google.maps.Marker({
-        position: {lat: lat, lng: lng},
+      var icon = {
+        url: "https://s3-us-west-2.amazonaws.com/homepage-image-assets/competition_pin.png",
+        scaledSize: new google.maps.Size(50, 50),
+        zIndex: 0
+      };
+
+      var marker = new google.maps.Marker({
+        position: {lat: place.geometry.location.lat(), lng: place.geometry.location.lng()},
         zIndex:0,
         map: me.state.map,
         icon: icon});
 
-    var contentString;
 
-    if(place.rating) {
-      contentString = '<div id="content">'+ place.name + '</div> <div> Rating: ' + place.rating +'</div>';
-    } else {
-      contentString = '<div id="content">'+ place.name + '</div>';
-    }
+      var contentString;
+
+      if(place.rating) {
+        contentString = '<div id="content">'+ place.name + '</div> <div> Rating: ' + place.rating +'</div>';
+      } else {
+        contentString = '<div id="content">'+ place.name + '</div>';
+      }
 
 
-    var infowindow = new google.maps.InfoWindow({
-      content: contentString
+      var infowindow = new google.maps.InfoWindow({
+        content: contentString
+      });
+
+      marker.addListener('click', function() {
+        infowindow.open(me.state.map, marker);
+        me.state.infowindow = infowindow;
+        me.setState(me.state);
+      });
+
+      me.state.places.push(marker)
+
     });
 
-    marker.addListener('click', function() {
-      infowindow.open(me.state.map, marker);
-      me.state.infowindow = infowindow;
-      me.setState(me.state);
-    });
-
-    this.state.places.push(marker);
     this.setState(this.state);
   }
 
   drawPropertyWithIcon(property, icon) {
 
-    var me = this;
-
     var marker = new google.maps.Marker({
         position: {lat: property.lat, lng: property.lng},
         zIndex:0,
-        map: me.state.map,
+        map: this.state.map,
         icon: icon});
 
-    marker.addListener('click', function(){
-      console.log("show the info window");
-    });
-
     this.state.propertyMarker = marker;
-
     this.setState(this.state);
-  }
+
+   }
 
 
   render () {

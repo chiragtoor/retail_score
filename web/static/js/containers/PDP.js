@@ -63,7 +63,6 @@ class PDP extends React.Component {
     }
 
     componentDidMount(){
-      console.log("HERE");
       this.props.loadProperty(this.props.params.propertyId);
     }
 
@@ -77,8 +76,6 @@ class PDP extends React.Component {
         if(demographics) {
           tapestry = demographics.tapestry;
         }
-
-        console.log("this is the property " + JSON.stringify(property));
 
         var filterTransitionOptions = {
           transitionName: "contactFade",
