@@ -1,7 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import ReactDOM from 'react-dom';
 import MobilePropertyTile from './MobilePropertyTile.js';
-import MobileEmptyTile from './MobileEmptyTile.js';
+import MobileNextTile from './MobileNextTile.js';
+import MobileLastTile from './MobileLastTile.js';
 import { Grid, Row, Col, Panel, Button, FormGroup, ControlLabel, FormControl, InputGroup, Carousel, CarouselItem, DropdownButton, MenuItem } from 'react-bootstrap';
 
 export default class MobilePropertyList extends Component {
@@ -10,11 +11,15 @@ export default class MobilePropertyList extends Component {
     super(props);
 
     this.visibilityChanged = this.visibilityChanged.bind(this);
-    this.emptyTileVisible = this.emptyTileVisible.bind(this);
-
+    this.lastPage = this.lastPage.bind(this);
+    this.nextPage = this.nextPage.bind(this);
+    this.scrollToFront = this.scrollToFront.bind(this);
 
     this.state = {
-      visibleIndex: 0
+      visibleIndex: 0,
+      page: 0,
+      minIndex: 0,
+      maxIndex: 20
     }
 
   }
@@ -22,44 +27,54 @@ export default class MobilePropertyList extends Component {
   visibilityChanged(property, index) {
 
       if(index != this.state.visibleIndex) {
+
+        this.props.visibilityChanged(property);
+
         this.state.visibleIndex = index;
         this.setState(this.state);
-        this.props.visibilityChanged(property);
       }
+
   }
 
-  emptyTileVisible(index) {
+  nextPage() {
+    this.state.page = this.state.page + 1;
+    this.state.minIndex = this.state.minIndex + 20;
+    this.state.maxIndex = this.state.maxIndex + 20;
+    this.setState(this.state);
 
-      if(index != this.state.visibleIndex) {
-        this.state.visibleIndex = index;
-        this.setState(this.state);
-      }
+    this.scrollToFront();
+  }
+
+  lastPage() {
+    if(this.state.page > 0) {
+      this.state.page = this.state.page - 1;
+      this.state.minIndex = this.state.minIndex - 20;
+      this.state.maxIndex = this.state.maxIndex - 20;
+      this.setState(this.state);
+    }
+  }
+
+  scrollToFront() {
+    document.getElementById('first').scrollIntoView();
   }
 
   render () {
 
-    var properties = this.props.properties;
+    var min = this.state.minIndex;
+    var max = this.state.maxIndex;
 
-    var maxLoad = this.state.visibleIndex + 10;
-    var minLoad = this.state.visibleIndex - 10;
+    var maxLength = this.props.properties.length;
 
-    if(maxLoad > (properties.length - 1) ) {
-      maxLoad = properties.length - 1
-    } 
-
-    if(minLoad < 0 ) {
-      minLoad = 0;
-    }
+    var tiles = this.props.properties.slice(min, max);
 
     return (
         <div style={{overflowX: "scroll", overflowY: "hidden", display: "flex", width: "100%", height:"150px", backgroundColor:"#ecf0f1"}}>
-          {properties.map((property, index) => {
-            if(index <= maxLoad && index >= minLoad){
-              return <MobilePropertyTile key={index} index={index} property={property} tileClick={this.props.tileClick} visibilityChanged={this.visibilityChanged} />;
-            } else {
-              return <MobileEmptyTile  key={index} index={index} visibilityChanged={this.emptyTileVisible} />;
-            } 
+          { min > 0 ? <MobileLastTile userClick={this.lastPage}/> : null}
+          <div id="first" style={{color:"#ecf0f1", width:"2px", fontSize:"2px"}}>f</div>
+          {tiles.map((property, index) => {
+            return <MobilePropertyTile key={index} index={index} property={property} tileClick={this.props.tileClick} visibilityChanged={this.visibilityChanged} />;
           })}
+          { max < maxLength ? <MobileNextTile userClick={this.nextPage}/> : null}
         </div>
     );
   }

@@ -119,7 +119,7 @@ export default class GoogleMap extends Component {
 
   drawPropertyMarkers(properties) {
 
-    console.log("in drawPropertyMarkers ");
+    console.log("in drawPropertyMarkers, this is how many properties i have to draw " + properties.length);
 
     var me = this;
 
@@ -204,6 +204,7 @@ export default class GoogleMap extends Component {
     }
 
     if(nextProps.currentPropertyMarker){
+      if(this.state.highlightedId != nextProps.currentPropertyMarker.id)
       this.highlightMarker(nextProps.currentPropertyMarker);
     }
   }

@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import * as Actions from '../actions';
 
 import ContentWrapper from '../components/Base/ContentWrapper';
-import { Grid, Row, Col, Panel, Button, FormGroup, ControlLabel, FormControl, InputGroup, Carousel, CarouselItem, DropdownButton, MenuItem } from 'react-bootstrap';
+import { Grid, Row, Col, Panel, Button, Popover,Pagination, OverlayTrigger, Overlay, FormGroup, ControlLabel, FormControl, InputGroup, Carousel, CarouselItem, DropdownButton, MenuItem } from 'react-bootstrap';
 
 const isBrowser = typeof window !== 'undefined';
 // const C3Chart = isBrowser ? require('react-c3') : undefined;
@@ -24,24 +24,6 @@ const PRICE_MAX = 100000;
 
 const SQ_MIN = 0;
 const SQ_MAX = 30000;
-
-var properties = [
-  {
-      streetAddress: "13900 Francisquito",
-      city: "Baldwin Park",
-      state: "CA",
-      zipCode: "91706",
-      retailScore: "95",
-      squareFeet: 764,
-      price: 1495.00156667,
-      lat: 34.0674545,
-      lng: -117.9731211,
-      image_lat: 34.0676669,
-      image_lng: -117.9729022,
-      image_heading: 220.488380302844,
-      id: 48
-  }
-];
 
 class SRP extends React.Component {
 
@@ -167,8 +149,9 @@ class SRP extends React.Component {
 
       if(!this.state.currentProperty || this.state.currentProperty.id != property.id) {
         this.state.currentProperty = property;
-        this.setState(this.state);
       }
+
+      this.setState(this.state);
     }
 
     componentDidMount() {
@@ -286,10 +269,18 @@ class SRP extends React.Component {
         var saveFilterColor = "#49A3DC"
         var saveFilterBackground = "#FFFFFF";
 
+        const popoverClick = (
+              <Popover id="popover-trigger-click">
+                <strong>{"What's RetailScore?"}</strong>
+              </Popover>
+            );
+
         if(this.state.tempNeedsUpgrade) {
           saveFilterColor = "#FFFFFF";
           saveFilterBackground = "#49A3DC";
         }
+
+
         return (
             <div style={{height:"100%"}}>
 
@@ -306,7 +297,7 @@ class SRP extends React.Component {
                     </Col>
 
                     <Col  md={5} lg={5} className="desktopListings hidden-sm hidden-xs">
-                      <Row style={{marginLeft:"0px"}}>
+                      <Row style={{marginLeft:"0px", borderRight:"solid thin #DCE0E0"}}>
                           <div style={{backgroundColor:"#1abc9c", color:"#FFFFFF", height:"250px", width:"100%"}}>
                            <DesktopFilters 
                                 saveFilters={this.saveTempFilters} 
@@ -330,6 +321,13 @@ class SRP extends React.Component {
                           <div style={{backgroundColor:"#f1c40f", width:"100%"}}>
                             <DesktopPropertyList properties={filteredProperties} tileClick={this.tileClick} />
                           </div>
+                          <div style={{width:"100%"}}>
+                            <Pagination
+                              bsSize="medium"
+                              items={10}
+                              activePage={this.state.activePage}
+                              onSelect={this.handleSelect} />
+                          </div>
                       </Row>
                     </Col>
 
@@ -345,7 +343,9 @@ class SRP extends React.Component {
                     </Col>
 
                     <Col xs={12} sm={12} className="smallGoogleMap hidden-md hidden-lg">
+                      
                       <Button onClick={this.showRetailScoreExplanation} style={{fontSize:"20px", backgroundColor:"#7f8c8d", color:"#FFFFFF",borderRadius:"20px", position:"fixed", top:"65px", right:"5px", zIndex:"1"}}><em className="fa fa-question-circle"></em></Button>
+
                       <div style={{height:"100%"}} className="hidden-md hidden-lg">
                         <GoogleMap 
                           id={"mobile"} 
@@ -359,7 +359,7 @@ class SRP extends React.Component {
                     <Col className="hidden-md hidden-lg" sm={12} xs={12}>
 
                       <div style={{width:"100%", height:"50px"}}>
-                        <div style={{height:"100%", padding:"15px",float:"left", color:"#95a5a6", width:"50%", fontSize:"16px"}}>{filteredProperties.length} properties for lease</div>
+                        <div style={{height:"100%", padding:"15px",float:"left", color:"#95a5a6", fontSize:"16px"}}>{filteredProperties.length} properties for lease</div>
                         <div style={{height:"100%",padding:"5px", float:"right"}}>
                             <Button onClick={this.showFilters} style={{backgroundColor:"#FFFFFF",color:"#49A3DC", border:"#49A3DC",fontSize:"16px", fontWeight:"400"}}>Filters</Button>
                         </div>

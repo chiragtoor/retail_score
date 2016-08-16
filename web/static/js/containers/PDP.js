@@ -93,6 +93,11 @@ class PDP extends React.Component {
         return (
             <ContentWrapper unwrap>
                 {/*MOBILE AND TABLET HTML*/}
+
+                <Col md={12} lg={12} className="hidden-sm hidden-xs" style={{height:"50px", color:"#FFFFFF", width:"100%", backgroundColor:"#49A3DC"}}>
+                  <img style={{height:"46px", paddingTop:"2px"}} src="https://s3-us-west-2.amazonaws.com/homepage-image-assets/retail_score_logo_white.png" />
+                </Col>
+
                 <div className="hidden-md hidden-lg" style={{width:"100%", backgroundColor:"#FFFFFF"}}>
                   <Row>
                     <Col className="col-sm-offset-1" sm={ 10 } xs={12}>
@@ -105,7 +110,7 @@ class PDP extends React.Component {
                         <Col className="col-sm-offset-1 hidden-md hidden-lg" lg={ 12 } md={ 10 } sm={ 10 } xs={12}>
                           {property ? <RetailScorePanel showModal={this.showRetailScoreExpalanation} property={property} /> : null }
                           { demographics ? <DemographicPanel data={demographics} /> : null}
-                          {property ? <CompetitionPanel property={property} /> : null}
+                          {property.lat ? <CompetitionPanel property={property} /> : null}
                           { tapestry ? <PeoplePanel people={tapestry}/> : null}
                         </Col>
                         
@@ -133,7 +138,7 @@ class PDP extends React.Component {
                       { demographics ? <DesktopDemographicPanel data={demographics} tag={"largeDemographics"} /> : null}
                     </Col>
                     <Col className="col-lg-offset-1 " lg={ 10 } >
-                      {property ? <DesktopCompetitionPanel property={property} tag={"largeCompetition"} /> : null}
+                      {property.lat ? <DesktopCompetitionPanel property={property} tag={"largeCompetition"} /> : null}
                     </Col>
                   </Row>
                 </div>
@@ -147,7 +152,7 @@ class PDP extends React.Component {
                       { demographics != null ? <DesktopDemographicPanel data={demographics} tag={"mediumDemographics"}/> : null}
                     </Col>
                     <Col md={ 12 } >
-                      {property ? <DesktopCompetitionPanel property={property} tag={"mediumCompetition"}/> : null}
+                      {property.lat ? <DesktopCompetitionPanel property={property} tag={"mediumCompetition"}/> : null}
                     </Col>
                   </Row>
                 </div>

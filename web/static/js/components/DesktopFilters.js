@@ -92,13 +92,13 @@ export default class DesktopFilters extends Component {
         <Col md={12} lg={12} style={{height:"20%", marginTop:"10px"}}>
           <div style={{width:"20%", color:"#95a5a6", float:"left", textAlign:"left",paddingLeft:"5px", fontSize:"18px"}}>Sort By</div>
 
-          <center style={{width:"80%", float:"right"}}>
+          <div style={{width:"80%", float:"right"}}>
             <ButtonGroup style={{width:"100%"}}>
-                <Button onClick={e => this.sortIndexChanged(e, 1)} style={{width:"33%", height:"40px", backgroundColor:(priceBackground), color:(priceColor)}}>Price</Button>
-                <Button onClick={e => this.sortIndexChanged(e, 2)} style={{width:"33%", height:"40px", backgroundColor:(sqftBackground), color:(sqftColor)}}>Square Feet</Button>
-                <Button onClick={e => this.sortIndexChanged(e, 3)} style={{width:"33%", height:"40px", backgroundColor:(retailScoreBackground), color:(retailScoreColor)}}>RetailScore</Button>
+                <Button onClick={e => this.sortIndexChanged(e, 1)} style={{width:"33%", float:"right", height:"40px", backgroundColor:(priceBackground), color:(priceColor)}}>Price</Button>
+                <Button onClick={e => this.sortIndexChanged(e, 2)} style={{width:"33%",float:"right", height:"40px", backgroundColor:(sqftBackground), color:(sqftColor)}}>Square Feet</Button>
+                <Button onClick={e => this.sortIndexChanged(e, 3)} style={{width:"33%",float:"right", height:"40px", backgroundColor:(retailScoreBackground), color:(retailScoreColor)}}>RetailScore</Button>
             </ButtonGroup>
-          </center>
+          </div>
         </Col>
 
         <Col md={12} lg={12} style={{height:"20%", marginTop:"10px"}}>
