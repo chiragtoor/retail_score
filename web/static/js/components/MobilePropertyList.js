@@ -24,6 +24,20 @@ export default class MobilePropertyList extends Component {
 
   }
 
+  componentWillReceiveProps(nextProps){
+    
+    if(nextProps.reset) {
+      this.state.page = 0;
+      this.state.minIndex = 0;
+      this.state.maxIndex = 20;
+      this.setState(this.state);
+      this.scrollToFront();
+
+      this.props.resetDone();
+    }
+    
+  }
+
   visibilityChanged(property, index) {
 
       if(index != this.state.visibleIndex) {

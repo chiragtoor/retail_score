@@ -39,6 +39,8 @@ class SRP extends React.Component {
       this.saveTempFilters = this.saveTempFilters.bind(this);
       this.upgradeTempFilters = this.upgradeTempFilters.bind(this);
       this.showRetailScoreExplanation = this.showRetailScoreExplanation.bind(this);
+      this.scrollToFilters = this.scrollToFilters.bind(this);
+      this.listDoneResetting = this.listDoneResetting.bind(this);
 
       var thisCity = this.props.params.city;
       thisCity = thisCity.replace("-", " ");
@@ -63,7 +65,8 @@ class SRP extends React.Component {
         tempSqftMax: SQ_MAX,
         tempSortIndex: 1,
         tempNeedsUpgrade: false,
-        sortIndex: 1
+        sortIndex: 1,
+        resetList: false
       };
 
     }
@@ -98,6 +101,7 @@ class SRP extends React.Component {
       this.state.sqftMin = sqftMin;
       this.state.sqftMax = sqftMax;
       this.state.sortIndex = sortIndex;
+      this.state.resetList = true;
       this.setState(this.state);
 
       this.hideFilters();
@@ -124,9 +128,20 @@ class SRP extends React.Component {
       this.state.sqftMax = this.state.tempSqftMax;
       this.state.sortIndex = this.state.tempSortIndex
       this.state.tempNeedsUpgrade = false;
+      this.state.resetList = true;
 
       this.setState(this.state);
 
+    }
+
+    listDoneResetting(){
+      console.log("in list done resetting");
+      this.state.resetList = false;
+      this.setState(this.state);  
+    }
+
+    scrollToFilters() {
+      document.getElementById('desktopFilters').scrollIntoView();
     }
 
     showRetailScoreExplanation() {
@@ -256,12 +271,16 @@ class SRP extends React.Component {
             propertyList = <MobilePropertyList 
                           properties={filteredProperties} 
                           tileClick={this.tileClick} 
-                          visibilityChanged={this.setCurrentProperty} />;
+                          visibilityChanged={this.setCurrentProperty}
+                          reset={this.state.resetList}
+                          resetDone={this.listDoneResetting} />;
           } else if (window.innerWidth < 800) {
             propertyList = <TabletPropertyList 
                           properties={filteredProperties} 
                           tileClick={this.tileClick} 
-                          visibilityChanged={this.setCurrentProperty} />;
+                          visibilityChanged={this.setCurrentProperty}
+                          reset={this.state.resetList}
+                          resetDone={this.listDoneResetting} />;
           }
         }
 
@@ -298,7 +317,7 @@ class SRP extends React.Component {
 
                     <Col  md={5} lg={5} className="desktopListings hidden-sm hidden-xs">
                       <Row style={{marginLeft:"0px", borderRight:"solid thin #DCE0E0"}}>
-                          <div style={{backgroundColor:"#1abc9c", color:"#FFFFFF", height:"250px", width:"100%"}}>
+                          <div id='desktopFilters' style={{backgroundColor:"#1abc9c", color:"#FFFFFF", height:"250px", width:"100%"}}>
                            <DesktopFilters 
                                 saveFilters={this.saveTempFilters} 
                                 priceMin={this.state.tempPriceMin} 
@@ -311,7 +330,7 @@ class SRP extends React.Component {
                             
                           </div>
 
-                          <div style={{backgroundColor:"#FFFFFF",width:"100%", height:"50px", color:"#FFFFFF", borderTop:"solid thin #DCE0E0"}}>
+                          <div id='desktopFilterBar' style={{backgroundColor:"#FFFFFF",width:"100%", height:"50px", color:"#FFFFFF", borderTop:"solid thin #DCE0E0"}}>
                             <div style={{height:"100%", padding:"15px",float:"left", color:"#95a5a6", width:"50%", fontSize:"16px"}}>{filteredProperties.length} properties for lease</div>
                             <div style={{height:"100%",float:"right", width:"50%", fontSize:"16px"}}>
                               <Button onClick={this.upgradeTempFilters} style={{backgroundColor:(saveFilterBackground), marginTop:"5px", marginRight:"15px", float:"right", color:(saveFilterColor), border:"solid thin #49A3DC",fontSize:"16px", fontWeight:"400"}}>Save Filters</Button>
@@ -319,7 +338,12 @@ class SRP extends React.Component {
                           </div>
 
                           <div style={{backgroundColor:"#f1c40f", width:"100%"}}>
-                            <DesktopPropertyList properties={filteredProperties} tileClick={this.tileClick} />
+                            <DesktopPropertyList 
+                              properties={filteredProperties} 
+                              tileClick={this.tileClick} 
+                              scrollToTop={this.scrollToFilters}
+                              reset={this.state.resetList}
+                              resetDone={this.listDoneResetting} />
                           </div>
                       </Row>
                     </Col>

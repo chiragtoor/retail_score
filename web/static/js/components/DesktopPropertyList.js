@@ -15,9 +15,21 @@ export default class DesktopPropertyList extends Component {
     };
   }
 
+  componentWillReceiveProps(nextProps){
+    
+    if(nextProps.reset) {
+      this.state.page = 1;
+      this.setState(this.state);
+      this.props.resetDone();
+    }
+    
+  }
+
   handleSelect(eventKey) {
     this.state.page = eventKey;
     this.setState(this.state);
+
+    this.props.scrollToTop();
   }
 
   render () {
