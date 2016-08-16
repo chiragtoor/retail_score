@@ -321,13 +321,6 @@ class SRP extends React.Component {
                           <div style={{backgroundColor:"#f1c40f", width:"100%"}}>
                             <DesktopPropertyList properties={filteredProperties} tileClick={this.tileClick} />
                           </div>
-                          <div style={{width:"100%"}}>
-                            <Pagination
-                              bsSize="medium"
-                              items={10}
-                              activePage={this.state.activePage}
-                              onSelect={this.handleSelect} />
-                          </div>
                       </Row>
                     </Col>
 

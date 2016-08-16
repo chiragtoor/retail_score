@@ -127,6 +127,6 @@ export const cities = [
           {name: "West Hollywood, CA"},
           {name: "Westchester, CA"},
           {name: "Westlake Village, CA"},
-          {name: "Whittier, CA"}
+          {name: "Whittier, CA"},
           {name: "Wilmington, CA"}
         ];
