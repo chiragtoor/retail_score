@@ -57,12 +57,38 @@ export default class GoogleMap extends Component {
       if (map.getZoom() > 16) map.setZoom(16);
     });
 
+    var me = this;
+
+    //only have pins that are in the bounds on the map at any given time
+    google.maps.event.addListener(map, 'idle', function() {
+
+      var bounds = map.getBounds();
+      var visibleProps = [];
+      var properties = me.props.properties;
+
+      if (properties) {
+
+        properties.map(function(property){
+          if(property.lat >= bounds.getSouthWest().lat() && property.lat <= bounds.getNorthEast().lat()) {
+            if(property.lng >= bounds.getSouthWest().lng() && property.lng <= bounds.getNorthEast().lng()) {
+              visibleProps.push(property);
+            }
+          }
+        });
+
+        me.clearMap();
+        if(visibleProps.length > 0) {
+          me.drawPropertyMarkers(visibleProps, me);
+        }
+      } 
+    });
+
     this.state.map = map;
 
     this.setState(this.state);
 
     if(this.props.properties) {
-      this.drawPropertyMarkers(this.props.properties);
+      // this.drawPropertyMarkers(this.props.properties);
     }
 
     if(this.props.currentPropertyMarker){
@@ -72,30 +98,6 @@ export default class GoogleMap extends Component {
 
 
   highlightMarker(property) {
-
-    console.log("in highlight marker");
-
-
-    var me = this;
-    this.state.markers.map(function(marker, index){
-      if(marker.get("id") == property.id) {
-        var icon = {
-          url: "https://s3-us-west-2.amazonaws.com/homepage-image-assets/competition_pin.png",
-          scaledSize: new google.maps.Size(70, 70),
-          zIndex: 1
-        };
-        marker.setIcon(icon);
-
-      } else if(marker.get("id") == me.state.highlightedId) {
-        var smallIcon = {
-          url: "https://s3-us-west-2.amazonaws.com/zamatics-images/propertyicon50x50.png", // url
-          scaledSize: new google.maps.Size(50, 50),
-          zIndex: 0
-        };
-        marker.setIcon(smallIcon);
-      }
-    });
-
 
     this.state.highlightedId = property.id;
 
@@ -107,8 +109,6 @@ export default class GoogleMap extends Component {
   }
 
   clearMap() {
-    console.log("in clear map");
-
     this.state.markers.map(function(marker){
       marker.setMap(null);
     });
@@ -117,26 +117,35 @@ export default class GoogleMap extends Component {
     this.setState(this.state);
   }
 
-  drawPropertyMarkers(properties) {
-
-    console.log("in drawPropertyMarkers, this is how many properties i have to draw " + properties.length);
-
-    var me = this;
+  drawPropertyMarkers(properties, me) {
 
     //resetting the property ids
     me.state.propertyIds = {};
 
     properties.map((property) => {
 
-      var icon = {
-        url: "https://s3-us-west-2.amazonaws.com/zamatics-images/propertyicon50x50.png",
-        scaledSize: new google.maps.Size(50, 50),
-        zIndex: 0
-      };
+      var icon;
+      var zIndex;
+
+      if(property.id == me.state.highlightedId) {
+        icon = {
+          url: "https://s3-us-west-2.amazonaws.com/homepage-image-assets/competition_pin.png",
+          scaledSize: new google.maps.Size(70, 70),
+          zIndex: 1
+        };
+        zIndex = 1;
+      } else {
+        icon = {
+          url: "https://s3-us-west-2.amazonaws.com/zamatics-images/propertyicon50x50.png",
+          scaledSize: new google.maps.Size(50, 50),
+          zIndex: 0
+        };
+        zIndex = 0;
+      }
 
       var marker = new google.maps.Marker({
         position: {lat: property.lat, lng: property.lng},
-        zIndex:0,
+        zIndex:zIndex,
         map: me.state.map,
         icon: icon});
 
@@ -159,31 +168,6 @@ export default class GoogleMap extends Component {
   }
 
   componentWillReceiveProps(nextProps){
-
-    if(nextProps.properties) {
-      var redraw = false;
-
-      var ids = this.state.propertyIds;
-
-      var keys = Object.keys(ids);
-
-      if (nextProps.properties.length != keys.length) {
-        redraw = true;
-      } else {
-        nextProps.properties.map(function(property){
-          if(!ids[property.id]) {
-            redraw = true;
-          }
-        });
-      }
-
-      if(redraw) {
-        console.log("going to redraw");
-        this.clearMap();
-        this.drawPropertyMarkers(nextProps.properties);
-      }
-
-    }
 
     if(nextProps.city && (this.state.city != nextProps.city)){
 
