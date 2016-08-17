@@ -63,6 +63,7 @@ class PDP extends React.Component {
     }
 
     componentDidMount(){
+      this.context.mixpanel.track('PDP did mount.');
       this.props.loadProperty(this.props.params.propertyId);
     }
 
@@ -162,6 +163,10 @@ class PDP extends React.Component {
     }
 
 }
+
+PDP.contextTypes = {
+    mixpanel: PropTypes.object.isRequired
+};
 
 const mapStateToProps = (state) => {
   return {

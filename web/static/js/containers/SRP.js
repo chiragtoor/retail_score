@@ -170,6 +170,9 @@ class SRP extends React.Component {
     }
 
     componentDidMount() {
+
+      this.context.mixpanel.track('SRP did mount.');
+      
       var cityString = this.state.city.split(',')[0];
       this.props.loadProperties(cityString, "CA");
     }
@@ -403,11 +406,17 @@ class SRP extends React.Component {
 
 }
 
+SRP.contextTypes = {
+    mixpanel: PropTypes.object.isRequired
+};
+
 const mapStateToProps = (state) => {
   return {
     server_side: state.server_side,
     properties: state.properties
   };
 };
+
+
 export default connect(mapStateToProps, Actions)(SRP);
 
