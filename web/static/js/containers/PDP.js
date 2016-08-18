@@ -165,7 +165,7 @@ class PDP extends React.Component {
 }
 
 PDP.contextTypes = {
-    mixpanel: PropTypes.object.isRequired
+    mixpanel: React.PropTypes.object.isRequired
 };
 
 const mapStateToProps = (state) => {

@@ -407,7 +407,7 @@ class SRP extends React.Component {
 }
 
 SRP.contextTypes = {
-    mixpanel: PropTypes.object.isRequired
+    mixpanel: React.PropTypes.object.isRequired
 };
 
 const mapStateToProps = (state) => {

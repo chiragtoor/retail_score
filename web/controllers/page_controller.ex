@@ -66,8 +66,6 @@ defmodule RetailScore.PageController do
   def srp_page(conn, %{"city" => city}) do
     [city, state] = String.split(city, ", ")
 
-    IO.puts "SERVER RENDER SRP"
-
     properties = Property
     |> where([p], p.city == ^city)
     |> where([p], p.state == ^state)
