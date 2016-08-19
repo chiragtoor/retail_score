@@ -137,7 +137,6 @@ defmodule RetailScore.Processor do
       IO.puts "Inserting #{file} properties into the DB"
 
       properties = RetailScore.S3.download("processed/#{file}")
-      # |> IO.inspect
       |> Poison.decode!
       |> Enum.map(fn(dataSet) ->
         %{"property" => propertyParams, "demographics" => demographics, "propertySpaces" => propertySpaces, "agent" => agentParams} = dataSet

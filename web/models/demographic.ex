@@ -22,8 +22,8 @@ defmodule RetailScore.Demographic do
   end
 
   # Esri Account Credentials
-  @client_id "XSjcp380W1NBXKRS"
-  @client_secret "b67a80d0ba1749bd9c0cc9034427070b"
+  @client_id "lpCIeD2LSd3f0NSK"
+  @client_secret "750385b9fd9e4093ad995fdb21c48c1a"
   # Esri Query URL Specific Info
   @esri_url "http://geoenrich.arcgis.com/arcgis/rest/services/World/geoenrichmentserver/Geoenrichment/Enrich?"
   @study_areas ~s(studyAreas=[{%22areaType%22:%22RingBuffer%22,%22bufferUnits%22:%22esriMiles%22,%22bufferRadii%22:[1],%22geometry%22:)
@@ -192,7 +192,7 @@ defmodule RetailScore.Demographic do
     10.0 => ~s(Predominantly single, well-educated 
               professionals in business, finance, legal,
               computer, and entertainment occupations. They are
-              affl uent and partial to city living—and its amenities.
+              affluent and partial to city living—and its amenities.
               Neighborhoods are densely populated, primarily located
               in the cities of large metropolitan areas. Many residents
               walk, bike, or use public transportation to get to work; a
