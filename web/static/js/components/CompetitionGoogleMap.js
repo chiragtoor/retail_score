@@ -176,6 +176,10 @@ export default class CompetitionGoogleMap extends Component {
         infowindow.open(me.state.map, marker);
         me.state.infowindow = infowindow;
         me.setState(me.state);
+
+        if(me.props.pinClick) {
+          me.props.pinClick(place.name);
+        }
       });
 
       me.state.places.push(marker)

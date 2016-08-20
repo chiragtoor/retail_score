@@ -30,8 +30,4 @@ mixpanel.init("ae0fd077786c8096959a7c297b28d99b");</script><!-- end Mixpanel -->
       <script src="<%= static_path(@conn, "/js/app.js") %>"></script>
     <% end %>
   </body>
-  <footer>
-  <a href="https://mixpanel.com/f/partner" rel="nofollow"><img src="//cdn.mxpnl.com/site_media/images/partner/badge_light.png" alt="Mobile Analytics" /></a>
-  </footer>
-
 </html>

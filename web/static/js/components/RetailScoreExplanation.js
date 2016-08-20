@@ -6,8 +6,21 @@ export default class RetailScoreExplanation extends Component {
 
   constructor(props) {
     super(props);
+
+    this.helpful = this.helpful.bind(this);
+    this.notHelpful = this.notHelpful.bind(this);
+
   }
 
+  helpful() {
+    this.props.mixpanel.track('RetailScore Explanation Modal Helpful');
+    this.props.hide();
+  }
+
+  notHelpful() {
+    this.props.mixpanel.track('RetailScore Explanation Modal Not Helpful');
+    this.props.hide();
+  }
 
   render () {
     return (
@@ -18,8 +31,8 @@ export default class RetailScoreExplanation extends Component {
               
               <div style={{width:"70%", marginLeft:"15%", marginTop:"20px"}}>
                 <p style={{width:"100%", textAlign:"center", fontSize:"20px", fontWeight:"400"}}>Was this helpful?</p>
-                <Button style={{backgroundColor:"#49A3DC", color:"#FFFFFF", fontSize:"20px",  float:"left"}} onClick={this.props.helpful}><em className="fa fa-thumbs-up"></em></Button>
-                <Button style={{backgroundColor:"#49A3DC", color:"#FFFFFF", fontSize:"20px", float:"right"}} onClick={this.props.notHelpful}><em className="fa fa-thumbs-down"></em></Button>
+                <Button style={{backgroundColor:"#49A3DC", color:"#FFFFFF", fontSize:"20px",  float:"left"}} onClick={this.helpful}><em className="fa fa-thumbs-up"></em></Button>
+                <Button style={{backgroundColor:"#49A3DC", color:"#FFFFFF", fontSize:"20px", float:"right"}} onClick={this.notHelpful}><em className="fa fa-thumbs-down"></em></Button>
               </div>
             </div>
     );

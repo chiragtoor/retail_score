@@ -41,16 +41,18 @@ class PDP extends React.Component {
     showContactModal(){
       if(this.props.property.agents) {
         this.state.modal = <div className="" style={{height:"300px", width:"100%", backgroundColor:"#FFFFFF", position:"fixed", zIndex:"3", bottom:"0", right:"0"}}>
-                      <ContactModal submitContact={this.hideModals} agent={this.props.property.agents[0]} />
+                      <ContactModal submitContact={this.hideModals} agent={this.props.property.agents[0]} mixpanel={this.context.mixpanel} />
                      </div>;
         this.state.dimDiv = <div className="PDPDimDiv" onClick={this.hideModals}></div>;
         this.setState(this.state);
+
+        this.context.mixpanel.track('Show Mobile Contact Modal');
       }
     }
 
     showRetailScoreExpalanation() {
       this.state.modal = <div style={{height:"300px", width:"100%", backgroundColor:"#FFFFFF", position:"fixed", zIndex:"3", bottom:"0", right:"0"}}>
-                    <RetailScoreExplanation helpful={this.hideModals} notHelpful={this.hideModals} />
+                    <RetailScoreExplanation hide={this.hideFilters} mixpanel={this.context.mixpanel} />
                    </div>;
       this.state.dimDiv = <div className="PDPDimDiv" onClick={this.hideModals}></div>;
       this.setState(this.state);
@@ -63,7 +65,6 @@ class PDP extends React.Component {
     }
 
     componentDidMount(){
-      this.context.mixpanel.track('PDP did mount.');
       this.props.loadProperty(this.props.params.propertyId);
     }
 
@@ -110,8 +111,8 @@ class PDP extends React.Component {
                     <Row>
                         <Col className="col-sm-offset-1 hidden-md hidden-lg" lg={ 12 } md={ 10 } sm={ 10 } xs={12}>
                           {property ? <RetailScorePanel showModal={this.showRetailScoreExpalanation} property={property} /> : null }
-                          { demographics ? <DemographicPanel data={demographics} /> : null}
-                          {property.lat ? <CompetitionPanel property={property} /> : null}
+                          { demographics ? <DemographicPanel data={demographics} mixpanel={this.context.mixpanel} /> : null}
+                          {property.lat ? <CompetitionPanel property={property} mixpanel={this.context.mixpanel} /> : null}
                           { tapestry ? <PeoplePanel people={tapestry}/> : null}
                         </Col>
                         
@@ -133,13 +134,13 @@ class PDP extends React.Component {
                 <div className="hidden-xs hidden-sm hidden-md" style={{width:"100%", backgroundColor:"#FFFFFF"}}>
                   <Row>
                     <Col className="col-lg-offset-1 " lg={ 10 } >
-                      { property ? <DesktopPropertySummary property={property} /> : null}
+                      { property ? <DesktopPropertySummary property={property} mixpanel={this.context.mixpanel} /> : null}
                     </Col>
                     <Col className="col-lg-offset-1 " lg={ 10 } >
-                      { demographics ? <DesktopDemographicPanel data={demographics} tag={"largeDemographics"} /> : null}
+                      { demographics ? <DesktopDemographicPanel data={demographics} mixpanel={this.context.mixpanel} tag={"largeDemographics"} /> : null}
                     </Col>
                     <Col className="col-lg-offset-1 " lg={ 10 } >
-                      {property.lat ? <DesktopCompetitionPanel property={property} tag={"largeCompetition"} /> : null}
+                      {property.lat ? <DesktopCompetitionPanel property={property} mixpanel={this.context.mixpanel} tag={"largeCompetition"} /> : null}
                     </Col>
                   </Row>
                 </div>
@@ -147,13 +148,13 @@ class PDP extends React.Component {
                 <div className="hidden-xs hidden-sm hidden-lg" style={{width:"100%", backgroundColor:"#FFFFFF"}}>
                   <Row>
                     <Col md={ 12 } >
-                      { property ? <DesktopPropertySummary property={property} /> : null}
+                      { property ? <DesktopPropertySummary property={property} mixpanel={this.context.mixpanel} /> : null}
                     </Col>
                     <Col md={ 12 } >
-                      { demographics != null ? <DesktopDemographicPanel data={demographics} tag={"mediumDemographics"}/> : null}
+                      { demographics != null ? <DesktopDemographicPanel data={demographics} mixpanel={this.context.mixpanel} tag={"mediumDemographics"}/> : null}
                     </Col>
                     <Col md={ 12 } >
-                      {property.lat ? <DesktopCompetitionPanel property={property} tag={"mediumCompetition"}/> : null}
+                      {property.lat ? <DesktopCompetitionPanel property={property} mixpanel={this.context.mixpanel} tag={"mediumCompetition"}/> : null}
                     </Col>
                   </Row>
                 </div>

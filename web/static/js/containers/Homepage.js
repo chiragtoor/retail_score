@@ -27,6 +27,7 @@ export class Homepage extends React.Component {
 
     this.searchClick = this.searchClick.bind(this);
     this.tileClick = this.tileClick.bind(this);
+    this.scrollToAboutUs = this.scrollToAboutUs.bind(this);
 
     this.state = {
       value : "",
@@ -41,14 +42,33 @@ export class Homepage extends React.Component {
 
   searchClick(city) {
 	  var cityString = city;
+
+	  if(cityString == '') {
+	  	return;
+	  }
+
+	  //track this click on mixpanel
+	  this.context.mixpanel.track('Homepage Search', {'city':cityString});
+
     cityString.replace(' ','-');
     this.props.history.push('/retail-space-for-lease/' + cityString);
   }
 
   tileClick(city) {
 	  var cityString = city;
+
+	  //track this click on mixpanel
+	  this.context.mixpanel.track('Location Tile Click', {'city':cityString});
+
     cityString.replace(' ','-');
     this.props.history.push('/retail-space-for-lease/' + cityString);
+  }
+
+  scrollToAboutUs() {
+
+	  this.context.mixpanel.track('Homepage About Us Tap');
+
+    document.getElementById('about_us').scrollIntoView();
   }
 
   render() {
@@ -343,5 +363,10 @@ export class Homepage extends React.Component {
     );
   }
 }
+
+
+Homepage.contextTypes = {
+    mixpanel: React.PropTypes.object.isRequired
+};
 
 export default Homepage;

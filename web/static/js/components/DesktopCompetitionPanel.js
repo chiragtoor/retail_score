@@ -13,15 +13,22 @@ export default class DesktopCompetitionPanel extends Component {
     super(props);
 
     this.searchClick = this.searchClick.bind(this);
+    this.pinClick = this.pinClick.bind(this);
 
     this.state = {
       keyword: null
     };
   }
 
+  pinClick(name) {
+    this.props.mixpanel.track('Competition Pin Clicked', {'name':name});
+  }
+
   searchClick(keyword) {
     this.state.keyword = keyword;
     this.setState(this.state);
+
+    this.props.mixpanel.track('Competition Searched', {'keyword':keyword});
   }
 
   render () {
@@ -55,6 +62,7 @@ export default class DesktopCompetitionPanel extends Component {
                           <DesktopCompetitionSearchBar searchClick={this.searchClick} />
                           <CompetitionGoogleMap 
                             id={this.props.tag}
+                            pinClick={this.pinClick}
                             property={this.props.property}
                             keyword={this.state.keyword}/>
                        </div>

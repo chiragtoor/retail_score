@@ -13,6 +13,7 @@ export default class CompetitionPanel extends Component {
     super(props);
 
     this.searchClick = this.searchClick.bind(this);
+    this.pinClick = this.pinClick.bind(this);
 
     this.state = {
       keyword: null
@@ -22,11 +23,15 @@ export default class CompetitionPanel extends Component {
   searchClick(keyword) {
     this.state.keyword = keyword;
     this.setState(this.state);
+
+    this.props.mixpanel.track('Competition Searched', {'keyword':keyword});
+  }
+
+  pinClick(name) {
+    this.props.mixpanel.track('Competition Pin Clicked', {'name':name});
   }
 
   render () {
-
-    console.log("This is the keyword dawg " + this.state.keyword);
 
     return (
       <div style={{height:"100%", width:"100%", marginTop:"10px"}}>
@@ -56,6 +61,7 @@ export default class CompetitionPanel extends Component {
                           {this.props.property ? <CompetitionGoogleMap 
                             id={"competition"}
                             property={this.props.property}
+                            pinClick={this.pinClick}
                             keyword={this.state.keyword}/> : null}
                        </div>
                     </div>

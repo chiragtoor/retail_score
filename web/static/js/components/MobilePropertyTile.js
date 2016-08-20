@@ -23,7 +23,7 @@ export default class MobilePropertyTile extends Component {
   }
 
   tileClick() {
-    this.props.tileClick(this.props.property.id);
+    this.props.tileClick(this.props.property);
   }
 
 

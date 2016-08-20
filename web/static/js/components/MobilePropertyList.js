@@ -56,6 +56,8 @@ export default class MobilePropertyList extends Component {
     this.state.maxIndex = this.state.maxIndex + 20;
     this.setState(this.state);
 
+    this.props.mixpanel.track('Mobile Property List Next Page');
+
     this.scrollToFront();
   }
 
@@ -65,6 +67,8 @@ export default class MobilePropertyList extends Component {
       this.state.minIndex = this.state.minIndex - 20;
       this.state.maxIndex = this.state.maxIndex - 20;
       this.setState(this.state);
+
+      this.props.mixpanel.track('Mobile Property List Last Page');
     }
   }
 

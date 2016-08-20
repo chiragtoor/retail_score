@@ -21,14 +21,38 @@ export default class DesktopDemographicPanel extends Component {
     this.setDemographicIndex = this.setDemographicIndex.bind(this);
 
     this.state = {
-      demographicIndex: 0
+      demographicIndex: 0,
     };
   }
 
   setDemographicIndex(index) {
     this.state.demographicIndex = index;
     this.setState(this.state);
-    // console.log("just set the demographicIndex to " + this.state.demographicIndex);
+
+    var title;
+    switch(index){
+      case 0:
+          title = 'Household Income';
+        break;
+      case 1:
+          title = 'Ethnicities';
+        break;
+      case 2:
+          title = 'Marriage';
+        break;
+      case 3:
+          title = 'Age';
+        break;
+      case 4:
+          title = 'Gender';
+        break;
+      default:
+          title = 'Household Income';
+        break;
+    }
+
+    this.props.mixpanel.track('Demographic Index Changed', {'data':title});
+
   }
 
   render () {

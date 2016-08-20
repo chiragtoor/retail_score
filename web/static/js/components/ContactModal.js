@@ -34,6 +34,8 @@ export default class ContactModal extends Component {
   submitContact() {
     console.log("submot contact with: " + this.state.name + " " + this.state.email + " " + this.state.message);
     this.props.submitContact();
+
+    this.props.mixpanel.track('Submit Contact', {'name':this.state.name, 'email': this.state.email, 'message': this.state.message});
   }
 
   render () {
@@ -41,7 +43,7 @@ export default class ContactModal extends Component {
     var agent = this.props.agent;
 
     return (
-            <div className="row-masonry" style={{margin:"0", padding:"0", width:"500px"}}>
+            <div className="row-masonry" style={{margin:"0", padding:"0", height:"500px", width:"100%"}}>
                <div className="col-masonry">
                   <div className="panel b m0">
                      <div className="panel-heading">

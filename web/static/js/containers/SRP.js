@@ -31,6 +31,7 @@ class SRP extends React.Component {
 
       super(props);
       this.tileClick = this.tileClick.bind(this);
+      this.pinClick = this.pinClick.bind(this);
       this.searchClick = this.searchClick.bind(this);
       this.setCurrentProperty = this.setCurrentProperty.bind(this);
       this.showFilters = this.showFilters.bind(this);
@@ -71,8 +72,17 @@ class SRP extends React.Component {
 
     }
 
-    tileClick(propertyId) {
-      this.props.history.push('/properties/' + propertyId);
+    tileClick(property) {
+
+      this.context.mixpanel.track('Property Click', {'type':'tile', 'retailscore':property.retail_score, 'id': property.id});
+
+      this.props.history.push('/properties/' + property.id);
+    }
+
+    pinClick(property) {
+      this.context.mixpanel.track('Property Click', {'type':'pin', 'retailscore':property.retail_score, 'id': property.id});
+
+      this.props.history.push('/properties/' + property.id);
     }
 
     showFilters(){
@@ -83,10 +93,14 @@ class SRP extends React.Component {
                               priceMax={this.state.priceMax}
                               sqftMax={this.state.sqftMax}
                               sqftMin={this.state.sqftMin}
-                              sortIndex={this.state.sortIndex} />
+                              sortIndex={this.state.sortIndex}
+                              mixpanel={this.context.mixpanel} />
                            </div>;
       this.state.dimDiv = <div className="dimDiv" onClick={this.hideFilters}></div>;
       this.setState(this.state);
+
+      this.context.mixpanel.track('Show Mobile Filters');
+
     }
 
     hideFilters(){
@@ -103,6 +117,27 @@ class SRP extends React.Component {
       this.state.sortIndex = sortIndex;
       this.state.resetList = true;
       this.setState(this.state);
+
+      var sortString = "Price";
+
+      //track sort change in mixpanel
+      switch(this.state.sortIndex){
+        case 1:
+          sortString = "Price";
+          break;
+        case 2:
+          sortString = "Square Feet";
+        break;
+        case 3:
+          sortString = "RetailScore"
+          break;
+        default:
+          sortString = "Price";
+          break;
+      }
+
+      this.context.mixpanel.track('Save Mobile Filters', {'sort by':sortString, 'priceMin':this.state.priceMin, 'priceMax': this.state.priceMax, 'sqftMin': this.state.sqftMin, 'sqftMax': this.state.sqftMax});
+
 
       this.hideFilters();
     }
@@ -130,6 +165,26 @@ class SRP extends React.Component {
       this.state.tempNeedsUpgrade = false;
       this.state.resetList = true;
 
+      var sortString = "Price";
+
+      //track sort change in mixpanel
+      switch(this.state.tempSortIndex){
+        case 1:
+          sortString = "Price";
+          break;
+        case 2:
+          sortString = "Square Feet";
+        break;
+        case 3:
+          sortString = "RetailScore"
+          break;
+        default:
+          sortString = "Price";
+          break;
+      }
+
+      this.context.mixpanel.track('Save Desktop Filters', {'sort by':sortString, 'priceMin':this.state.tempPriceMin, 'priceMax': this.state.tempPriceMax, 'sqftMin': this.state.tempSqftMin, 'sqftMax': this.state.tempSqftMax});
+
       this.setState(this.state);
 
     }
@@ -146,10 +201,12 @@ class SRP extends React.Component {
 
     showRetailScoreExplanation() {
       this.state.modal = <div style={{height:"350px", width:"100%", backgroundColor:"#FFFFFF", position:"absolute", zIndex:"3", bottom:"0", right:"0"}}>
-                    <RetailScoreExplanation helpful={this.hideFilters} notHelpful={this.hideFilters} />
+                    <RetailScoreExplanation hide={this.hideFilters} mixpanel={this.context.mixpanel} />
                    </div>;
       this.state.dimDiv = <div className="dimDiv" onClick={this.hideFilters}></div>;
       this.setState(this.state);
+
+      this.context.mixpanel.track('Show RetailScore Explanation Modal', {'type':'mobile'});
     }
 
     searchClick(city) {
@@ -158,6 +215,8 @@ class SRP extends React.Component {
       this.state.city  = city;
       this.setState(this.state);
       this.props.history.push('/retail-space-for-lease/' + cityString);
+
+      this.context.mixpanel.track('SRP Search', {'city':city});
     }
 
     setCurrentProperty(property){
@@ -169,10 +228,7 @@ class SRP extends React.Component {
       this.setState(this.state);
     }
 
-    componentDidMount() {
-
-      this.context.mixpanel.track('SRP did mount.');
-      
+    componentDidMount() {      
       var cityString = this.state.city.split(',')[0];
       this.props.loadProperties(cityString, "CA");
     }
@@ -276,14 +332,16 @@ class SRP extends React.Component {
                           tileClick={this.tileClick} 
                           visibilityChanged={this.setCurrentProperty}
                           reset={this.state.resetList}
-                          resetDone={this.listDoneResetting} />;
+                          resetDone={this.listDoneResetting}
+                          mixpanel={this.context.mixpanel} />;
           } else if (window.innerWidth < 800) {
             propertyList = <TabletPropertyList 
                           properties={filteredProperties} 
                           tileClick={this.tileClick} 
                           visibilityChanged={this.setCurrentProperty}
                           reset={this.state.resetList}
-                          resetDone={this.listDoneResetting} />;
+                          resetDone={this.listDoneResetting}
+                          mixpanel={this.context.mixpanel} />;
           }
         }
 
@@ -318,7 +376,7 @@ class SRP extends React.Component {
                       <img style={{height:"46px", paddingTop:"2px", paddingLeft:"15px"}} src="https://s3-us-west-2.amazonaws.com/homepage-image-assets/retail_score_logo_white.png" />
                     </Col>
 
-                    <Col  md={5} lg={5} className="desktopListings hidden-sm hidden-xs">
+                    <Col  md={5} lg={4} className="desktopListings hidden-sm hidden-xs">
                       <Row style={{marginLeft:"0px", borderRight:"solid thin #DCE0E0"}}>
                           <div id='desktopFilters' style={{backgroundColor:"#1abc9c", color:"#FFFFFF", height:"250px", width:"100%"}}>
                            <DesktopFilters 
@@ -329,7 +387,8 @@ class SRP extends React.Component {
                                 sqftMin={this.state.tempSqftMin}
                                 sortIndex={this.state.sortIndex}
                                 searchClick={this.searchClick} 
-                                city={this.state.city} />
+                                city={this.state.city}
+                                mixpanel={this.context.mixpanel} />
                             
                           </div>
 
@@ -346,17 +405,18 @@ class SRP extends React.Component {
                               tileClick={this.tileClick} 
                               scrollToTop={this.scrollToFilters}
                               reset={this.state.resetList}
-                              resetDone={this.listDoneResetting} />
+                              resetDone={this.listDoneResetting}
+                              mixpanel={this.context.mixpanel} />
                           </div>
                       </Row>
                     </Col>
 
-                    <Col md={7} lg={7} style={{marginRight:"0px", paddingRight:"0px"}} className="desktopMap hidden-xs hidden-sm">
+                    <Col md={7} lg={8} style={{marginRight:"0px", paddingRight:"0px"}} className="desktopMap hidden-xs hidden-sm">
                       <div style={{width:"100%"}} className="fullHeight hidden-sm hidden-xs">
                         <GoogleMap 
                           id={"desktop"} 
                           properties={filteredProperties} 
-                          pinClick={this.tileClick} 
+                          pinClick={this.pinClick} 
                           currentPropertyMarker={this.state.currentProperty}
                           city={this.state.city}/>
                       </div>
@@ -370,7 +430,7 @@ class SRP extends React.Component {
                         <GoogleMap 
                           id={"mobile"} 
                           properties={filteredProperties} 
-                          pinClick={this.tileClick} 
+                          pinClick={this.pinClick} 
                           currentPropertyMarker={this.state.currentProperty}
                           city={this.state.city}/>
                       </div>

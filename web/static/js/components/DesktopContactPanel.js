@@ -43,7 +43,9 @@ export default class DesktopContactPanel extends Component {
 
   submitContact() {
     console.log("submot contact with: " + this.state.name + " " + this.state.email + " " + this.state.message);
-    this.props.submitContact();
+    // this.props.submitContact();
+
+    this.props.mixpanel.track('Submit Contact', {'name':this.state.name, 'email': this.state.email, 'message': this.state.message, 'phone': this.state.phone});
   }
 
   render () {
@@ -80,7 +82,7 @@ export default class DesktopContactPanel extends Component {
                               <FormControl 
                                 type="text" 
                                 placeholder="Your Phone Number(optional)" 
-                                value={this.state.email}
+                                value={this.state.phone}
                                 onChange={(e) => this.updatePhone(e)}/>
                             </FormGroup>
                             <FormGroup controlId="formControlsText">

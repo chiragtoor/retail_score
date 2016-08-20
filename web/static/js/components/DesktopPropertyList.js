@@ -30,6 +30,8 @@ export default class DesktopPropertyList extends Component {
     this.setState(this.state);
 
     this.props.scrollToTop();
+
+    this.props.mixpanel.track('Property List Page Change', {'page':eventKey});
   }
 
   render () {
@@ -53,14 +55,16 @@ export default class DesktopPropertyList extends Component {
             return <DesktopPropertyTile key={index} property={property} tileClick={this.props.tileClick} />;
           })}
 
-          <div style={{width:"100%", textAlign:"center", display:"inline-block"}}>
-            <Pagination
-              bsSize="large"
-              items={num}
-              activePage={this.state.page}
-              maxButtons={5}
-              onSelect={this.handleSelect} />
-          </div>
+          { num >= 2 ?
+            <div style={{width:"100%", textAlign:"center", display:"inline-block"}}>
+              <Pagination
+                bsSize="large"
+                items={num}
+                activePage={this.state.page}
+                maxButtons={5}
+                onSelect={this.handleSelect} />
+            </div> 
+          : null}
         </div>
     );
   }

@@ -154,7 +154,7 @@ export default class GoogleMap extends Component {
       marker.addListener('click', function(){
         
         if(me.props.pinClick) {
-          me.props.pinClick(property.id);
+          me.props.pinClick(property);
         }
       });
 

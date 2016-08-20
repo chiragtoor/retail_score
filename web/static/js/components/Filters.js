@@ -51,6 +51,27 @@ export default class Filters extends Component {
 
   sortIndexChanged(e, selectedKey) {
     this.state.sortIndex = selectedKey;
+
+    var sortString = "Price";
+
+    //track sort change in mixpanel
+    switch(selectedKey){
+      case 1:
+        sortString = "Price";
+        break;
+      case 2:
+        sortString = "Square Feet";
+      break;
+      case 3:
+        sortString = "RetailScore"
+        break;
+      default:
+        sortString = "Price";
+        break;
+    }
+
+    this.props.mixpanel.track('Sort Changed',{'sortBy': sortString});
+
     this.setState(this.state);
 
   }

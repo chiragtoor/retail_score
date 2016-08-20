@@ -42,7 +42,6 @@ export default class DesktopFilters extends Component {
     this.state.sqftMin = values.min;
     this.state.sqftMax = values.max;
     this.setState(this.state);
-
     this.saveFilters();
   }
 
@@ -50,13 +49,32 @@ export default class DesktopFilters extends Component {
     this.state.priceMin = values.min;
     this.state.priceMax = values.max;
     this.setState(this.state);
-
     this.saveFilters();
   }
 
   sortIndexChanged(e, selectedKey) {
     this.state.sortIndex = selectedKey;
     this.setState(this.state);
+
+    var sortString = "Price";
+
+    //track sort change in mixpanel
+    switch(selectedKey){
+      case 1:
+        sortString = "Price";
+        break;
+      case 2:
+        sortString = "Square Feet";
+      break;
+      case 3:
+        sortString = "RetailScore"
+        break;
+      default:
+        sortString = "Price";
+        break;
+    }
+
+    this.props.mixpanel.track('Sort Changed',{'sortBy': sortString});
 
     this.saveFilters();
   }
@@ -90,7 +108,7 @@ export default class DesktopFilters extends Component {
         </Col>
 
         <Col md={12} lg={12} style={{height:"20%", marginTop:"10px"}}>
-          <div style={{width:"20%", color:"#95a5a6", float:"left", textAlign:"left",paddingLeft:"5px", fontSize:"18px"}}>Sort By</div>
+          <div style={{width:"20%", color:"#95a5a6", float:"left", textAlign:"left",paddingLeft:"5px", fontSize:"14px"}}>Sort By</div>
 
           <div style={{width:"80%", float:"right"}}>
             <ButtonGroup style={{width:"100%"}}>
@@ -102,7 +120,7 @@ export default class DesktopFilters extends Component {
         </Col>
 
         <Col md={12} lg={12} style={{height:"20%", marginTop:"10px"}}>
-          <div style={{width:"20%", color:"#95a5a6", float:"left", textAlign:"left",paddingLeft:"5px", fontSize:"18px"}}>Price</div>
+          <div style={{width:"20%", color:"#95a5a6", float:"left", textAlign:"left",paddingLeft:"5px", fontSize:"14px"}}>Price</div>
 
           <div style={{width:"80%", marginTop:"10px",  float:"right"}}>
             <InputRange
@@ -112,14 +130,14 @@ export default class DesktopFilters extends Component {
                 onChange={this.updatePrice} />
           </div>
 
-          <div style={{height:"15px", float:"right", width:"80%",color:"#95a5a6",  marginLeft:"5%"}}>
+          <div style={{height:"15px", float:"right", width:"80%",color:"#95a5a6",fontSize:"12px",  marginLeft:"5%"}}>
             <div style={{float:"left", marginLeft:"5px"}}>{styledPriceMin}</div>
             <div style={{float:"right", marginRight:"5px"}}>{styledPriceMax}</div>
           </div>
         </Col>
 
         <Col  md={12} lg={12} style={{height:"20%", marginTop:"10px"}}>
-          <div style={{width:"20%", color:"#95a5a6",float:"left", textAlign:"left", paddingLeft:"5px", fontSize:"18px"}}>Square Feet</div>
+          <div style={{width:"20%", color:"#95a5a6",float:"left", textAlign:"left", paddingLeft:"5px", fontSize:"14px"}}>Square Feet</div>
 
           <div style={{width:"80%", marginTop:"10px",  float:"right"}}>
             <InputRange
@@ -128,7 +146,7 @@ export default class DesktopFilters extends Component {
                 value={{min: this.state.sqftMin, max: this.state.sqftMax}}
                 onChange={this.updateSqft} />
           </div>
-          <div style={{height:"15px", width:"80%", float:"right", color:"#95a5a6", marginLeft:"5%"}}>
+          <div style={{height:"15px", width:"80%", float:"right", color:"#95a5a6", fontSize:"12px", marginLeft:"5%"}}>
             <div style={{float:"left", marginLeft:"5px"}}>{styledSqftMin}</div>
             <div style={{float:"right", marginRight:"5px"}}>{styledSqftMax}</div>
           </div>
