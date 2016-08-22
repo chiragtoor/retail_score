@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import * as Actions from '../actions';
 
 import ContentWrapper from '../components/Base/ContentWrapper';
-import { Grid, Row, Col, Panel, Button, Popover,Pagination, OverlayTrigger, Overlay, FormGroup, ControlLabel, FormControl, InputGroup, Carousel, CarouselItem, DropdownButton, MenuItem } from 'react-bootstrap';
+import { Grid, Row, Modal, Col, Panel, Button, Popover,Pagination, OverlayTrigger, Overlay, FormGroup, ControlLabel, FormControl, InputGroup, Carousel, CarouselItem, DropdownButton, MenuItem } from 'react-bootstrap';
 
 const isBrowser = typeof window !== 'undefined';
 // const C3Chart = isBrowser ? require('react-c3') : undefined;
@@ -18,6 +18,7 @@ import TabletPropertyList from '../components/TabletPropertyList';
 import DesktopPropertyList from '../components/DesktopPropertyList';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import RetailScoreExplanation from '../components/RetailScoreExplanation';
+import DesktopRetailScoreExplanation from '../components/DesktopRetailScoreExplanation'
 
 const PRICE_MIN = 0;
 const PRICE_MAX = 100000;
@@ -36,10 +37,12 @@ class SRP extends React.Component {
       this.setCurrentProperty = this.setCurrentProperty.bind(this);
       this.showFilters = this.showFilters.bind(this);
       this.hideFilters = this.hideFilters.bind(this);
+      this.hideModals = this.hideModals.bind(this);
       this.saveFilters = this.saveFilters.bind(this);
       this.saveTempFilters = this.saveTempFilters.bind(this);
       this.upgradeTempFilters = this.upgradeTempFilters.bind(this);
       this.showRetailScoreExplanation = this.showRetailScoreExplanation.bind(this);
+      this.showDesktopRetailScoreExpalantion = this.showDesktopRetailScoreExpalantion.bind(this);
       this.scrollToFilters = this.scrollToFilters.bind(this);
       this.listDoneResetting = this.listDoneResetting.bind(this);
 
@@ -67,7 +70,8 @@ class SRP extends React.Component {
         tempSortIndex: 1,
         tempNeedsUpgrade: false,
         sortIndex: 1,
-        resetList: false
+        resetList: false,
+        desktopRetailScoreExplanation: false
       };
 
     }
@@ -96,7 +100,7 @@ class SRP extends React.Component {
                               sortIndex={this.state.sortIndex}
                               mixpanel={this.context.mixpanel} />
                            </div>;
-      this.state.dimDiv = <div className="dimDiv" onClick={this.hideFilters}></div>;
+      this.state.dimDiv = <div className="dimDiv" onClick={this.hideModals}></div>;
       this.setState(this.state);
 
       this.context.mixpanel.track('Show Mobile Filters');
@@ -106,6 +110,13 @@ class SRP extends React.Component {
     hideFilters(){
       this.state.modal = null;
       this.state.dimDiv = null;
+      this.setState(this.state);
+    }
+
+    hideModals(){
+      this.state.modal = null;
+      this.state.dimDiv = null;
+      this.state.desktopRetailScoreExplanation = false;
       this.setState(this.state);
     }
 
@@ -200,13 +211,25 @@ class SRP extends React.Component {
     }
 
     showRetailScoreExplanation() {
-      this.state.modal = <div style={{height:"350px", width:"100%", backgroundColor:"#FFFFFF", position:"absolute", zIndex:"3", bottom:"0", right:"0"}}>
+      
+      //Mobile explanation modals
+      this.state.modal = <div className="hidden-lg hidden-md" style={{height:"350px", width:"100%", backgroundColor:"#FFFFFF", position:"absolute", zIndex:"3", bottom:"0", right:"0"}}>
                     <RetailScoreExplanation hide={this.hideFilters} mixpanel={this.context.mixpanel} />
                    </div>;
-      this.state.dimDiv = <div className="dimDiv" onClick={this.hideFilters}></div>;
+      this.state.dimDiv = <div className="dimDiv hidden-lg hidden-md" onClick={this.hideFilters}></div>;
+
       this.setState(this.state);
 
       this.context.mixpanel.track('Show RetailScore Explanation Modal', {'type':'mobile'});
+    }
+
+    showDesktopRetailScoreExpalantion() {
+      //Desktop explanation modals
+      console.log("show the desktop modal");
+      this.state.desktopRetailScoreExplanation = true;
+
+      this.setState(this.state);
+      this.context.mixpanel.track('Show RetailScore Explanation Modal', {'type':'desktop'});
     }
 
     searchClick(city) {
@@ -412,6 +435,8 @@ class SRP extends React.Component {
                     </Col>
 
                     <Col md={7} lg={8} style={{marginRight:"0px", paddingRight:"0px"}} className="desktopMap hidden-xs hidden-sm">
+                      <Button onClick={this.showDesktopRetailScoreExpalantion} style={{fontSize:"14px", backgroundColor:"#FFFFFF", color:"#7f8c8d", border:"solid thin #7f8c8d", position:"fixed", top:"65px", right:"5px", zIndex:"1"}}>What is RetailScore?</Button>
+
                       <div style={{width:"100%"}} className="fullHeight hidden-sm hidden-xs">
                         <GoogleMap 
                           id={"desktop"} 
@@ -459,6 +484,12 @@ class SRP extends React.Component {
                         {this.state.modal}
                       </ReactCSSTransitionGroup>
                     </Col>
+
+                    <Modal show={this.state.desktopRetailScoreExplanation}>
+                      <Modal.Body style={{height:"300px"}}>
+                        <DesktopRetailScoreExplanation hide={this.hideModals} mixpanel={this.context.mixpanel}/>
+                      </Modal.Body>
+                    </Modal>
                 </Row>
             </div>
             );
