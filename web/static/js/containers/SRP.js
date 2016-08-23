@@ -63,10 +63,10 @@ class SRP extends React.Component {
         priceMax: PRICE_MAX,
         sqftMin: SQ_MIN,
         sqftMax: SQ_MAX,
-        tempPriceMin: PRICE_MIN,
-        tempPriceMax: PRICE_MAX,
-        tempSqftMin: SQ_MIN,
-        tempSqftMax: SQ_MAX,
+        tempPriceMin: null,
+        tempPriceMax: null,
+        tempSqftMin: null,
+        tempSqftMax: null,
         tempSortIndex: 1,
         tempNeedsUpgrade: false,
         sortIndex: 1,
@@ -168,10 +168,22 @@ class SRP extends React.Component {
 
     upgradeTempFilters() {
 
-      this.state.priceMin = this.state.tempPriceMin;
-      this.state.priceMax = this.state.tempPriceMax;
-      this.state.sqftMin = this.state.tempSqftMin;
-      this.state.sqftMax = this.state.tempSqftMax;
+      if(this.state.tempPriceMin) {
+        this.state.priceMin = this.state.tempPriceMin;
+      }
+
+      if(this.state.tempPriceMax) {
+        this.state.priceMax = this.state.tempPriceMax;
+      }
+
+      if(this.state.tempSqftMin) {
+        this.state.sqftMin = this.state.tempSqftMin;
+      }
+
+      if(this.state.tempSqftMax) {
+        this.state.sqftMax = this.state.tempSqftMax;
+      }
+
       this.state.sortIndex = this.state.tempSortIndex
       this.state.tempNeedsUpgrade = false;
       this.state.resetList = true;
@@ -418,7 +430,7 @@ class SRP extends React.Component {
                           <div id='desktopFilterBar' style={{backgroundColor:"#FFFFFF",width:"100%", height:"50px", color:"#FFFFFF", borderTop:"solid thin #DCE0E0"}}>
                             <div style={{height:"100%", padding:"15px",float:"left", color:"#95a5a6", width:"50%", fontSize:"16px"}}>{filteredProperties.length} properties for lease</div>
                             <div style={{height:"100%",float:"right", width:"50%", fontSize:"16px"}}>
-                              <Button onClick={this.upgradeTempFilters} style={{backgroundColor:(saveFilterBackground), marginTop:"5px", marginRight:"15px", float:"right", color:(saveFilterColor), border:"solid thin #49A3DC",fontSize:"16px", fontWeight:"400"}}>Save Filters</Button>
+                              <Button onClick={this.upgradeTempFilters} style={{backgroundColor:(saveFilterBackground), marginTop:"5px", marginRight:"15px", float:"right", color:(saveFilterColor), border:"solid thin #49A3DC",fontSize:"16px", fontWeight:"400"}}>Save</Button>
                             </div>
                           </div>
 

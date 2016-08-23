@@ -43,21 +43,21 @@ export default class CompetitionGoogleMap extends Component {
 
     map.setOptions({ scrollwheel: false});
 
-    var moonMapType = new google.maps.ImageMapType({
-      getTileUrl: function(coord, zoom) {
-        if(zoom < 8) {
-          return null;
-        }
-        return 'https://s3-us-west-2.amazonaws.com/retailscoretiles/' + zoom + '/' + coord.x + '/' + coord.y + '/tile.png'
-      },
-      tileSize: new google.maps.Size(256, 256),
-      maxZoom: 17,
-      minZoom: 8,
-      radius: 1738000,
-      name: 'RetailScore'
-    });
+    // var moonMapType = new google.maps.ImageMapType({
+    //   getTileUrl: function(coord, zoom) {
+    //     if(zoom < 8) {
+    //       return null;
+    //     }
+    //     return 'https://s3-us-west-2.amazonaws.com/retailscoretiles/' + zoom + '/' + coord.x + '/' + coord.y + '/tile.png'
+    //   },
+    //   tileSize: new google.maps.Size(256, 256),
+    //   maxZoom: 17,
+    //   minZoom: 8,
+    //   radius: 1738000,
+    //   name: 'RetailScore'
+    // });
 
-    map.overlayMapTypes.push(moonMapType);
+    // map.overlayMapTypes.push(moonMapType);
 
     google.maps.event.addListener(map, 'zoom_changed', function() {
       if (map.getZoom() > 16) map.setZoom(16);
