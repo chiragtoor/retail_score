@@ -1,6 +1,7 @@
 import {default as React, Component} from "react";
-import {Glyphicon,Modal, Button,ButtonGroup, FormGroup, ControlLabel, FormControl, InputGroup, Panel, Nav, NavItem, NavBar} from "react-bootstrap";
+import {Glyphicon,Modal, Button,ButtonGroup, FormGroup, Dropdown, Clearfix, MenuItem, DropdownButton, ControlLabel, FormControl, InputGroup, Panel, Nav, NavItem, NavBar} from "react-bootstrap";
 import InputRange from 'react-input-range';
+import * as Util from '../Util.js';
 
 
 const PRICE_MIN = 0;
@@ -14,16 +15,19 @@ export default class Filters extends Component {
   constructor(props) {
     super(props);
 
-    this.updatePrice = this.updatePrice.bind(this);
-    this.updateSqft = this.updateSqft.bind(this);
+    this.updateMaxPrice = this.updateMaxPrice.bind(this);
+    this.updateMinPrice = this.updateMinPrice.bind(this);
+    this.updateMinSqft = this.updateMinSqft.bind(this);
+    this.updateMaxSqft = this.updateMaxSqft.bind(this);
+
     this.saveFilters = this.saveFilters.bind(this);
     this.sortIndexChanged = this.sortIndexChanged.bind(this);
 
     this.state = {
-      priceMin: PRICE_MIN,
-      priceMax: PRICE_MAX,
-      sqftMin: SQ_MIN,
-      sqftMax: SQ_MAX,
+      priceMin: null,
+      priceMax: null,
+      sqftMin: null,
+      sqftMax: null,
       sortIndex: 1
     };
   }
@@ -37,15 +41,23 @@ export default class Filters extends Component {
     this.setState(this.state);
   }
 
-  updateSqft(component, values)  {
-    this.state.sqftMin = values.min;
-    this.state.sqftMax = values.max;
+  updateMinSqft(index)  {
+    this.state.sqftMin = Util.square_feet[index];
     this.setState(this.state);
   }
 
-  updatePrice(component, values) {
-    this.state.priceMin = values.min;
-    this.state.priceMax = values.max;
+  updateMaxSqft(index)  {
+    this.state.sqftMax = Util.square_feet[index];
+    this.setState(this.state);
+  }
+
+  updateMinPrice(index) {
+    this.state.priceMin = Util.prices[index];
+    this.setState(this.state);
+  }
+
+  updateMaxPrice(index) {    
+    this.state.priceMax = Util.prices[index];
     this.setState(this.state);
   }
 
@@ -82,12 +94,6 @@ export default class Filters extends Component {
 
   render () {
 
-
-    var styledPriceMin = '$' + this.state.priceMin.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' /mo';
-    var styledPriceMax = '$' + this.state.priceMax.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' /mo';
-    var styledSqftMin = this.state.sqftMin.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' sqft';
-    var styledSqftMax = this.state.sqftMax.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ' sqft';
-
     var priceBackground = this.state.sortIndex == 1 ? "#49A3DC" : "#FFFFFF";
     var priceColor = this.state.sortIndex == 1 ? "#FFFFFF" : "#95a5a6";
     var sqftBackground = this.state.sortIndex == 2 ? "#49A3DC" : "#FFFFFF";
@@ -95,8 +101,96 @@ export default class Filters extends Component {
     var retailScoreBackground = this.state.sortIndex == 3 ? "#49A3DC" : "#FFFFFF";
     var retailScoreColor = this.state.sortIndex == 3 ? "#FFFFFF" : "#95a5a6";
 
+    var minPriceString = this.state.priceMin ? ('$' + this.state.priceMin.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")) : "Min";
+    var maxPriceString = this.state.priceMax ? ('$' + this.state.priceMax.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))  : "Max";
+
+    var minSqftString = this.state.sqftMin ? this.state.sqftMin.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : "Min";
+    var maxSqftString = this.state.sqftMax ? this.state.sqftMax.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",") : "Max";
+
+    var minSqft = this.state.sqftMin;
+    var maxSqft = this.state.sqftMax;
+    var minPrice = this.state.priceMin;
+    var maxPrice = this.state.priceMax;
+
+    var maxSqftDropDown = <Dropdown.Menu style={{height:"auto", maxHeight:"100px", overflowX:"hidden"}}>
+                    {Util.square_feet.map(function(sqft, index){
+                      if(!minSqft) {
+                        return <MenuItem key={index}  eventKey={index}>{sqft.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</MenuItem>;
+                      } else if (sqft > minSqft) {
+                        return <MenuItem key={index}  eventKey={index}>{sqft.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</MenuItem>;
+                      }
+                    })}
+                </Dropdown.Menu>;
+
+    var minSqftDropDown = <Dropdown.Menu style={{height:"auto", maxHeight:"100px", overflowX:"hidden"}}>
+                    {Util.square_feet.map(function(sqft, index){
+                      if(!maxSqft) {
+                        return <MenuItem key={index} eventKey={index}>{sqft.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</MenuItem>;
+                      } else if (sqft < maxSqft) {
+                        return <MenuItem key={index} eventKey={index}>{sqft.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",")}</MenuItem>;
+                      }
+                    })}
+                </Dropdown.Menu>;
+
+
+    var minPriceDropDown = <Dropdown.Menu style={{height:"auto", maxHeight:"100px", overflowX:"hidden"}}>
+                    {Util.prices.map(function(price, index){
+                      if(!maxPrice) {
+                        return <MenuItem key={index}  eventKey={index}>{('$' + price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}</MenuItem>;
+                      }
+                      else if (price < maxPrice){
+                        return <MenuItem key={index}  eventKey={index}>{('$' + price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}</MenuItem>;
+                      }
+                    })}
+                </Dropdown.Menu>;
+
+    var maxPriceDropDown = <Dropdown.Menu style={{height:"auto", maxHeight:"100px", overflowX:"hidden"}}>
+                    {Util.prices.map(function(price, index){
+                      if(!minPrice) {
+                        return <MenuItem key={index}  eventKey={index}>{('$' + price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}</MenuItem>;
+                      } else if(price > minPrice){
+                        return <MenuItem key={index}  eventKey={index}>{('$' + price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","))}</MenuItem>
+                      }
+                    })}
+                </Dropdown.Menu>;
+
     return (
-      <div style={{height:"100%", width:"100%", backgroundColor:"#FFFFFF"}}>
+      <div style={{height:"100%", width:"100%", backgroundColor:"#FFFFFF", overflowY:"hidden"}}>
+        
+        <div style={{width:"100%", textAlign:"center", fontSize:"18px", marginTop:"15px"}}>Monthly Rent</div>
+        <div style={{width:"100%", textAlign:"center", marginTop:"5px"}}>
+          <Dropdown onSelect={e => this.updateMinPrice(e)} id='minPriceDropDown'>
+            <Dropdown.Toggle style={{fontSize:"18px" ,height:"40px", width:"150px", marginLeft:"5px", color:"#5C6872", fontWeight:"100", backgroundColor:"#FFFFFF"}}>
+              {minPriceString}
+            </Dropdown.Toggle>
+            {minPriceDropDown}
+          </Dropdown>
+
+          <Dropdown onSelect={e => this.updateMaxPrice(e)} id='maxPriceDropDown'>
+            <Dropdown.Toggle style={{fontSize:"18px" ,height:"40px", width:"150px", marginLeft:"25px",  color:"#5C6872", fontWeight:"100", backgroundColor:"#FFFFFF"}}>
+              {maxPriceString}
+            </Dropdown.Toggle>
+            {maxPriceDropDown}
+          </Dropdown>
+        </div>
+
+        <div style={{width:"100%", textAlign:"center", fontSize:"18px", marginTop:"10px"}}>Square Feet</div>
+        
+        <div style={{width:"100%", textAlign:"center", marginTop:"5px"}}>
+          <Dropdown onSelect={e => this.updateMinSqft(e)} id='minSqftDropDown'>
+            <Dropdown.Toggle style={{fontSize:"18px" ,height:"40px", width:"150px", marginLeft:"5px",  color:"#5C6872", fontWeight:"100", backgroundColor:"#FFFFFF"}}>
+              {minSqftString}
+            </Dropdown.Toggle>
+            {minSqftDropDown}
+          </Dropdown>
+
+          <Dropdown onSelect={e => this.updateMaxSqft(e)} id='maxSqftDropDown'>
+            <Dropdown.Toggle style={{fontSize:"18px" ,height:"40px", width:"150px", marginLeft:"25px",  color:"#5C6872", fontWeight:"100", backgroundColor:"#FFFFFF"}}>
+              {maxSqftString}
+            </Dropdown.Toggle>
+            {maxSqftDropDown}
+          </Dropdown>
+        </div>
 
         <div style={{width:"100%", textAlign:"center", fontSize:"18px", marginTop:"10px"}}>Sort By:</div> 
 
@@ -107,33 +201,6 @@ export default class Filters extends Component {
               <Button onClick={e => this.sortIndexChanged(e, 3)} style={{width:"33%", height:"40px", backgroundColor:(retailScoreBackground), color:(retailScoreColor)}}>RetailScore</Button>
           </ButtonGroup>
         </center>
-        
-        <div style={{width:"100%", textAlign:"center", fontSize:"18px", marginTop:"15px"}}>Price</div>
-        <div style={{width:"80%", marginLeft:"10%", marginTop:"5px", height:"25px"}}>
-          <InputRange
-              maxValue={PRICE_MAX}
-              minValue={PRICE_MIN}
-              value={{min: this.state.priceMin, max: this.state.priceMax}}
-              onChange={this.updatePrice} />
-        </div>
-        <div style={{height:"15px", width:"90%",color:"#95a5a6",  marginLeft:"5%", marginTop:"10px"}}>
-          <div style={{float:"left"}}>{styledPriceMin}</div>
-          <div style={{float:"right"}}>{styledPriceMax}</div>
-        </div>
-
-        <div style={{width:"100%", textAlign:"center", fontSize:"18px", marginTop:"10px"}}>Square Feet</div>
-        <div style={{width:"80%", marginLeft:"10%", marginTop:"5px", height:"25px"}}>
-          <InputRange
-              maxValue={SQ_MAX}
-              minValue={SQ_MIN}
-              value={{min: this.state.sqftMin, max: this.state.sqftMax}}
-              onChange={this.updateSqft} />
-        </div>
-        <div style={{height:"15px", width:"90%", color:"#95a5a6", marginLeft:"5%", marginTop:"10px"}}>
-          <div style={{float:"left"}}>{styledSqftMin}</div>
-          <div style={{float:"right"}}>{styledSqftMax}</div>
-        </div>
-
 
         <Button onClick={this.saveFilters} style={{backgroundColor:"#49A3DC",color:"#FFFFFF", marginTop:"30px", border:"solid thin #49A3DC", width:"60%", marginLeft:"20%", fontSize:"18px", fontWeight:"400px"}}>Save</Button>
       </div>

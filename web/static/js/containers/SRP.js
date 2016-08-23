@@ -59,10 +59,10 @@ class SRP extends React.Component {
         city: thisCity,
         modal: null,
         dimDiv: null,
-        priceMin: PRICE_MIN,
-        priceMax: PRICE_MAX,
-        sqftMin: SQ_MIN,
-        sqftMax: SQ_MAX,
+        priceMin: null,
+        priceMax: null,
+        sqftMin: null,
+        sqftMax: null,
         tempPriceMin: null,
         tempPriceMax: null,
         tempSqftMin: null,
@@ -286,20 +286,25 @@ class SRP extends React.Component {
 
         var filteredProperties = [];
 
+        var minPrice = this.state.priceMin ? this.state.priceMin : PRICE_MIN;
+        var maxPrice = this.state.priceMax ? this.state.priceMax : PRICE_MAX;
+        var minSqft = this.state.sqftMin ? this.state.sqftMin : SQ_MIN;
+        var maxSqft = this.state.sqftMax ? this.state.sqftMax : SQ_MAX;
+
          for(var i = 0; i < properties.length; i++) {
            var property = properties[i];
 
           if(!property.rental_rate_min) {
             if(!property.min_sq_feet) {
               filteredProperties.push(property);
-            } else if( (property.min_sq_feet <=  this.state.sqftMax && property.min_sq_feet >=  this.state.sqftMin) || (property.max_sq_feet <= this.state.sqftMax && property.max_sq_feet >= this.state.sqftMin) ) {
+            } else if( (property.min_sq_feet <=  maxSqft && property.min_sq_feet >=  minSqft) || (property.max_sq_feet <= maxSqft && property.max_sq_feet >= minSqft) ) {
               filteredProperties.push(property);
             }
           } 
-          else if( (property.rental_rate_min <=  this.state.priceMax && property.rental_rate_min >=  this.state.priceMin) || (property.rental_rate_max <=  this.state.priceMax && property.rental_rate_max >=  this.state.priceMin) ){
+          else if( (property.rental_rate_min <= maxPrice  && property.rental_rate_min >=  minPrice) || (property.rental_rate_max <=  maxPrice && property.rental_rate_max >=  minPrice) ){
             if(!property.min_sq_feet) {
               filteredProperties.push(property);
-            } else if( (property.min_sq_feet <=  this.state.sqftMax && property.min_sq_feet >=  this.state.sqftMin) || (property.max_sq_feet <= this.state.sqftMax && property.max_sq_feet >= this.state.sqftMin) ){
+            } else if( (property.min_sq_feet <=  maxSqft && property.min_sq_feet >=  minSqft) || (property.max_sq_feet <= maxSqft && property.max_sq_feet >= minSqft) ){
               filteredProperties.push(property);
             }
           }
