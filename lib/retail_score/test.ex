@@ -1,5 +1,9 @@
 defmodule RetailScore.Test do
 
+  def scrape(url) do
+    IO.inspect Scrape.article url
+  end
+
   @properties [%{"name" => "1124 Montana Avenue", "lat" => 34.030344, "lng" => -118.4972039},
                %{"name" => "1444 Third Street Promenade", "lat" => 34.0145689, "lng" => -118.4951749},
                %{"name" => "3rd Street Mall Center", "lat" => 34.013660, "lng" => -118.493965},

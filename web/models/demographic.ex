@@ -22,8 +22,8 @@ defmodule RetailScore.Demographic do
   end
 
   # Esri Account Credentials
-  @client_id "lpCIeD2LSd3f0NSK"
-  @client_secret "750385b9fd9e4093ad995fdb21c48c1a"
+  @client_id "mR0qtEBMOIM4TV99"
+  @client_secret "60821f2219c043038ef9ee612cdd399c"
   # Esri Query URL Specific Info
   @esri_url "http://geoenrich.arcgis.com/arcgis/rest/services/World/geoenrichmentserver/Geoenrichment/Enrich?"
   @study_areas ~s(studyAreas=[{%22areaType%22:%22RingBuffer%22,%22bufferUnits%22:%22esriMiles%22,%22bufferRadii%22:[1],%22geometry%22:)
@@ -31,10 +31,20 @@ defmodule RetailScore.Demographic do
   @rs_study_areas ~s(studyAreas=[{%22areaType%22:%22RingBuffer%22,%22bufferUnits%22:%22esriKilometers%22,%22bufferRadii%22:[0.5],%22geometry%22:)
   @rs_study_area_options ~s(studyAreaOptions=[{%22areaType%22:%22RingBuffer%22,%22bufferUnits%22:%22esriKilometers%22,%22bufferRadii%22:[0.5]}])
   @rs_variables [
-              {"X5001_X", "clothing.X5001_X"},
-              {"X1131_X", "food.X1131_X"},
-              {"X10001_X", "HealthPersonalCareCEX.X10001_X"},
-              {"X9001_X", "entertainment.X9001_X"}
+    {"RTSALESTOT", "retailmarketplace.RTSALESTOT"}, # Total Retail Sales
+    {"RSALES4413", "retailmarketplace.RSALES4413"}, # Auto Parts/Accessor/Tire Stores
+    {"RSALES442", "retailmarketplace.RSALES442"},   # Furniture/Home Furnishing Stores
+    {"RSALES4431", "retailmarketplace.RSALES4431"}, # Electronics & Appliance Stores
+    {"RSALES4441", "retailmarketplace.RSALES4441"}, # Bldg Material/Supplies Dealers
+    {"RSALES4452", "retailmarketplace.RSALES4452"}, # Specialty Food Stores
+    {"RSALES4461", "retailmarketplace.RSALES4461"}, # Health & Personal Care Stores
+    {"RSALES4481", "retailmarketplace.RSALES4481"}, # Clothing Stores
+    {"RSALES4482", "retailmarketplace.RSALES4482"}, # Shoe Stores
+    {"RSALES451", "retailmarketplace.RSALES451"},   # Sports/Hobby/Book/Music Stores
+    {"RSALES4531", "retailmarketplace.RSALES4531"}, # Florists
+    {"RSALES4532", "retailmarketplace.RSALES4532"}, # Office Suppl/Station/Gift Stores
+    {"RSALES7221", "retailmarketplace.RSALES7221"}, # Full-Service Restaurants
+    {"RSALES7224", "retailmarketplace.RSALES7224"}  # Drinking Places-Alcohol
   ]
   @idCode "myId"
   @variables [ # Income Demographic Variables
@@ -911,6 +921,8 @@ defmodule RetailScore.Demographic do
       @study_area_options <> "&f=pjson&forStorage=true" <>
       "&analysisVariables=[%22" <> variables <> "%22]" 
 
+    IO.inspect query_url
+
     case HTTPoison.post(query_url, "", [], [{:timeout, :infinity}, {:recv_timeout, :infinity}]) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         extract_esri_variables(Poison.Parser.parse!(body))
@@ -994,15 +1006,11 @@ defmodule RetailScore.Demographic do
 
         case Poison.Parser.parse!(body) do
           %{"error" => error} ->
-            IO.puts "ERROR"
-            IO.inspect query_url
             new_client_id = String.strip(IO.gets "Enter a new client_id: ")
             new_client_secret = String.strip(IO.gets "Enter a new client_secret: ")
             get_esri_data_for_lat_lng_batch(properties, new_client_id, new_client_secret)
           success ->
             %{"results" => [%{"value" => %{"FeatureSet" => [%{"features" => results}]}}]} = success
-            IO.puts "Got Results"
-            IO.inspect results
 
             results
             |> Enum.map(fn(attributes) ->
@@ -1105,8 +1113,10 @@ defmodule RetailScore.Demographic do
 
               property = Map.merge(property, %{"demographics" => old_demographics ++ add_demographics})
 
-              [{"X5001_X", clothing}, {"X1131_X", food}, {"X10001_X", personal}, {"X9001_X", entertainment}] = variableTuples
-              sum = clothing + food + personal + entertainment
+              sum = variableTuples
+              |> Enum.reduce(0, fn({_, value}, acc) ->
+                acc + value
+              end)
 
               Map.merge(property, %{"rs_data" => %{"sum" => sum}})
             end)

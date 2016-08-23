@@ -84,7 +84,13 @@ defmodule RetailScore.Processor do
       IO.puts "Adding Demographics"
       processed_with_demographics = processed_with_geo
       |> Enum.chunk(50, 50, [])
-      |> Enum.map(fn(batch) ->
+
+      batch_count = processed_with_demographics |> Enum.count
+
+      processed_with_demographics = processed_with_demographics
+      |> Enum.with_index
+      |> Enum.map(fn({batch, index}) ->
+        IO.puts "\tOn batch #{index + 1} / #{batch_count}"
         RetailScore.Demographic.get_esri_data_for_lat_lng_batch(batch)
       end)
       |> Enum.concat
@@ -99,7 +105,13 @@ defmodule RetailScore.Processor do
       IO.puts "Adding RS Data"
       processed_with_rs_data = processed_with_demographics
       |> Enum.chunk(50, 50, [])
-      |> Enum.map(fn(batch) ->
+
+      batch_count = processed_with_rs_data |> Enum.count
+
+      processed_with_rs_data = processed_with_rs_data
+      |> Enum.with_index
+      |> Enum.map(fn({batch, index}) ->
+        IO.puts "\tOn batch #{index + 1} / #{batch_count}"
         RetailScore.Demographic.get_esri_data_for_lat_lng_rs_batch(batch)
       end)
       |> Enum.concat
@@ -115,6 +127,108 @@ defmodule RetailScore.Processor do
       finalData = processed_with_rs_data
       |> score_rs_data_properties
       # |> IO.inspect
+
+      IO.puts "Uploading final data to S3"
+      uploadData = finalData
+      |> Enum.map(fn(property) ->
+        Poison.encode!(property)
+      end)
+      |> Enum.join(",")
+
+      upload = "[" <> uploadData <> "]"
+
+      RetailScore.S3.upload("processed/#{file}", upload)
+
+      IO.puts "Uploaded processed/#{file} to S3"
+    end)
+  end
+
+  def rescore_files(files) do
+    files
+    |> Enum.map(fn(file) ->
+      IO.puts "Working on: #{file}"
+
+      IO.puts "Downloading from S3"
+      properties = RetailScore.S3.download("processed/#{file}")
+      |> Poison.decode!
+
+      uploadData = properties
+      |> Enum.map(fn(propertyData) ->
+        %{"demographics" => demographics} = propertyData
+
+        retailSales = demographics
+        |> Enum.map(fn(demographic) ->
+          case demographic do
+            %{"esri_variable" => "RSALES4481"} ->
+              demographic
+            %{"esri_variable" => "RSALES4482"} ->
+              demographic
+            _ ->
+              nil
+          end
+        end)
+        |> Enum.filter(fn(demographic) ->
+          demographic != nil
+        end)
+        |> IO.inspect
+        |> Enum.reduce(0, fn(%{"value" => value}, sum) ->
+          sum + value
+        end)
+
+        Map.merge(propertyData, %{"rs_data" => retailSales})
+      end)
+      |> score_rs_data_properties
+      |> Enum.map(fn(property) ->
+        Poison.encode!(property)
+      end)
+      |> Enum.join(",")
+
+      upload = "[" <> uploadData <> "]"
+
+      RetailScore.S3.upload("processed/#{file}", upload)
+
+      IO.puts "Uploaded processed/#{file} to S3"
+
+    end)
+  end
+
+  def process_files_2(files) do
+    files
+    |> Enum.map(fn(file) ->
+      IO.puts "Working on: #{file}"
+
+      IO.puts "Downloading from S3"
+      properties = RetailScore.S3.download("processed/#{file}")
+      |> Poison.decode!
+
+       totalCount = properties
+      |> Enum.count
+      IO.puts "#{totalCount} properties to be inserted after getting demographics"
+
+      IO.puts "Adding RS Data"
+      processed_with_rs_data = properties
+      |> Enum.chunk(50, 50, [])
+
+      batch_count = processed_with_rs_data |> Enum.count
+
+      processed_with_rs_data = processed_with_rs_data
+      |> Enum.with_index
+      |> Enum.map(fn({batch, index}) ->
+        IO.puts "\tOn batch #{index + 1} / #{batch_count}"
+        RetailScore.Demographic.get_esri_data_for_lat_lng_rs_batch(batch)
+      end)
+      |> Enum.concat
+      |> Enum.filter(fn(property) ->
+        property != nil
+      end)
+
+       totalCount = processed_with_rs_data
+      |> Enum.count
+      IO.puts "#{totalCount} properties to be inserted after getting RS data"
+
+      IO.puts "Scoring properties by city"
+      finalData = processed_with_rs_data
+      |> score_rs_data_properties
 
       IO.puts "Uploading final data to S3"
       uploadData = finalData
