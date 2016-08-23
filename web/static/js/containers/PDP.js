@@ -16,7 +16,7 @@ import PeoplePanel from '../components/PeoplePanel';
 import CompetitionPanel from '../components/CompetitionPanel';
 import DesktopCompetitionPanel from '../components/DesktopCompetitionPanel';
 
-import { Grid, Row, Col, Panel, Button, ButtonGroup, FormGroup, ControlLabel, FormControl, InputGroup, Carousel, CarouselItem } from 'react-bootstrap';
+import { Grid, Row, Col, Panel, Button, ButtonGroup, Modal, FormGroup, ControlLabel, FormControl, InputGroup, Carousel, CarouselItem } from 'react-bootstrap';
 
 // const isBrowser = typeof window !== 'undefined';
 // const C3Chart = isBrowser ? require('react-c3') : undefined;
@@ -30,24 +30,42 @@ class PDP extends React.Component {
       this.showRetailScoreExpalanation = this.showRetailScoreExpalanation.bind(this);
       this.hideModals = this.hideModals.bind(this);
       this.showContactModal = this.showContactModal.bind(this);
+      this.submitContactAndHideModal = this.submitContactAndHideModal.bind(this);
+      this.submitContact = this.submitContact.bind(this);
+      this.desktopContactFailed = this.desktopContactFailed.bind(this);
+      this.mobileContactFailed = this.mobileContactFailed.bind(this);
 
       this.state= 
       { 
         dimDiv: null,
-        modal: null
+        modal: null,
+        desktopContactSuccess: false,
+        desktopContactFailure: false
       }
     }
 
     showContactModal(){
       if(this.props.property.agents) {
-        this.state.modal = <div className="" style={{height:"300px", width:"100%", backgroundColor:"#FFFFFF", position:"fixed", zIndex:"3", bottom:"0", right:"0"}}>
-                      <ContactModal submitContact={this.hideModals} agent={this.props.property.agents[0]} mixpanel={this.context.mixpanel} />
+        this.state.modal = <div style={{height:"300px", width:"100%", backgroundColor:"#FFFFFF", position:"fixed", zIndex:"3", bottom:"0", right:"0"}}>
+                      <ContactModal contactFailed={this.mobileContactFailed} submitContact={this.submitContactAndHideModal} propertyId={this.props.property.id} agent={this.props.property.agents[0]} mixpanel={this.context.mixpanel} />
                      </div>;
         this.state.dimDiv = <div className="PDPDimDiv" onClick={this.hideModals}></div>;
         this.setState(this.state);
 
         this.context.mixpanel.track('Show Mobile Contact Modal');
       }
+    }
+
+    submitContact(data){
+      this.props.submitContact(data);
+      this.state.desktopContactSuccess = true;
+      this.setState(this.state);
+    }
+
+    submitContactAndHideModal(data) {
+      console.log("in pdp");
+      this.props.submitContact(data);
+      this.hideModals();
     }
 
     showRetailScoreExpalanation() {
@@ -58,9 +76,25 @@ class PDP extends React.Component {
       this.setState(this.state);
     }
 
+    mobileContactFailed() {
+      this.state.modal = <div style={{height:"200px", width:"100%", textAlign:"center", backgroundColor:"#FFFFFF", position:"fixed", zIndex:"3", bottom:"0", right:"0"}}>
+                        <p style={{fontSize:"18px", fontWeight:"400px", textAlign:"center", marginTop:"10px"}}>Please provide your Name, E-Mail and a Message for the broker.</p>
+                        <Button style={{backgroundColor:"#49A3DC", color:"#FFFFFF", fontSize:"18px"}} onClick={this.showContactModal}>Got it</Button>
+                   </div>;
+      this.state.dimDiv = <div className="PDPDimDiv" onClick={this.hideModals}></div>;
+      this.setState(this.state);
+    }
+
+    desktopContactFailed() {
+      this.state.desktopContactFailure = true;
+      this.setState(this.state);
+    }
+
     hideModals() {
       this.state.modal = null;
       this.state.dimDiv = null;
+      this.state.desktopContactSuccess = false;
+      this.state.desktopContactFailure = false;
       this.setState(this.state);
     }
 
@@ -134,7 +168,7 @@ class PDP extends React.Component {
                 <div className="hidden-xs hidden-sm hidden-md" style={{width:"100%", backgroundColor:"#FFFFFF"}}>
                   <Row>
                     <Col className="col-lg-offset-1 " lg={ 10 } >
-                      { property ? <DesktopPropertySummary property={property} mixpanel={this.context.mixpanel} /> : null}
+                      { property ? <DesktopPropertySummary submitContact={this.submitContact} contactFailed={this.desktopContactFailed} property={property} mixpanel={this.context.mixpanel} /> : null}
                     </Col>
                     <Col className="col-lg-offset-1 " lg={ 10 } >
                       { demographics ? <DesktopDemographicPanel data={demographics} mixpanel={this.context.mixpanel} tag={"largeDemographics"} /> : null}
@@ -148,7 +182,7 @@ class PDP extends React.Component {
                 <div className="hidden-xs hidden-sm hidden-lg" style={{width:"100%", backgroundColor:"#FFFFFF"}}>
                   <Row>
                     <Col md={ 12 } >
-                      { property ? <DesktopPropertySummary property={property} mixpanel={this.context.mixpanel} /> : null}
+                      { property ? <DesktopPropertySummary submitContact={this.submitContact} contactFailed={this.desktopContactFailed} property={property} mixpanel={this.context.mixpanel} /> : null}
                     </Col>
                     <Col md={ 12 } >
                       { demographics != null ? <DesktopDemographicPanel data={demographics} mixpanel={this.context.mixpanel} tag={"mediumDemographics"}/> : null}
@@ -156,6 +190,20 @@ class PDP extends React.Component {
                     <Col md={ 12 } >
                       {property.lat ? <DesktopCompetitionPanel property={property} mixpanel={this.context.mixpanel} tag={"mediumCompetition"}/> : null}
                     </Col>
+
+                    <Modal className="hidden-sm hidden-xs" show={this.state.desktopContactSuccess}>
+                      <Modal.Body style={{textAlign:"center"}}>
+                        <p style={{fontSize:"18px", fontWeight:"400px", textAlign:"center"}}>Your message has been sent. Expect a response soon!</p>
+                        <Button style={{backgroundColor:"#49A3DC", color:"#FFFFFF"}} onClick={this.hideModals}>Awesome</Button>
+                      </Modal.Body>
+                    </Modal>
+
+                     <Modal className="hidden-sm hidden-xs" show={this.state.desktopContactFailure}>
+                      <Modal.Body style={{textAlign:"center"}}>
+                        <p style={{fontSize:"18px", fontWeight:"400px", textAlign:"center"}}>Please provide your Name, E-Mail and a Message for the broker.</p>
+                        <Button style={{backgroundColor:"#49A3DC", color:"#FFFFFF"}} onClick={this.hideModals}>Ok</Button>
+                      </Modal.Body>
+                    </Modal>
                   </Row>
                 </div>
 

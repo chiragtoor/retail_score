@@ -10,6 +10,7 @@ import axios from 'axios';
 const endpoint = "/api/"
 const load_properties_endpoint = endpoint + "properties";
 const load_property_endpoint = endpoint + "property";
+const send_message_url = endpoint + 'messages';
 
 /*
  * State Management Types & Actions
@@ -29,6 +30,17 @@ export function loadProperties(city, state) {
     return axios.get(`${load_properties_endpoint}?city=${city}&state=${state}`).then(response => {
       dispatch(receiveProperties(response.data.properties));
     }).catch(response => {
+      console.error(response);
+    });
+  }
+}
+
+export function submitContact(data) {
+  return function(dispatch) {
+    console.log("in submitContact function");
+    axios.post(send_message_url, data).then(function (response) {
+      console.log(response);
+  }).catch(function (response) {
       console.error(response);
     });
   }

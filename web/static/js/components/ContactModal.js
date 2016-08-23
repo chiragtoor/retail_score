@@ -12,7 +12,7 @@ export default class ContactModal extends Component {
     this.state = {
       name: "",
       email: "",
-      message: ""
+      message: "Hello, I am intered in this property and want some more information."
     };
   }
 
@@ -32,8 +32,23 @@ export default class ContactModal extends Component {
   }
 
   submitContact() {
-    console.log("submot contact with: " + this.state.name + " " + this.state.email + " " + this.state.message);
-    this.props.submitContact();
+
+
+    if(this.state.name == "" || this.state.email == "" || this.state.message == ""){
+      this.props.contactFailed();
+      return;
+    }
+
+    this.props.submitContact({
+      "message":{
+        "contact_name": this.state.name,
+        "contact_email_address": this.state.email,
+        "body": this.state.message,
+        "property_id": this.props.propertyId
+      }
+    });
+
+    console.log("submit contact with: " + this.state.name + " " + this.state.email + " " + this.state.message + " " + this.props.propertyId);
 
     this.props.mixpanel.track('Submit Contact', {'name':this.state.name, 'email': this.state.email, 'message': this.state.message});
   }

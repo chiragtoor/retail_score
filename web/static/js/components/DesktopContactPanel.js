@@ -16,7 +16,7 @@ export default class DesktopContactPanel extends Component {
     this.state = {
       name: "",
       email: "",
-      message: "",
+      message: "Hello, \nI'm interested in this location and wanted some more information.",
       phone: ""
     };
   }
@@ -42,10 +42,29 @@ export default class DesktopContactPanel extends Component {
   }
 
   submitContact() {
-    console.log("submot contact with: " + this.state.name + " " + this.state.email + " " + this.state.message);
-    // this.props.submitContact();
+
+    if(this.state.name == "" || this.state.email == "" || this.state.message == ""){
+      this.props.contactFailed();
+      return;
+    }
+
+    this.props.submitContact({
+      "message":{
+        "contact_name": this.state.name,
+        "contact_email_address": this.state.email,
+        "contact_phone_number": this.state.phone,
+        "body": this.state.message,
+        "property_id": this.props.propertyId
+      }
+    });
 
     this.props.mixpanel.track('Submit Contact', {'name':this.state.name, 'email': this.state.email, 'message': this.state.message, 'phone': this.state.phone});
+    
+    this.state.name = "";
+    this.state.email = "";
+    this.state.phone = "";
+    this.state.message = "Hello, I am intered in this property and want some more information.";
+    this.setState(this.state);
   }
 
   render () {
@@ -93,11 +112,9 @@ export default class DesktopContactPanel extends Component {
                                 onChange={(e) => this.updateEmail(e)}/>
                             </FormGroup>
                             <FormGroup controlId="formControlsTextarea">
-                              <FormControl 
-                                componentClass="textarea" 
-                                placeholder="Optional Message ..." 
-                                value={this.state.message}
-                                onChange={(e) => this.updateMessage(e)}/>
+                              <textarea rows="4" style={{width:"100%", borderColor:"#CCCCCC"}} value={this.state.message} onChange={(e) => this.updateMessage(e)}>
+                                {"Hello, \nI'm interested in this location and wanted some more information."}
+                              </textarea>
                             </FormGroup>
                             <center>
                               <Button style={{color:"#FFFFFF", width:"100%", fontSize:"18px", backgroundColor:"#49A3DC", textAlign:"left"}} onClick={this.submitContact} bsClass="btn btn-labeled mr">
