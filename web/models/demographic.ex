@@ -779,10 +779,10 @@ defmodule RetailScore.Demographic do
 
   defp get_spending_data(demographics) do
     %{
-      clothing: extract_demographic(demographics, "X5001_X"),
-      food: extract_demographic(demographics, "X1131_X"),
-      personal: extract_demographic(demographics, "X10001_X"),
-      entertainment: extract_demographic(demographics, "X9001_X")
+      clothing: extract_demographic(demographics, "RSALES4481"),
+      food: extract_demographic(demographics, "RSALES7221"),
+      personal: extract_demographic(demographics, "RSALES4461"),
+      entertainment: extract_demographic(demographics, "RSALES451")
     }
   end
 
