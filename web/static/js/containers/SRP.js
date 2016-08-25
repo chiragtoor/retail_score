@@ -18,7 +18,7 @@ import TabletPropertyList from '../components/TabletPropertyList';
 import DesktopPropertyList from '../components/DesktopPropertyList';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import RetailScoreExplanation from '../components/RetailScoreExplanation';
-import DesktopRetailScoreExplanation from '../components/DesktopRetailScoreExplanation'
+import DesktopRetailScoreExplanation from '../components/DesktopRetailScoreExplanation';
 
 const PRICE_MIN = 0;
 const PRICE_MAX = 100000;
