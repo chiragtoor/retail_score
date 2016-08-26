@@ -178,7 +178,7 @@ export class CustomerProfile extends React.Component {
 
             <div style={{height:"50px", marginTop:"20px", position:"relative"}}>
               <TypeWriter ref="typer" delayMap={delays} typing={this.state.typing} fixed={true} onTypingEnd={this.typingEnd}>
-                 <div style={{width:"70%", position:"absolute", zIndex:"0", marginLeft:"15%"}}>
+                 <div style={{width:"70%", position:"absolute", zIndex:"0", fontSize:"30px", marginLeft:"15%"}}>
                   {this.state.text}
                  </div>
               </TypeWriter>
@@ -188,7 +188,7 @@ export class CustomerProfile extends React.Component {
                 onClick={this.stopAnimating}
                 onChange={(e) => this.updateBusiness(e)}
                 value={this.state.business}
-                style={{backgroundColor:"rgba(0,0,0,0.5)",  fontSize:"30px", height:"50px", fontWeight:"400px", position:"absolute", zIndex:"1", border:"solid thin #49A3DC", width:"70%", marginLeft:"15%", borderBottom:"solid thin #FFFFFF", color:"#FFFFFF"}}/>
+                style={{backgroundColor:"rgba(0,0,0,0.0)",  fontSize:"30px", height:"50px", fontWeight:"400px", position:"absolute", zIndex:"1", border:"solid thin #49A3DC", width:"70%", marginLeft:"15%", borderBottom:"solid thin #FFFFFF", color:"#FFFFFF"}}/>
             </div>
 
             <div style={{textAlign:"center", fontSize:"30px", fontWeight:"800px", marginTop:"30px", color:"#FFFFFF"}}>
