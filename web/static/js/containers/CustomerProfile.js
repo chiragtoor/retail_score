@@ -70,12 +70,12 @@ export class CustomerProfile extends React.Component {
       return;
     }
     this.context.mixpanel.track('Customer Profile Search Clicked', {'business':this.state.business, 'price':this.state.price, 'minAge': this.state.minAge, 'maxAge':this.state.maxAge});
-    this.props.history.push('/retail-space-for-lease/Los%20Angeles%20,%20CA');
+    this.props.history.push('/retail-space-for-lease/Los%20Angeles,%20CA');
   }
 
   skipClick(){
     this.context.mixpanel.track('Skip Clicked', {'page': this.state.page});
-    this.props.history.push('/retail-space-for-lease/Los%20Angeles%20,%20CA');
+    this.props.history.push('/retail-space-for-lease/Los%20Angeles,%20CA');
   }
 
   stopAnimating(){
