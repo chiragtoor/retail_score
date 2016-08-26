@@ -188,7 +188,7 @@ export class CustomerProfile extends React.Component {
                 onClick={this.stopAnimating}
                 onChange={(e) => this.updateBusiness(e)}
                 value={this.state.business}
-                style={{backgroundColor:"rgba(0,0,0,0.5)",  fontSize:"30px", fontWeight:"400px", position:"absolute", zIndex:"1", border:"solid thin #49A3DC", width:"70%", marginLeft:"15%", borderBottom:"solid thin #FFFFFF", color:"#FFFFFF"}}/>
+                style={{backgroundColor:"rgba(0,0,0,0.5)",  fontSize:"30px", height:"50px", fontWeight:"400px", position:"absolute", zIndex:"1", border:"solid thin #49A3DC", width:"70%", marginLeft:"15%", borderBottom:"solid thin #FFFFFF", color:"#FFFFFF"}}/>
             </div>
 
             <div style={{textAlign:"center", fontSize:"30px", fontWeight:"800px", marginTop:"30px", color:"#FFFFFF"}}>
