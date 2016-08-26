@@ -34,6 +34,7 @@ export class CustomerProfile extends React.Component {
     this.updateMinAge = this.updateMinAge.bind(this);
     this.updateMaxAge = this.updateMaxAge.bind(this);
     this.updateBusiness = this.updateBusiness.bind(this);
+    this.stopAnimating = this.stopAnimating.bind(this);
 
     this.state = {
       text: "Clothing Store.",
@@ -49,8 +50,13 @@ export class CustomerProfile extends React.Component {
 
   updateBusiness(business) {
     this.state.business = business.target.value;
+    this.setState(this.state);
+  }
+
+  stopAnimating(){
     this.refs.typer.reset();
     this.state.index = 2;
+    this.state.text = "";
     this.setState(this.state);
   }
 
@@ -108,50 +114,49 @@ export class CustomerProfile extends React.Component {
 
     return(
         <div className="container-fluid container-div" style={{width:"100%", height:"100%", margin:"0", padding:"0"}}>
-          <Row style={{backgroundColor:"#49A3DC", height:"100%", width:"100%", margin:"0", padding:"0"}}>
+          <Row style={{backgroundColor:"#49A3DC", height:"100%", width:"100%", margin:"0", padding:"0",fontSize:"30px", color:"#FFFFFF", fontWeight:"400px"}}>
             <div style={{textAlign:"center", width:"100%", marginTop:"5px"}}>
               <img className="homepageTopBarImage" src={"https://s3-us-west-2.amazonaws.com/homepage-image-assets/retail_score_logo_white.png"} />
             </div>
 
-            <div style={{textAlign:"center", marginTop:"20px", color:"#FFFFFF", fontSize:"25px", fontWeight:"600px"}}>
+            <div style={{textAlign:"center", marginTop:"40px"}}>
               {"I'm opening a "}
-
-              <Dropdown onSelect={e => this.updatePrice(e)}>
-                <Dropdown.Toggle style={{fontSize:"25px", border:"solid thin #49A3DC", backgroundColor:"#49A3DC", padding:"10px", color:"#FFFFFF"}}>
+              <Dropdown id="updatePrice" onSelect={e => this.updatePrice(e)}>
+                <Dropdown.Toggle style={{fontSize:"30px", border:"solid thin #49A3DC", backgroundColor:"#49A3DC", padding:"10px", color:"#FFFFFF"}}>
                   {this.state.price}
                 </Dropdown.Toggle>
                 <Dropdown.Menu style={{height:"auto", maxHeight:"100px", overflowX:"hidden"}}>
                   {prices.map(function(price, index){
-                     return <MenuItem eventKey={index}>{price}</MenuItem>
+                     return <MenuItem key={index} eventKey={index}>{price}</MenuItem>
                     })}
                 </Dropdown.Menu>
               </Dropdown>
             </div>
 
-            <div style={{height:"50px", marginTop:"10px", position:"relative"}}>
+            <div style={{height:"50px", marginTop:"20px", position:"relative"}}>
               <TypeWriter ref="typer" delayMap={delays} typing={this.state.typing} fixed={true} onTypingEnd={this.typingEnd}>
-                 <div style={{width:"70%", position:"absolute", zIndex:"0", marginLeft:"15%",fontSize:"25px", color:"#FFFFFF", fontWeight:"400px"}}>
+                 <div style={{width:"70%", position:"absolute", zIndex:"0", marginLeft:"15%"}}>
                   {this.state.text}
                  </div>
               </TypeWriter>
 
               <FormControl 
                 type="text" 
+                onClick={this.stopAnimating}
                 onChange={(e) => this.updateBusiness(e)}
                 value={this.state.business}
-                style={{backgroundColor:"rgba(0,0,0,0)", fontSize:"25px", fontWeight:"400px", position:"absolute", zIndex:"1", border:"solid thin #49A3DC", width:"70%", marginLeft:"15%", borderBottom:"solid thin #FFFFFF", color:"#FFFFFF"}}/>
-              
+                style={{backgroundColor:"rgba(0,0,0,0)", fontSize:"30px", fontWeight:"400px", position:"absolute", zIndex:"1", border:"solid thin #49A3DC", width:"70%", marginLeft:"15%", borderBottom:"solid thin #FFFFFF", color:"#FFFFFF"}}/>
             </div>
 
-            <div style={{textAlign:"center", fontSize:"25px", fontWeight:"800px", marginTop:"10px", color:"#FFFFFF"}}>
+            <div style={{textAlign:"center", fontSize:"30px", fontWeight:"800px", marginTop:"30px", color:"#FFFFFF"}}>
               {" for "}
-              <Dropdown onSelect={e => this.updateGender(e)}>
-                <Dropdown.Toggle style={{fontSize:"25px", border:"solid thin #49A3DC", backgroundColor:"#49A3DC", padding:"10px", color:"#FFFFFF"}}>
+              <Dropdown id="updateGender" onSelect={e => this.updateGender(e)}>
+                <Dropdown.Toggle style={{fontSize:"30px", border:"solid thin #49A3DC", backgroundColor:"#49A3DC", padding:"10px", color:"#FFFFFF"}}>
                   {this.state.gender}
                 </Dropdown.Toggle>
                 <Dropdown.Menu style={{height:"auto", maxHeight:"100px", overflowX:"hidden"}}>
                   {genders.map(function(price, index){
-                     return <MenuItem eventKey={index}>{price}</MenuItem>
+                     return <MenuItem key={index} eventKey={index}>{price}</MenuItem>
                     })}
                 </Dropdown.Menu>
               </Dropdown>
@@ -162,35 +167,37 @@ export class CustomerProfile extends React.Component {
 
               <br/>
 
-              <Dropdown  onSelect={e => this.updateMinAge(e)}>
-                <Dropdown.Toggle style={{fontSize:"25px", border:"solid thin #49A3DC", backgroundColor:"#49A3DC", padding:"10px", color:"#FFFFFF"}}>
+              <Dropdown id="updateMinAge"  onSelect={e => this.updateMinAge(e)}>
+                <Dropdown.Toggle style={{fontSize:"30px", border:"solid thin #49A3DC", backgroundColor:"#49A3DC", padding:"10px", color:"#FFFFFF"}}>
                   {this.state.minAge}
                 </Dropdown.Toggle>
                 <Dropdown.Menu style={{height:"auto", maxHeight:"100px", overflowX:"hidden"}}>
                   {ages.map(function(age, index){
-                    return <MenuItem eventKey={index}>{age}</MenuItem>;
+                    return <MenuItem key={index} eventKey={index}>{age}</MenuItem>;
                   })}
                 </Dropdown.Menu>
               </Dropdown>
 
               {" and "}
 
-              <Dropdown onSelect={e => this.updateMaxAge(e)}>
-                <Dropdown.Toggle style={{fontSize:"25px", border:"solid thin #49A3DC", backgroundColor:"#49A3DC", padding:"10px", color:"#FFFFFF"}}>
+              <Dropdown id="updateMaxAge" onSelect={e => this.updateMaxAge(e)}>
+                <Dropdown.Toggle style={{fontSize:"30px", border:"solid thin #49A3DC", backgroundColor:"#49A3DC", padding:"10px", color:"#FFFFFF"}}>
                   {this.state.maxAge}
                 </Dropdown.Toggle>
                 <Dropdown.Menu style={{height:"auto", maxHeight:"100px", overflowX:"hidden"}}>
                   {ages.map(function(age, index){
-                    return <MenuItem eventKey={index}>{age}</MenuItem>;
+                    return <MenuItem key={index} eventKey={index}>{age}</MenuItem>;
                   })}
                 </Dropdown.Menu>
               </Dropdown>
 
               <br/>
             </div>
-            <br/>
-            <Button style={{width:"90%", marginLeft:"5%", height:"40px", backgroundColor:"#FFFFFF", color:"#49A3DC", fontSize:"18px"}}>Find my perfect property</Button>
-            <Button style={{width:"90%", marginLeft:"5%", height:"40px", backgroundColor:"#FFFFFF", color:"#49A3DC", marginTop:"10px", fontSize:"18px"}}>{"I don't know my customer"}</Button>
+            
+            <div style={{position:"fixed", bottom:"15px", width:"100%"}}>
+              <Button style={{width:"45%", float:"right", marginRight:"2.5%", height:"60px", backgroundColor:"#FFFFFF", color:"#49A3DC", fontSize:"22px"}}>Search</Button>
+              <Button style={{width:"45%", float:"left", marginLeft:"2.5%", height:"60px", backgroundColor:"#49A3DC", color:"#FFFFFF",fontSize:"22px"}}>{"Skip"}</Button>
+            </div>
           </Row>
         </div>
     );
