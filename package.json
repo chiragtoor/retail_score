@@ -16,6 +16,7 @@
     "react-redux": "^4.4.5",
     "react-router": "^2.6.1",
     "react-router-redux": "^4.0.5",
+    "react-typewriter": "^0.4.1",
     "react-visibility-sensor": "^3.4.0",
     "redux": "^3.5.2",
     "redux-thunk": "^2.1.0"
