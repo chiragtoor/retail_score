@@ -35,6 +35,9 @@ export class CustomerProfile extends React.Component {
     this.updateMaxAge = this.updateMaxAge.bind(this);
     this.updateBusiness = this.updateBusiness.bind(this);
     this.stopAnimating = this.stopAnimating.bind(this);
+    this.searchClick = this.searchClick.bind(this);
+    this.skipClick = this.skipClick.bind(this);
+    this.nextPage = this.nextPage.bind(this);
 
     this.state = {
       text: "Clothing Store.",
@@ -44,13 +47,35 @@ export class CustomerProfile extends React.Component {
       gender:"Men and Women",
       minAge:"1",
       maxAge:"60+",
-      business: ""
+      business: "",
+      page: 1
     };
   }
 
   updateBusiness(business) {
     this.state.business = business.target.value;
     this.setState(this.state);
+  }
+
+  nextPage(){
+    this.state.page = 2;
+    this.setState(this.state);
+
+    this.context.mixpanel.track('Next Page Clicked');
+  }
+
+  searchClick(){
+    if(this.state.business == "") {
+      alert("Don't forget to let us know what type of business you're starting");
+      return;
+    }
+    this.context.mixpanel.track('Customer Profile Search Clicked', {'business':this.state.business, 'price':this.state.price, 'minAge': this.state.minAge, 'maxAge':this.state.maxAge});
+    this.props.history.push('/retail-space-for-lease/Los%20Angeles%20,%20CA');
+  }
+
+  skipClick(){
+    this.context.mixpanel.track('Skip Clicked', {'page': this.state.page});
+    this.props.history.push('/retail-space-for-lease/Los%20Angeles%20,%20CA');
   }
 
   stopAnimating(){
@@ -112,9 +137,27 @@ export class CustomerProfile extends React.Component {
       delay: 100
     }];
 
+    var page = this.state.page;
+
     return(
         <div className="container-fluid container-div" style={{width:"100%", height:"100%", margin:"0", padding:"0"}}>
-          <Row style={{backgroundColor:"#49A3DC", height:"100%", width:"100%", margin:"0", padding:"0",fontSize:"30px", color:"#FFFFFF", fontWeight:"400px"}}>
+          { page == 1 ? 
+            <Row style={{backgroundColor:"#49A3DC", height:"100%", width:"100%", margin:"0", padding:"0",fontSize:"30px", color:"#FFFFFF", fontWeight:"400px"}}>
+              <div style={{textAlign:"center", width:"100%", marginTop:"5px"}}>
+                <img className="homepageTopBarImage" src={"https://s3-us-west-2.amazonaws.com/homepage-image-assets/retail_score_logo_white.png"} />
+              </div>
+              <TypeWriter typing={1} fixed={true} >
+                <div style={{width:"90%", marginLeft:"5%", marginTop:"50px", textAlign:"center", fontSize:"35px"}}>
+                  {"Tell us who your customer is and we'll find the perfect location for your business!"}
+                </div>
+              </TypeWriter>
+              <div style={{position:"fixed", bottom:"15px", width:"100%"}}>
+                <Button onClick={this.nextPage} style={{width:"90%", marginLeft:"5%", height:"60px", backgroundColor:"#FFFFFF", color:"#49A3DC", fontSize:"25px", fontWeight:"400px"}}>Find perfect location</Button>
+                <Button onClick={this.skipClick} style={{width:"90%",  marginLeft:"5%", marginTop:"10px", height:"60px", backgroundColor:"#49A3DC", color:"#FFFFFF",fontSize:"25px"}}>{"Skip"}</Button>
+              </div>
+            </Row>
+            : 
+            <Row style={{backgroundColor:"#49A3DC", height:"100%", width:"100%", margin:"0", padding:"0",fontSize:"30px", color:"#FFFFFF", fontWeight:"400px"}}>
             <div style={{textAlign:"center", width:"100%", marginTop:"5px"}}>
               <img className="homepageTopBarImage" src={"https://s3-us-west-2.amazonaws.com/homepage-image-assets/retail_score_logo_white.png"} />
             </div>
@@ -122,7 +165,7 @@ export class CustomerProfile extends React.Component {
             <div style={{textAlign:"center", marginTop:"40px"}}>
               {"I'm opening a "}
               <Dropdown id="updatePrice" onSelect={e => this.updatePrice(e)}>
-                <Dropdown.Toggle style={{fontSize:"30px", border:"solid thin #49A3DC", backgroundColor:"#49A3DC", padding:"10px", color:"#FFFFFF"}}>
+                <Dropdown.Toggle style={{fontSize:"30px", paddingBottom:"10px", border:"solid thin #49A3DC", backgroundColor:"#49A3DC", color:"#FFFFFF"}}>
                   {this.state.price}
                 </Dropdown.Toggle>
                 <Dropdown.Menu style={{height:"auto", maxHeight:"100px", overflowX:"hidden"}}>
@@ -151,7 +194,7 @@ export class CustomerProfile extends React.Component {
             <div style={{textAlign:"center", fontSize:"30px", fontWeight:"800px", marginTop:"30px", color:"#FFFFFF"}}>
               {" for "}
               <Dropdown id="updateGender" onSelect={e => this.updateGender(e)}>
-                <Dropdown.Toggle style={{fontSize:"30px", border:"solid thin #49A3DC", backgroundColor:"#49A3DC", padding:"10px", color:"#FFFFFF"}}>
+                <Dropdown.Toggle style={{fontSize:"30px",paddingBottom:"10px", border:"solid thin #49A3DC", backgroundColor:"#49A3DC", color:"#FFFFFF"}}>
                   {this.state.gender}
                 </Dropdown.Toggle>
                 <Dropdown.Menu style={{height:"auto", maxHeight:"100px", overflowX:"hidden"}}>
@@ -168,7 +211,7 @@ export class CustomerProfile extends React.Component {
               <br/>
 
               <Dropdown id="updateMinAge"  onSelect={e => this.updateMinAge(e)}>
-                <Dropdown.Toggle style={{fontSize:"30px", border:"solid thin #49A3DC", backgroundColor:"#49A3DC", padding:"10px", color:"#FFFFFF"}}>
+                <Dropdown.Toggle style={{fontSize:"30px",paddingBottom:"10px", border:"solid thin #49A3DC", backgroundColor:"#49A3DC", color:"#FFFFFF"}}>
                   {this.state.minAge}
                 </Dropdown.Toggle>
                 <Dropdown.Menu style={{height:"auto", maxHeight:"100px", overflowX:"hidden"}}>
@@ -181,7 +224,7 @@ export class CustomerProfile extends React.Component {
               {" and "}
 
               <Dropdown id="updateMaxAge" onSelect={e => this.updateMaxAge(e)}>
-                <Dropdown.Toggle style={{fontSize:"30px", border:"solid thin #49A3DC", backgroundColor:"#49A3DC", padding:"10px", color:"#FFFFFF"}}>
+                <Dropdown.Toggle style={{fontSize:"30px",paddingBottom:"10px", border:"solid thin #49A3DC", backgroundColor:"#49A3DC", color:"#FFFFFF"}}>
                   {this.state.maxAge}
                 </Dropdown.Toggle>
                 <Dropdown.Menu style={{height:"auto", maxHeight:"100px", overflowX:"hidden"}}>
@@ -195,10 +238,10 @@ export class CustomerProfile extends React.Component {
             </div>
             
             <div style={{position:"fixed", bottom:"15px", width:"100%"}}>
-              <Button style={{width:"45%", float:"right", marginRight:"2.5%", height:"60px", backgroundColor:"#FFFFFF", color:"#49A3DC", fontSize:"22px"}}>Search</Button>
-              <Button style={{width:"45%", float:"left", marginLeft:"2.5%", height:"60px", backgroundColor:"#49A3DC", color:"#FFFFFF",fontSize:"22px"}}>{"Skip"}</Button>
+              <Button onClick={this.searchClick} style={{width:"45%", float:"right", marginRight:"2.5%", height:"60px", backgroundColor:"#FFFFFF", color:"#49A3DC", fontSize:"22px"}}>Search</Button>
+              <Button onClick={this.skipClick} style={{width:"45%", float:"left", marginLeft:"2.5%", height:"60px", backgroundColor:"#49A3DC", color:"#FFFFFF",fontSize:"22px"}}>{"Skip"}</Button>
             </div>
-          </Row>
+          </Row>}
         </div>
     );
   }
