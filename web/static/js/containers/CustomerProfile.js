@@ -130,6 +130,10 @@ export class CustomerProfile extends React.Component {
     this.setState(this.state);
   }
 
+  componentDidMount(){
+    this.context.mixpanel.track('Customer container did mount');
+  }
+
   render() {
 
     var delays = [{
