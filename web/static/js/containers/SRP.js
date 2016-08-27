@@ -77,14 +77,22 @@ class SRP extends React.Component {
     }
 
     tileClick(property) {
-
       this.context.mixpanel.track('Property Click', {'type':'tile', 'retailscore':property.retail_score, 'id': property.id});
 
       this.props.history.push('/properties/' + property.id);
     }
 
     pinClick(property) {
-      this.context.mixpanel.track('Property Click', {'type':'pin', 'retailscore':property.retail_score, 'id': property.id});
+
+      if(this.state.currentProperty) {
+        if(this.state.currentProperty.id == property.id){
+          this.context.mixpanel.track('Property Click', {'type':'selected pin', 'retailscore':property.retail_score, 'id': property.id});
+        } else {
+          this.context.mixpanel.track('Property Click', {'type':'pin', 'retailscore':property.retail_score, 'id': property.id});
+        }
+      } else {
+        this.context.mixpanel.track('Property Click', {'type':'pin', 'retailscore':property.retail_score, 'id': property.id});
+      }
 
       this.props.history.push('/properties/' + property.id);
     }
