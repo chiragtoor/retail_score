@@ -48,7 +48,7 @@ export class CustomerProfile extends React.Component {
       minAge:"1",
       maxAge:"60+",
       business: "",
-      page: 1
+      page: 2
     };
   }
 
