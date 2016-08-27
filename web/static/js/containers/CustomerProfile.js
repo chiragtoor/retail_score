@@ -69,7 +69,7 @@ export class CustomerProfile extends React.Component {
       alert("Don't forget to let us know what type of business you're starting");
       return;
     }
-    this.context.mixpanel.track('Customer Profile Search Clicked', {'business':this.state.business, 'price':this.state.price, 'minAge': this.state.minAge, 'maxAge':this.state.maxAge});
+    this.context.mixpanel.track('Customer Profile Search Clicked', {'business':this.state.business, 'price':this.state.price, 'minAge': this.state.minAge, 'maxAge':this.state.maxAge, 'gender': this.state.gender});
     this.props.history.push('/retail-space-for-lease/Los%20Angeles,%20CA');
   }
 
