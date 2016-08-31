@@ -82,6 +82,7 @@ export default class CompetitionGoogleMap extends Component {
 
     if(nextProps.keyword != this.state.keyword) {
       this.state.keyword = nextProps.keyword;
+      this.state.map.setZoom(12);
       this.setState(this.state);
 
       if(this.state.places){

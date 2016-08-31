@@ -45,7 +45,7 @@ export default class DesktopPropertyTile extends Component {
       addressString = property.street_address; 
     }
 
-    if(property.spaces) {
+    if(property.spaces && property.spaces.length != undefined) {
       var spacesString = (property.spaces.length <= 1) ?  property.spaces.length + " space available" : property.spaces.length + " spaces available" ;
     }
 

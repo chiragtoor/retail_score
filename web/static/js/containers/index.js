@@ -5,8 +5,10 @@ import { Router, RouterContext, browserHistory, createMemoryHistory, match } fro
 
 import configureStore from "../store";
 import routes from "../routes";
-
 import MixpanelProvider from 'react-mixpanel';
+
+var env = process.env.MIX_ENV || 'dev';
+var prod = env === 'prod';
 
 export default class Index extends React.Component {
   render() {
@@ -28,7 +30,16 @@ export default class Index extends React.Component {
       });
     } else {
       const mixpanel = require('mixpanel-browser');
-      mixpanel.init("ae0fd077786c8096959a7c297b28d99b");
+
+      //production token
+      var mix_token = "ae0fd077786c8096959a7c297b28d99b";
+
+      if(!prod) {
+        //dev token
+        mix_token = "87fc08fe6d7679baf9840478c022ef91";
+      }
+
+      mixpanel.init(mix_token);
 
       initialState = window.__INITIAL_STATE__;
       history = browserHistory;
