@@ -53,14 +53,22 @@ export default class GoogleMap extends Component {
 
     // map.overlayMapTypes.push(moonMapType);
 
+    var me = this;
+
     google.maps.event.addListener(map, 'zoom_changed', function() {
       if (map.getZoom() > 16) map.setZoom(16);
-    });
 
-    var me = this;
+      if(me.props.mixpanel) {
+        me.props.mixpanel.track('Map Done Zooming');
+      }
+    });
 
     //only have pins that are in the bounds on the map at any given time
     google.maps.event.addListener(map, 'idle', function() {
+
+      if(me.props.mixpanel) {
+        me.props.mixpanel.track('Map Done Panning');
+      }
 
       var bounds = map.getBounds();
       var visibleProps = [];

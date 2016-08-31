@@ -465,6 +465,7 @@ class SRP extends React.Component {
                       <div style={{width:"100%"}} className="fullHeight hidden-sm hidden-xs">
                         <GoogleMap 
                           id={"desktop"} 
+                          mixpanel={this.context.mixpanel}
                           properties={filteredProperties} 
                           pinClick={this.pinClick} 
                           currentPropertyMarker={this.state.currentProperty}
@@ -479,6 +480,7 @@ class SRP extends React.Component {
                       <div style={{height:"100%"}} className="hidden-md hidden-lg">
                         <GoogleMap 
                           id={"mobile"} 
+                          mixpanel={this.context.mixpanel}
                           properties={filteredProperties} 
                           pinClick={this.pinClick} 
                           currentPropertyMarker={this.state.currentProperty}
