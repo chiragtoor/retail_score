@@ -8,7 +8,6 @@ import routes from "../routes";
 import MixpanelProvider from 'react-mixpanel';
 
 var env = process.env.MIX_ENV || 'dev';
-var prod = env === 'prod';
 
 export default class Index extends React.Component {
   render() {
@@ -31,11 +30,11 @@ export default class Index extends React.Component {
     } else {
       const mixpanel = require('mixpanel-browser');
 
-      //production token
-      var mix_token = "ae0fd077786c8096959a7c297b28d99b";
+      var mix_token;
 
-      if(!prod) {
-        //dev token
+      if(env === 'prod') {
+        mix_token = "ae0fd077786c8096959a7c297b28d99b";
+      }else{
         mix_token = "87fc08fe6d7679baf9840478c022ef91";
       }
 
