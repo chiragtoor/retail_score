@@ -9,6 +9,8 @@ import MixpanelProvider from 'react-mixpanel';
 
 var env = process.env.MIX_ENV || 'dev';
 
+const isBrowser = typeof window !== 'undefined';
+
 export default class Index extends React.Component {
   render() {
     let initialState, history, router, component;
@@ -29,12 +31,17 @@ export default class Index extends React.Component {
       });
     } else {
       const mixpanel = require('mixpanel-browser');
-
+      
       var mix_token;
 
-      if(env === 'prod') {
-        mix_token = "ae0fd077786c8096959a7c297b28d99b";
-      }else{
+      //if not SSR
+      if(isBrowser) {
+        if(window.location.hostname == 'localhost') {
+          mix_token = "87fc08fe6d7679baf9840478c022ef91";
+        } else {
+          mix_token = "ae0fd077786c8096959a7c297b28d99b";
+        }
+      } else {
         mix_token = "87fc08fe6d7679baf9840478c022ef91";
       }
 
