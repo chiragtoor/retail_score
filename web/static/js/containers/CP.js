@@ -210,9 +210,9 @@ export class CP extends React.Component {
           {/* fade-in animate the businessType part of the form */}
           <ReactCSSTransitionGroup transitionName="fadeIn" transitionEnterTimeout={500} transitionLeaveTimeout={500}>
             {this.state.mounted ?
-              <div style={{height:"50px", marginTop:"0px", width:"100%", paddingLeft:"20px", paddingRight:"20px", position:"relative"}}>
+              <div style={{height:"50px", marginTop:"0px", width:"100%", position:"relative"}}>
                 <TypeWriter ref="typer" delayMap={delays} typing={typing} fixed={true} onTypingEnd={this.typingEnd}>
-                   <div style={{position:"absolute", zIndex:"0", fontSize:"25px", color:"#FFFFFF", fontWeight:"400px", textAlign:"center"}}>
+                   <div style={{position:"absolute", width:"80%", marginLeft:"10%", zIndex:"0", fontSize:"25px", color:"#FFFFFF", fontWeight:"400px", textAlign:"center"}}>
                     {this.state.text}
                    </div>
                 </TypeWriter>
@@ -221,7 +221,7 @@ export class CP extends React.Component {
                   onClick={this.stopAnimating}
                   onChange={(e) => this.updateBusiness(e)}
                   value={this.state.business}
-                  style={{backgroundColor:"rgba(0,0,0,0)", fontSize:"25px", fontWeight:"400px", border:"solid thin #49A3DC", borderBottom:"solid thin #FFFFFF", color:"#FFFFFF", textAlign:"center"}}/>
+                  style={{position:"absolute", zIndex:"1", width:"80%", marginLeft:"10%", paddingRight:"40px", backgroundColor:"rgba(0,0,0,0)", fontSize:"25px", fontWeight:"400px", border:"solid thin #49A3DC", borderBottom:"solid thin #FFFFFF", color:"#FFFFFF", textAlign:"center"}}/>
               </div>
             :
               false
