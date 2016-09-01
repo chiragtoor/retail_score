@@ -48,7 +48,7 @@ export class CustomerProfile extends React.Component {
 
   skip(){
     this.context.mixpanel.track('Skip Tapped');
-    this.props.history.push('/targetcustomer/1');
+    this.props.history.push('/targetcustomer/2');
   }
 
   nextPage(){
@@ -80,12 +80,15 @@ export class CustomerProfile extends React.Component {
             <div style={{textAlign:"center", width:"100%", marginTop:"5px"}}>
               <img className="homepageTopBarImage" src={"https://s3-us-west-2.amazonaws.com/homepage-image-assets/retail_score_logo_white.png"} />
             </div>
-            <div style={{width:"90%", marginLeft:"5%", marginTop:"100px", textAlign:"center", fontSize:"35px"}}>
-              Find a property in an area where your <b>customers</b> are already <b>shopping!</b>
-            </div>
-            <div style={{position:"fixed", bottom:"15px", width:"100%"}}>
-              <Button onClick={this.nextPage} style={{width:"90%", marginLeft:"5%", height:"60px", backgroundColor:"#FFFFFF", color:"#49A3DC", fontSize:"25px", fontWeight:"400px"}}><b>Find My Customers</b></Button>
-              <Button onClick={this.skip} style={{width:"90%", marginLeft:"5%", height:"60px", marginTop:"10px", backgroundColor:"rgba(0,0,0,0.0)", color:"#FFFFFF", fontSize:"25px", fontWeight:"400px"}}> <b> No Thanks </b></Button>
+            <div style={{height:"-webkit-calc(100% - 80px)", display:"flex", flexDirection:"column", justifyContent:"space-between"}}>
+              <div style={{width:"100px", height:"1px"}}/>
+              <div style={{width:"90%", marginLeft:"5%", textAlign:"center", fontSize:"8vw"}}>
+                Find a property in an area where your <b>customers</b> are already <b>shopping!</b>
+              </div>
+              <div style={{width:"100%"}}>
+                <Button onClick={this.nextPage} style={{width:"90%", marginLeft:"5%", height:"60px", backgroundColor:"#FFFFFF", color:"#49A3DC", fontSize:"25px", fontWeight:"400px"}}><b>Find My Customers</b></Button>
+                <Button onClick={this.skip} style={{width:"90%", marginLeft:"5%", height:"60px", marginTop:"10px", backgroundColor:"rgba(0,0,0,0.0)", color:"#FFFFFF", fontSize:"25px", fontWeight:"400px"}}> <b> No Thanks </b></Button>
+              </div>
             </div>
           </Row>
         </div>

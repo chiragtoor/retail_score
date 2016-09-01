@@ -19,7 +19,7 @@ const PRICE_AVERAGE = 'PRICE_AVERAGE';
 const PRICE_QUALITY = 'PRICE_QUALITY';
 const PRICE_HIGH_END = 'PRICE_HIGH_END';
 
-const priceAffordableText = 'cheaper';
+const priceAffordableText = 'cheap';
 const priceAverageText = 'affordable';
 const priceQualityText = 'higher quality';
 const priceHighEndText = 'expensive, high-end';
@@ -35,6 +35,8 @@ export class CP extends React.Component {
     this.updateBusiness = this.updateBusiness.bind(this);
     this.updateGender = this.updateGender.bind(this);
     this.updatePrice = this.updatePrice.bind(this);
+    this.searchClick = this.searchClick.bind(this);
+    this.stopAnimating = this.stopAnimating.bind(this);
 
     // workaround since React library method of animation on componentDidMount not working (transitionAppear),
     //  when component is mounted render children of any ReactCSSTransitionGroup, otherwise just render the 
@@ -48,10 +50,12 @@ export class CP extends React.Component {
       typing: 1,
       text: "Casual Wear",
       index: 0,
+      business: ""
     }
   }
 
   componentDidMount() {
+    this.context.mixpanel.track('CP container did mount');
     // on mount set the flag so the children of each ReactCSSTransitionGroup get animated in
     this.setState({mounted: true});
   }
@@ -83,8 +87,24 @@ export class CP extends React.Component {
     this.setState(this.state);
   }
 
-  typingEnd() {
+  searchClick(){
+    if(this.state.business == "") {
+      alert("Don't forget to let us know what type of business you're starting");
+      return;
+    }
 
+    this.context.mixpanel.track('CP Search', {'business':this.state.business, 'gender':this.state.gender, 'price': this.state.price});
+    this.props.history.push('/retail-space-for-lease/Los%20Angeles,%20CA');
+  }
+
+  stopAnimating(){
+    this.refs.typer.reset();
+    this.state.index = 2;
+    this.state.text = "";
+    this.setState(this.state);
+  }
+
+  typingEnd() {
     if(this.state.typing == 1 ) {
       this.state.typing = -1;
     } else {
@@ -109,7 +129,7 @@ export class CP extends React.Component {
   }
 
   render() {
-    const {gender, price, typing} = this.state;
+    const {gender, price, typing, business} = this.state;
     const delays = [{at: '.', delay: 100}];
 
     return(
@@ -135,7 +155,7 @@ export class CP extends React.Component {
             {this.state.mounted ?
               <div>
                 <div style={{textAlign:"center", marginTop:"10px", color:"#FFFFFF", fontSize:"8vw"}}>
-                  {"My main customers"}
+                  {"My target customers"}
                 </div>
               </div>
             :
@@ -197,7 +217,8 @@ export class CP extends React.Component {
                    </div>
                 </TypeWriter>
                 <FormControl 
-                  type="text" 
+                  type="text"
+                  onClick={this.stopAnimating}
                   onChange={(e) => this.updateBusiness(e)}
                   value={this.state.business}
                   style={{backgroundColor:"rgba(0,0,0,0)", fontSize:"25px", fontWeight:"400px", border:"solid thin #49A3DC", borderBottom:"solid thin #FFFFFF", color:"#FFFFFF", textAlign:"center"}}/>
@@ -209,7 +230,7 @@ export class CP extends React.Component {
           {/* make the button appear on mount, no animation because animation wraps in a div that is not styled for flexbox */}
           {this.state.mounted ?
             <div style={{width:"100%", flexGrow:"1", paddingLeft:"20px", paddingRight:"20px", display:"flex", flexDirection:"column", justifyContent:"space-around"}}>
-              <Button style={{width:"100%", minHeight:"40px", backgroundColor:"#FFFFFF", color:"#49A3DC", fontSize:"7vw"}}>Find my perfect property</Button>
+              <Button onClick={this.searchClick} style={{width:"100%", minHeight:"40px", backgroundColor:"#FFFFFF", color:"#49A3DC", fontSize:"7vw"}}>Find my perfect property</Button>
             </div>
           :
             false
@@ -219,5 +240,9 @@ export class CP extends React.Component {
     );
   }
 }
+
+CP.contextTypes = {
+  mixpanel: React.PropTypes.object.isRequired
+};
 
 export default CP;
