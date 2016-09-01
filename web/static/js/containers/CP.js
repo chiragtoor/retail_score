@@ -222,7 +222,7 @@ export class CP extends React.Component {
                   onClick={this.stopAnimating}
                   onChange={(e) => this.updateBusiness(e)}
                   value={this.state.business}
-                  style={{backgroundColor:"rgba(0,0,0,0)", zIndex:"1", position:"absolute", fontSize:"25px", fontWeight:"400px", border:"solid thin #49A3DC", borderBottom:"solid thin #FFFFFF", color:"#FFFFFF", marginTop:"10px"}}/>
+                  style={{position:"absolute", zIndex:"1", width:"80%", height:"50px", marginLeft:"10%", paddingRight:"40px", backgroundColor:"rgba(0,0,0,0)", fontSize:"25px", fontWeight:"400px", border:"solid thin #49A3DC", borderBottom:"solid thin #FFFFFF", color:"#FFFFFF", textAlign:"center"}}/>
               </div>
             :
               false
