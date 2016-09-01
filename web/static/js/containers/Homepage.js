@@ -112,7 +112,7 @@ export class Homepage extends React.Component {
 	            <div className="homepageFormContainer">
 	              <div className="descriptionDivLg hidden-sm hidden-xs">
 	                <center>
-	                  <span className="homepageMottoText hidden-sm hidden-xs">{"Find the perfect retail location"}</span>
+	                  <span className="homepageMottoText hidden-sm hidden-xs">{"Find real estate nearby where your target customer is already shopping!"}</span>
 	                </center>
 	                <center>
 	                  <span className="productDescriptionSpan hidden-xs hidden-sm" style={{color:"#FFFFFF", marginTop:"10px", fontSize:"18px", fontWeight:"550"}} >{"With foot traffic, competition and demographic data for 1000+ properties, we'll help you find the perfect location for your business"}</span>
@@ -120,7 +120,7 @@ export class Homepage extends React.Component {
 	              </div>
 	              <div className="descriptionDivSm hidden-lg hidden-md">
 	                <center>
-	                  <span className="homepageMottoTextSm hidden-lg hidden-md">{"Find the perfect retail location"}</span>
+	                  <span className="homepageMottoTextSm hidden-lg hidden-md">{"Find real estate nearby where your target customer is already shopping!"}</span>
 	                </center>
 	                <center>
 	                  <span className="productDescriptionSpanSm hidden-md hidden-lg" style={{color:"#FFFFFF", fontSize:"18px", fontWeight:"550"}} >{"With foot traffic, competition and demographic data for 1000+ properties, we'll help you find the perfect location for your business"}</span>
