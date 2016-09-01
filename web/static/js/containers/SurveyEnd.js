@@ -16,20 +16,20 @@ export class SurveyEnd extends React.Component {
     this.updateCity = this.updateCity.bind(this);
 
     this.state = {
-      email: "",
       city: "",
-      done: false
+      email: "",
+      done : 1
     }
   }
 
   saveInfo(){
-    if(this.state.email = "" || this.state.city == ""){
+    if(this.state.email == "" || this.state.city == ""){
       alert("Please enter your email and the city you are interested in");
-      return;
+    } else {
+      this.context.mixpanel.track('Save Info Tapped', {'email' : this.state.email, 'city' : this.state.city});
+      this.state.done = 2;
+      this.setState(this.state);
     }
-    this.context.mixpanel.track('Save Info Tapped', {'email' : this.state.email, 'city' : this.state.city});
-    this.state.done = true;
-    this.setState(this.state);
   }
 
   updateEmail(e){
@@ -50,7 +50,7 @@ export class SurveyEnd extends React.Component {
 
     return(
         <div className="container-fluid container-div" style={{backgroundColor:"#49A3DC", height:"100%", width:"100%", margin:"0", padding:"0",fontSize:"30px", color:"#FFFFFF", fontWeight:"400px"}}>
-          {this.state.done ? 
+          {this.state.done == 2 ? 
             <div style={{width:"90%", marginLeft:"5%", textAlign:"center", fontSize:"8vw", marginTop:"10px"}}>
               {"Awesome!"}
               <br/>
@@ -64,15 +64,17 @@ export class SurveyEnd extends React.Component {
 
                 <div>
                   <FormControl 
+                    id='city'
                     type="text" 
-                    onChange={(e) => this.updateCity(e)}
+                    onChange={this.updateCity}
                     value={this.state.city}
                     placeholder={"City"}
                     style={{backgroundColor:"#FFFFFF", fontSize:"30px", height:"50px", fontWeight:"400px", border:"solid thin #49A3DC", width:"90%", marginLeft:"5%", borderBottom:"solid thin #FFFFFF"}}/>
 
                   <FormControl 
+                    id='email'
                     type="text" 
-                    onChange={(e) => this.updateEmail(e)}
+                    onChange={this.updateEmail}
                     value={this.state.email}
                     placeholder={"Your e-mail"}
                     style={{backgroundColor:"#FFFFFF", fontSize:"30px", height:"50px", fontWeight:"400px", marginTop:"10px", border:"solid thin #49A3DC", width:"90%", marginLeft:"5%", borderBottom:"solid thin #FFFFFF"}}/>

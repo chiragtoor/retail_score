@@ -93,7 +93,7 @@ export class CP extends React.Component {
       return;
     }
 
-    this.context.mixpanel.track('CP Search', {'business':this.state.business, 'gender':this.state.gender, 'price': this.state.price});
+    this.context.mixpanel.track('CP Search', {'business':this.state.business, 'gender':this.state.gender.key, 'price': this.state.price.key});
     this.props.history.push('/scoreproperties');
   }
 
@@ -213,7 +213,7 @@ export class CP extends React.Component {
 
               <div style={{height:"50px", position:"relative", marginTop:"0px", width:"90%", marginLeft:"5%", position:"relative"}}>
                 <TypeWriter ref="typer" delayMap={delays} typing={typing} fixed={true} onTypingEnd={this.typingEnd}>
-                   <div style={{position:"absolute", width:"80%", marginLeft:"10%", zIndex:"0", fontSize:"25px", color:"#FFFFFF", fontWeight:"400px", textAlign:"center"}}>
+                   <div style={{position:"absolute", width:"80%", marginLeft:"10%", zIndex:"0", fontSize:"25px", color:"#FFFFFF", fontWeight:"400px", textAlign:"center", marginTop:"10px"}}>
                     {this.state.text}
                    </div>
                 </TypeWriter>
@@ -222,7 +222,7 @@ export class CP extends React.Component {
                   onClick={this.stopAnimating}
                   onChange={(e) => this.updateBusiness(e)}
                   value={this.state.business}
-                  style={{backgroundColor:"rgba(0,0,0,0)", zIndex:"1", position:"absolute", fontSize:"25px", fontWeight:"400px", border:"solid thin #49A3DC", borderBottom:"solid thin #FFFFFF", color:"#FFFFFF"}}/>
+                  style={{backgroundColor:"rgba(0,0,0,0)", zIndex:"1", position:"absolute", fontSize:"25px", fontWeight:"400px", border:"solid thin #49A3DC", borderBottom:"solid thin #FFFFFF", color:"#FFFFFF", marginTop:"10px"}}/>
               </div>
             :
               false
