@@ -20,12 +20,6 @@ var plugins = [
 
 if (prod) {
   plugins.push(new webpack.optimize.UglifyJsPlugin());
-  // plugins.push(new CompressionPlugin({
-  //           asset: "[path].gz[query]",
-  //           algorithm: "gzip",
-  //           test: /\.js$|\.html$/,
-  //           minRatio: 0.8
-  //       }));
   plugins.push(new webpack.DefinePlugin({
       'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'production')
     }));

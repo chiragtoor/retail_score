@@ -8,7 +8,8 @@ import PDPContainer from "../containers/PDP";
 import SRPContainer from "../containers/SRP";
 import CustomerProfile from "../containers/CustomerProfile";
 import TargetCustomerSearch from "../containers/TargetCustomerSearch";
-
+import CP from "../containers/CP";
+import Test from "../containers/Test";
 
 export default (
 	<Route path="/" component={Base}>
@@ -17,6 +18,8 @@ export default (
 	  <Route path="/" component={HomepageContainer} />
 	  <Route path='/customer' component={CustomerProfile} />
 	  <Route path='/targetcustomer/1' component={TargetCustomerSearch} />
+    <Route path='/customer' component={CP} />
+	  //<Route path='/customer' component={CustomerProfile} />
 	  <Route path="/pdp" component={PDPContainer} />
 	  <Route path='/properties/:propertyId' component={PDPContainer} />
 	  <Route path='/retail-space-for-lease/:city' component={SRPContainer} />

@@ -22,8 +22,8 @@ defmodule RetailScore.Demographic do
   end
 
   # Esri Account Credentials
-  @client_id "mR0qtEBMOIM4TV99"
-  @client_secret "60821f2219c043038ef9ee612cdd399c"
+  @client_id "R7MYICTwyBlGa20w"
+  @client_secret "1e9e729a1cf544eab5db26f895b3b8ab"
   # Esri Query URL Specific Info
   @esri_url "http://geoenrich.arcgis.com/arcgis/rest/services/World/geoenrichmentserver/Geoenrichment/Enrich?"
   @study_areas ~s(studyAreas=[{%22areaType%22:%22RingBuffer%22,%22bufferUnits%22:%22esriMiles%22,%22bufferRadii%22:[1],%22geometry%22:)
