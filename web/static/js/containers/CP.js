@@ -48,7 +48,7 @@ export class CP extends React.Component {
       gender: {key: GENDER_FEMALE, text: genderFemaleText},
       price: {key: PRICE_AVERAGE, text: priceAverageText},
       typing: 1,
-      text: "Casual Wear",
+      text: "Casual Shoes .",
       index: 0,
       business: ""
     }
@@ -94,7 +94,7 @@ export class CP extends React.Component {
     }
 
     this.context.mixpanel.track('CP Search', {'business':this.state.business, 'gender':this.state.gender, 'price': this.state.price});
-    this.props.history.push('/retail-space-for-lease/Los%20Angeles,%20CA');
+    this.props.history.push('/scoreproperties');
   }
 
   stopAnimating(){
@@ -111,12 +111,12 @@ export class CP extends React.Component {
       switch(this.state.index) {
         case 0:
           this.state.index = 1;
-          this.state.text = "Boutique Clothing";
+          this.state.text = "Designer Clothing .";
           this.state.typing = 1;
           break;
         case 1:
           this.state.index = 2;
-          this.state.text = "Skating Equipment";
+          this.state.text = "Skateboarding Equipment .";
           this.state.typing = 1;
           break;
         default: 
@@ -130,7 +130,7 @@ export class CP extends React.Component {
 
   render() {
     const {gender, price, typing, business} = this.state;
-    const delays = [{at: '.', delay: 100}];
+    const delays = [{at: '.', delay: 200}];
 
     return(
       <div className="container-fluid container-div" style={{width:"100%", height:"100%", margin:"0px", padding:"0px"}}>
@@ -210,7 +210,8 @@ export class CP extends React.Component {
           {/* fade-in animate the businessType part of the form */}
           <ReactCSSTransitionGroup transitionName="fadeIn" transitionEnterTimeout={500} transitionLeaveTimeout={500}>
             {this.state.mounted ?
-              <div style={{height:"50px", marginTop:"0px", width:"100%", position:"relative"}}>
+
+              <div style={{height:"50px", position:"relative", marginTop:"0px", width:"90%", marginLeft:"5%", position:"relative"}}>
                 <TypeWriter ref="typer" delayMap={delays} typing={typing} fixed={true} onTypingEnd={this.typingEnd}>
                    <div style={{position:"absolute", width:"80%", marginLeft:"10%", zIndex:"0", fontSize:"25px", color:"#FFFFFF", fontWeight:"400px", textAlign:"center"}}>
                     {this.state.text}
@@ -221,7 +222,7 @@ export class CP extends React.Component {
                   onClick={this.stopAnimating}
                   onChange={(e) => this.updateBusiness(e)}
                   value={this.state.business}
-                  style={{position:"absolute", zIndex:"1", width:"80%", marginLeft:"10%", paddingRight:"40px", backgroundColor:"rgba(0,0,0,0)", fontSize:"25px", fontWeight:"400px", border:"solid thin #49A3DC", borderBottom:"solid thin #FFFFFF", color:"#FFFFFF", textAlign:"center"}}/>
+                  style={{backgroundColor:"rgba(0,0,0,0)", zIndex:"1", position:"absolute", fontSize:"25px", fontWeight:"400px", border:"solid thin #49A3DC", borderBottom:"solid thin #FFFFFF", color:"#FFFFFF"}}/>
               </div>
             :
               false

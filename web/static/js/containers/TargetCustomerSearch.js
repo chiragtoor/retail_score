@@ -106,51 +106,39 @@ export class TargetCustomerSearch extends React.Component {
     }];
 
     return(
-        <div className="container-fluid container-div" style={{width:"100%", height:"100%", margin:"0", padding:"0"}}>
-          <Row style={{backgroundColor:"#49A3DC", height:"100%", width:"100%", margin:"0", padding:"0",fontSize:"30px", color:"#FFFFFF", fontWeight:"400px"}}>
-            
-            <div style={{textAlign:"center", width:"100%", marginTop:"5px"}}>
-              <img className="homepageTopBarImage" src={"https://s3-us-west-2.amazonaws.com/homepage-image-assets/retail_score_logo_white.png"} />
+          <div className="container-fluid container-div" style={{backgroundColor:"#49A3DC", height:"100%", width:"100%", margin:"0", padding:"0",fontSize:"30px", color:"#FFFFFF", fontWeight:"400px"}}>
+            <div style={{width:"100%", height:"100%",display:"flex", flexDirection:"column", justifyContent:"space-between"}}>
+              
+              <div style={{width:"100%", textAlign:"center", marginTop:"10px"}}>
+                <div style={{marginLeft:"5%", width:"90%", textAlign:"center"}}>
+                  What type of business are you starting?
+                </div>
+                <TypeWriter style={{marginTop:"10px"}} ref="typer" delayMap={delays} typing={this.state.typing} fixed={true} onTypingEnd={this.typingEnd}>
+                   <div style={{width:"70%", position:"absolute", zIndex:"0", fontSize:"26px", marginLeft:"15%"}}>
+                    {this.state.text}
+                   </div>
+                </TypeWriter>
+
+                <FormControl 
+                  type="text" 
+                  onClick={this.stopAnimating}
+                  onChange={(e) => this.updateBusiness(e)}
+                  value={this.state.business}
+                  style={{backgroundColor:"rgba(0,0,0,0.0)",  fontSize:"30px", height:"50px", fontWeight:"400px", position:"absolute", zIndex:"1", border:"solid thin #49A3DC", width:"90%", marginLeft:"5%", borderBottom:"solid thin #FFFFFF", color:"#FFFFFF"}}/>
+              </div>
+
+              <div style={{fontSize:"30px", fontWeight:"800px", width:"100%", textAlign:"center"}}>
+                {" Describe your target customer: "}
+
+                <FormControl 
+                  componentClass="textarea"
+                  onChange={(e) => this.updateCustomer(e)}
+                  value={this.state.customer}
+                  style={{backgroundColor:"#FFFFFF",  fontSize:"20px", height:"80px", fontWeight:"400px", border:"solid thin #49A3DC", width:"90%", marginLeft:"5%", borderBottom:"solid thin #FFFFFF"}}/>
+              </div>
+              
+              <Button onClick={this.searchClick} style={{width:"90%",height:"60px", marginLeft:"5%", marginBottom:"10px", backgroundColor:"#FFFFFF", color:"#49A3DC", fontSize:"22px"}}>Search</Button>
             </div>
-            
-            <br/>
-
-            <div style={{marginLeft:"5%", width:"90%", textAlign:"center"}}>
-              What type of business are you starting?
-            </div>
-
-            <div style={{height:"50px", marginTop:"20px", width:"100%", position:"relative", textAlign:"center"}}>
-              <TypeWriter ref="typer" delayMap={delays} typing={this.state.typing} fixed={true} onTypingEnd={this.typingEnd}>
-                 <div style={{width:"70%", position:"absolute", zIndex:"0", fontSize:"30px", marginLeft:"15%"}}>
-                  {this.state.text}
-                 </div>
-              </TypeWriter>
-
-              <FormControl 
-                type="text" 
-                onClick={this.stopAnimating}
-                onChange={(e) => this.updateBusiness(e)}
-                value={this.state.business}
-                style={{backgroundColor:"rgba(0,0,0,0.0)",  fontSize:"30px", height:"50px", fontWeight:"400px", position:"absolute", zIndex:"1", border:"solid thin #49A3DC", width:"90%", marginLeft:"5%", borderBottom:"solid thin #FFFFFF", color:"#FFFFFF"}}/>
-            </div>
-
-            <div style={{textAlign:"center", fontSize:"30px", fontWeight:"800px", marginTop:"30px",width:"100%", textAlign:"center"}}>
-              <br/>
-              {" Describe your target customer: "}
-              <br/>
-
-             <FormControl 
-              componentClass="textarea"
-              onChange={(e) => this.updateCustomer(e)}
-              value={this.state.customer}
-              style={{backgroundColor:"#FFFFFF",  fontSize:"20px", height:"80px", fontWeight:"400px", border:"solid thin #49A3DC", width:"90%", marginLeft:"5%", borderBottom:"solid thin #FFFFFF"}}/>
-            </div>
-            
-            <div style={{position:"fixed", bottom:"15px", width:"100%", textAlign:"center"}}>
-              <Button onClick={this.searchClick} style={{width:"80%",height:"60px", backgroundColor:"#FFFFFF", color:"#49A3DC", fontSize:"22px"}}>Search</Button>
-            </div>
-
-          </Row>
         </div>
     );
   }
