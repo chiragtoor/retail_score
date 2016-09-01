@@ -20,7 +20,7 @@ export class CustomerProfile extends React.Component {
   }
 
   componentDidMount(){
-    this.context.mixpanel.track('Customer container did mount');
+    this.context.mixpanel.track('Find perfect property container did mount');
   }
 
   render() {
