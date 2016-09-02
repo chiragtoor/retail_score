@@ -268,7 +268,10 @@ MOVE TO SRP.CSS AFTER
   transition-duration: 3s;
 }
 
-
+.noPaddingColumn {
+  padding-left: 0;
+  padding-right: 0;
+}
 
 @keyframes bounceIn {
   from, 20%, 40%, 60%, 80%, to {
