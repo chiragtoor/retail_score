@@ -17,7 +17,7 @@ const imageMap = {
   "San Diego": "https://s3-us-west-2.amazonaws.com/homepage-image-assets/san-diego-skyline.jpg",
   "San Jose" : "https://s3-us-west-2.amazonaws.com/homepage-image-assets/san-jose.jpg",
   "Sacramento" : "https://s3-us-west-2.amazonaws.com/homepage-image-assets/sacramento.jpg",
-  "Fresno" : "https://s3-us-west-2.amazonaws.com/homepage-image-assets/fresno.jpg"
+  "Fresno" : "https://s3-us-west-2.amazonaws.com/homepage-image-assets/sacramento.jpg"
 }
 
 export class Homepage extends React.Component {
@@ -112,7 +112,7 @@ export class Homepage extends React.Component {
 	            <div className="homepageFormContainer">
 	              <div className="descriptionDivLg hidden-sm hidden-xs">
 	                <center>
-	                  <span className="homepageMottoText hidden-sm hidden-xs">{"Find real estate nearby where your target customer is already shopping!"}</span>
+	                  <span className="homepageMottoText hidden-sm hidden-xs">Find a property in an area where your <b>customers</b> are already <b>shopping!</b></span>
 	                </center>
 	                <center>
 	                  <span className="productDescriptionSpan hidden-xs hidden-sm" style={{color:"#FFFFFF", marginTop:"10px", fontSize:"18px", fontWeight:"550"}} >{"With foot traffic, competition and demographic data for 1000+ properties, we'll help you find the perfect location for your business"}</span>
