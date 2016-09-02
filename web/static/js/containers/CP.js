@@ -10,19 +10,19 @@ const GENDER_MALE = 'GENDER_MALE';
 const GENDER_FEMALE = 'GENDER_FEMALE';
 const GENDER_BOTH = 'GENDER_BOTH';
 
-const genderMaleText = 'are men';
-const genderFemaleText = 'are women';
-const genderBothText = 'are men and women';
+const genderMaleText = 'men';
+const genderFemaleText = 'women';
+const genderBothText = 'men and women';
 
 const PRICE_AFFORDABLE = 'PRICE_AFFORDABLE';
 const PRICE_AVERAGE = 'PRICE_AVERAGE';
 const PRICE_QUALITY = 'PRICE_QUALITY';
 const PRICE_HIGH_END = 'PRICE_HIGH_END';
 
-const priceAffordableText = 'cheap';
-const priceAverageText = 'affordable';
-const priceQualityText = 'higher quality';
-const priceHighEndText = 'expensive, high-end';
+const priceAffordableText = 'a cheap';
+const priceAverageText = 'an affordable';
+const priceQualityText = 'a high-end';
+const priceHighEndText = 'a luxury';
 
 export class CP extends React.Component {
 
@@ -48,7 +48,7 @@ export class CP extends React.Component {
       gender: {key: GENDER_FEMALE, text: genderFemaleText},
       price: {key: PRICE_AVERAGE, text: priceAverageText},
       typing: 1,
-      text: "Casual Shoes .",
+      text: "Nail Salon .",
       index: 0,
       business: ""
     }
@@ -111,12 +111,12 @@ export class CP extends React.Component {
       switch(this.state.index) {
         case 0:
           this.state.index = 1;
-          this.state.text = "Designer Clothing .";
+          this.state.text = "Clothing Store .";
           this.state.typing = 1;
           break;
         case 1:
           this.state.index = 2;
-          this.state.text = "Skateboarding Equipment .";
+          this.state.text = "Mexican Restaurant .";
           this.state.typing = 1;
           break;
         default: 
@@ -155,40 +155,14 @@ export class CP extends React.Component {
             {this.state.mounted ?
               <div>
                 <div style={{textAlign:"center", marginTop:"10px", color:"#FFFFFF", fontSize:"8vw"}}>
-                  {"My target customers"}
+                  {"I'm opening"}
                 </div>
               </div>
             :
               false
             }
           </ReactCSSTransitionGroup>
-          {/* bounce-in animate the genderType */}
-          <ReactCSSTransitionGroup transitionName="fadedBounceIn" transitionEnterTimeout={500} transitionLeaveTimeout={500}>
-            {this.state.mounted ?
-              <div className="panel b text-center" style={{marginLeft:"20px", marginRight:"20px", marginTop:"10px", backgroundColor:"#49A3DC", borderColor:"#FFFFFF"}}>
-                <div className="panel-body">
-                  <p className="h4" style={{color:"#FFFFFF", marginBottom:"10px", marginTop:"0px", fontSize:"8vw"}}>{gender.text}</p>
-                  <ButtonGroup>
-                    <Button onClick={() => this.setGender(GENDER_MALE, genderMaleText)} style={{backgroundColor: gender.key == GENDER_MALE ? "#FFFFFF" : "#49A3DC", fontSize:"8vw"}}><i className="fa fa-male" style={{color: gender.key == GENDER_MALE ? "#49A3DC" : "#FFFFFF"}}/></Button>
-                    <Button onClick={() => this.setGender(GENDER_FEMALE, genderFemaleText)} style={{backgroundColor: gender.key == GENDER_FEMALE ? "#FFFFFF" : "#49A3DC", fontSize:"8vw"}}><i className="fa fa-female" style={{color: gender.key == GENDER_FEMALE ? "#49A3DC" : "#FFFFFF"}}/></Button>
-                    <Button onClick={() => this.setGender(GENDER_BOTH, genderBothText)} style={{backgroundColor: gender.key == GENDER_BOTH ? "#FFFFFF" : "#49A3DC", fontSize:"8vw"}}><i className="fa fa-male" style={{color: gender.key == GENDER_BOTH ? "#49A3DC" : "#FFFFFF"}}/>&nbsp;<i className="fa fa-female" style={{color: gender.key == GENDER_BOTH ? "#49A3DC" : "#FFFFFF"}}/></Button>
-                  </ButtonGroup>
-                </div>
-              </div>
-            :
-              false
-            }
-          </ReactCSSTransitionGroup>
-          {/* fade-in animate the text leading into pricing info */}
-          <ReactCSSTransitionGroup transitionName="fadeIn" transitionEnterTimeout={500} transitionLeaveTimeout={500}>
-            {this.state.mounted ?
-              <div style={{textAlign:"center", marginTop:"0px", color:"#FFFFFF", fontSize:"8vw"}}>
-                {"looking for"}
-              </div>
-            :
-              false
-            }
-          </ReactCSSTransitionGroup>
+
           {/* bounce-in animate the priceType */}
           <ReactCSSTransitionGroup transitionName="fadedBounceIn" transitionEnterTimeout={500} transitionLeaveTimeout={500}>
             {this.state.mounted ?
@@ -207,6 +181,7 @@ export class CP extends React.Component {
               false
             }
           </ReactCSSTransitionGroup>
+
           {/* fade-in animate the businessType part of the form */}
           <ReactCSSTransitionGroup transitionName="fadeIn" transitionEnterTimeout={500} transitionLeaveTimeout={500}>
             {this.state.mounted ?
@@ -228,6 +203,36 @@ export class CP extends React.Component {
               false
             }
           </ReactCSSTransitionGroup>
+
+          {/* fade-in animate the text leading into pricing info */}
+          <ReactCSSTransitionGroup transitionName="fadeIn" transitionEnterTimeout={500} transitionLeaveTimeout={500}>
+            {this.state.mounted ?
+              <div style={{textAlign:"center", marginTop:"0px", color:"#FFFFFF", fontSize:"8vw"}}>
+                {"for"}
+              </div>
+            :
+              false
+            }
+          </ReactCSSTransitionGroup>
+
+          {/* bounce-in animate the genderType */}
+          <ReactCSSTransitionGroup transitionName="fadedBounceIn" transitionEnterTimeout={500} transitionLeaveTimeout={500}>
+            {this.state.mounted ?
+              <div className="panel b text-center" style={{marginLeft:"20px", marginRight:"20px", marginTop:"10px", backgroundColor:"#49A3DC", borderColor:"#FFFFFF"}}>
+                <div className="panel-body">
+                  <p className="h4" style={{color:"#FFFFFF", marginBottom:"10px", marginTop:"0px", fontSize:"8vw"}}>{gender.text}</p>
+                  <ButtonGroup>
+                    <Button onClick={() => this.setGender(GENDER_MALE, genderMaleText)} style={{backgroundColor: gender.key == GENDER_MALE ? "#FFFFFF" : "#49A3DC", fontSize:"8vw"}}><i className="fa fa-male" style={{color: gender.key == GENDER_MALE ? "#49A3DC" : "#FFFFFF"}}/></Button>
+                    <Button onClick={() => this.setGender(GENDER_FEMALE, genderFemaleText)} style={{backgroundColor: gender.key == GENDER_FEMALE ? "#FFFFFF" : "#49A3DC", fontSize:"8vw"}}><i className="fa fa-female" style={{color: gender.key == GENDER_FEMALE ? "#49A3DC" : "#FFFFFF"}}/></Button>
+                    <Button onClick={() => this.setGender(GENDER_BOTH, genderBothText)} style={{backgroundColor: gender.key == GENDER_BOTH ? "#FFFFFF" : "#49A3DC", fontSize:"8vw"}}><i className="fa fa-male" style={{color: gender.key == GENDER_BOTH ? "#49A3DC" : "#FFFFFF"}}/>&nbsp;<i className="fa fa-female" style={{color: gender.key == GENDER_BOTH ? "#49A3DC" : "#FFFFFF"}}/></Button>
+                  </ButtonGroup>
+                </div>
+              </div>
+            :
+              false
+            }
+          </ReactCSSTransitionGroup>
+
           {/* make the button appear on mount, no animation because animation wraps in a div that is not styled for flexbox */}
           {this.state.mounted ?
             <div style={{width:"100%", flexGrow:"1", paddingLeft:"20px", paddingRight:"20px", display:"flex", flexDirection:"column", justifyContent:"space-around"}}>
