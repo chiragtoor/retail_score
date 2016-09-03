@@ -1,11 +1,12 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import { connect } from "react-redux";
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import { Row, Col, InputGroup, FormGroup, ButtonGroup, Button, FormControl, DropdownButton, MenuItem } from 'react-bootstrap';
 
+import * as Actions from '../actions';
+
 import GoogleMap from '../components/GoogleMap';
-    
-const properties = [5, 4, 3, 2, 1];
 
 export class Test extends React.Component {
   constructor(props) {
@@ -17,16 +18,30 @@ export class Test extends React.Component {
     // used on mobile to store all propertyTile refs
     this._propertyTiles = new Map();
 
+    // store current city in state
+    var thisCity = this.props.params.city;
+    thisCity = thisCity.replace("-", " ");
+    //if the city doesnt contain the state it wont match against the cities in the array
+    if(!thisCity.includes(',')) {
+      thisCity = thisCity + ", CA";
+    }
+
     this.state = {
       mounted: false,
       // used to highlight the correct tile on mobile and desktop, will be used to pass into the map which pin to enlarge and center on
       mobileSelectedIndex: 0,
-      mobileShowSecondaryContent: false
+      mobileShowSecondaryContent: false,
+      city: thisCity,
+      currentFilter: Actions.FILTER_RS
     }
   }
 
   componentDidMount() {
+    // used for flag on animations, on mount animations don't work if they are rendered, so we wait till mount to run animation
     this.setState({mounted: true});
+    // get the properties for the current city
+    const cityString = this.state.city.split(',')[0];
+    this.props.loadProperties(cityString, "CA");
   }
 
   // mobile only filter button clicked
@@ -59,7 +74,68 @@ export class Test extends React.Component {
     this.setState({mobileSelectedIndex: minTuple.index});
   }
 
+  sortByRetailScore(properties) {
+    // no property will have a null retail score, so sort by just comparing the two values
+    // < because we want to go from high to low
+    return properties.sort((propertyA, propertyB) => {
+      if(propertyA.retail_score < propertyB.retail_score) {
+        return 1;
+      } else {
+        return -1;
+      }
+    });
+  }
+
+  sortByPrice(properties) {
+    // properties can have null values for price, need to account for that and concat the filtered out ones
+    var filteredPopertiesToSort = properties.filter(property => property.rental_rate_min != null);
+    var filteredPopertiesToConcat = properties.filter(property => property.rental_rate_min == null);
+
+    // > because we want to go from low to high
+    filteredPopertiesToSort.sort((propertyA, propertyB) => {
+      if(propertyA.rental_rate_min > propertyB.rental_rate_min) {
+        return 1;
+      } else {
+        return -1;
+      }
+    });
+    // add the properties with nothing to sort by to the end, their place was unknown
+    return filteredPopertiesToSort.concat(filteredPopertiesToConcat);
+  }
+
+  sortBySqFt(properties) {
+    // properties can have null values for price, need to account for that and concat the filtered out ones
+    var filteredPopertiesToSort = properties.filter(property => property.min_sq_feet != null);
+    var filteredPopertiesToConcat = properties.filter(property => property.min_sq_feet == null);
+
+    // > because we want to go from low to high
+    filteredPopertiesToSort.sort((propertyA, propertyB) => {
+      if(propertyA.min_sq_feet > propertyB.min_sq_feet) {
+        return 1;
+      } else {
+        return -1;
+      }
+    });
+    // add the properties with nothing to sort by to the end, their place was unknown
+    return filteredPopertiesToSort.concat(filteredPopertiesToConcat);
+  }
+
   render() {
+    var properties = this.props.properties;
+
+    // sort properties by the current filter
+    switch(this.state.currentFilter) {
+      case Actions.FILTER_RS:
+        properties = this.sortByRetailScore(properties);
+        break;
+      case Actions.FILTER_PRICE:
+        properties = this.sortByPrice(properties);
+        break;
+      case Actions.FILTER_SQ_FT:
+        properties = this.sortBySqFt(properties);
+        break;
+    }
+
     return(
       <div style={{width:"100%", height:"100%", margin:"0px", padding:"0px"}}>
         {/* Use flex-box so that we can automatically resize the content below the desktop only header bar when it dissapears on mobile */}
@@ -113,7 +189,7 @@ export class Test extends React.Component {
                 </div>
                 {/* Filters are opened by a button on mobile, so hide in that case */}
                 <div className="hidden-sm hidden-xs" style={{marginBottom:"10px"}}>
-                  <Filters />
+                  <Filters selectedSort={this.state.currentFilter} onUpdateSort={(newValue) => this.setState({currentFilter: newValue})}/>
                 </div>
                 {/* Button for CP edit, # of Listings, and if on mobile button for Filters */}
                 <div style={{borderTop:"solid thin #CCCCCC", borderBottom:"solid thin #CCCCCC", height:"40px", display:"flex", alignItems:"center"}}>
@@ -133,13 +209,13 @@ export class Test extends React.Component {
                 {/* Bootstrap hidden is using display:none, so performance of doing this should not be a issue. But even so with pagination we should be avoiding any perfomance problem with many tiles */}
                 <div className="listingsDiv hidden-sm hidden-xs">
                   {properties.map((property, index) => {
-                    return <PropertyTile mobile={false} key={index} index={index} onHover={(index) => this.setState({mobileSelectedIndex: index})} selected={this.state.mobileSelectedIndex == index} style={{flexShrink: "1"}}/>
+                    return <PropertyTile property={property} mobile={false} key={index} index={index} onHover={(index) => this.setState({mobileSelectedIndex: index})} selected={this.state.mobileSelectedIndex == index} style={{flexShrink: "1"}}/>
                   })}
                 </div>
                 <div className="listingsDiv hidden-md hidden-lg" onScroll={this.listingsDivScrolled}>
                   {properties.map((property, index) => {
                     {/* Add the ref of this to the mobile tiles ref storage, this is used for calculating which element is in the main scroll position */}
-                    return <PropertyTile mobile={true} key={index} index={index} selected={this.state.mobileSelectedIndex == index} style={{flexShrink: "1"}} ref={c => this._propertyTiles.set(index, c)}/>
+                    return <PropertyTile property={property} mobile={true} key={index} index={index} selected={this.state.mobileSelectedIndex == index} style={{flexShrink: "1"}} ref={c => this._propertyTiles.set(index, c)}/>
                   })}
                 </div>
               </div>
@@ -162,8 +238,8 @@ export class Test extends React.Component {
         <ReactCSSTransitionGroup transitionName="fadedBounceIn" transitionEnterTimeout={500} transitionLeaveTimeout={500}>
           {this.state.mobileShowSecondaryContent ?
             <div onClick={() => this.setState({mobileShowSecondaryContent: false})} style={{width:"100%", height:"100%", position:"absolute", left:"0", top:"0", zIndex:"10", display:"flex", justifyContent:"center", alignItems:"center"}}>
-              <div onClick={(e) => e.stopPropogation()} style={{width:"95%", height:"70%"}}>
-                <Filters onSave={() => this.setState({mobileShowSecondaryContent: false})} padded={true} />
+              <div onClick={(e) => e.stopPropagation()} style={{width:"95%", height:"70%"}}>
+                <Filters selectedSort={this.state.currentFilter} onUpdateSort={(newValue) => this.setState({currentFilter: newValue})} onSave={() => this.setState({mobileShowSecondaryContent: false})} padded={true} />
               </div>
             </div>
           :
@@ -175,20 +251,55 @@ export class Test extends React.Component {
   }
 }
 class PropertyTile extends React.Component {
+
+  numberToString(number) {
+    return number.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+  }
+
+  formatPrice(property) {
+    // properties will either have null for both, only a min, or a min and max value
+    //  will never have a max and no min
+    if(property.rental_rate_min == null) {
+      return "Unknown Rate"
+    } else if(property.rental_rate_min != null && property.rental_rate_max == null) {
+      return "$" + this.numberToString(property.rental_rate_min) + "/mo"; 
+    } else if(property.rental_rate_min == property.rental_rate_max){
+      return "$" + this.numberToString(property.rental_rate_min) + "/mo";
+    } else {
+      return "$" + this.numberToString(property.rental_rate_min) + " - " + this.numberToString(property.rental_rate_max) + "/mo";
+    }
+  }
+
+  formatSqFt(property) {
+    // properties will either have null for both, only a min, or a min and max value
+    //  will never have a max and no min
+    if(property.min_sq_feet == null) {
+      return "Unknown Size"
+    } else if(property.min_sq_feet != null && property.max_sq_feet == null) {
+      return this.numberToString(property.rental_rate_min) + "Sq. Ft."; 
+    } else if(property.min_sq_feet == property.max_sq_feet) {
+      return this.numberToString(property.min_sq_feet) + "Sq. Ft.";
+    } else {
+      return this.numberToString(property.min_sq_feet) + " - " + this.numberToString(property.max_sq_feet) + "Sq. Ft.";
+    }
+  }
+
   render() {
-  {/* styles and color to use when a tile is currently selected, this is hovered over on desktop and in the main scroll position on mobile */}
+    {/* styles and color to use when a tile is currently selected, this is hovered over on desktop and in the main scroll position on mobile */}
     const selectedPanelContainerStyle = {display:"flex", flexDirection:"column", borderColor:"#49A3DC", borderWidth:"2px", boxShadow:"0 0 2px #49A3DC", marginBottom:"0px"};
     const panelBordersColor = this.props.selected ? "#49A3DC" : "#CCCCCC";
 
-    {/* Below code is temporary, just for simulating different RS values */}
-    var retailScore = <label className="control-label" style={{fontSize:"12px", marginLeft:"10px", color:"#27ae60", borderBottom:"solid thin"}}>Retail Score: <i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/></label>;
-    if(this.props.index == 1) {
+    {/* Below code gets the correct RS color and stars depending on score value */}
+    var retailScore = false;
+    if(this.props.property.retail_score >= 90) {
+      retailScore = <label className="control-label" style={{fontSize:"12px", marginLeft:"10px", color:"#27ae60", borderBottom:"solid thin"}}>Retail Score: <i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/></label>;
+    } else if(this.props.property.retail_score >= 80) {
       retailScore = <label className="control-label" style={{fontSize:"12px", marginLeft:"10px", color:"#f1c40f", borderBottom:"solid thin"}}>Retail Score: <i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/></label>;
-    } else if(this.props.index == 2) {
+    } else if(this.props.property.retail_score >= 70) {
       retailScore = <label className="control-label" style={{fontSize:"12px", marginLeft:"10px", color:"#e67e22", borderBottom:"solid thin"}}>Retail Score: <i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/></label>;
-    } else if(this.props.index == 3) {
+    } else if(this.props.property.retail_score >= 60) {
       retailScore = <label className="control-label" style={{fontSize:"12px", marginLeft:"10px", color:"#c0392b", borderBottom:"solid thin"}}>Retail Score: <i className="fa fa-star"/><i className="fa fa-star"/></label>;
-    } else if(this.props.index == 4) {
+    } else {
       retailScore = <label className="control-label" style={{fontSize:"12px", marginLeft:"10px", color:"#c0392b", borderBottom:"solid thin"}}>Retail Score: <i className="fa fa-star"/></label>;
     }
 
@@ -203,7 +314,7 @@ class PropertyTile extends React.Component {
             <div className="srpTilePanelImageHeight" style={{backgroundColor:"rgba(255,0,0,0.1)"}} />
           </div>
           {/* If CP given we have a RS for each property, otherwise we add a button  */}
-          {this.props.index % 2 == 0 ?
+          {true ?
             <div className="panel-body bt" style={{padding:"2px", borderColor: panelBordersColor}}>
               {/* RS and explanation, explanation uses CSS text cutoof technique on smaller devices with varying # of lines depending on screen width */}
               {retailScore}
@@ -218,10 +329,10 @@ class PropertyTile extends React.Component {
           <div className="panel-body bt" style={{padding:"2px", borderColor: panelBordersColor, marginTop:"2px"}}>
             <Row>
               <Col xs={6} className="br" style={{borderColor: panelBordersColor}}>
-                <p style={{marginBottom:"7px", marginTop:"5px"}}>$2,500/mo</p>
+                <p style={{marginBottom:"7px", marginTop:"5px"}}>{this.formatPrice(this.props.property)}</p>
               </Col>
               <Col xs={6}>
-                <p style={{marginBottom:"7px", marginTop:"5px"}}>600 Sq. Ft.</p>
+                <p style={{marginBottom:"7px", marginTop:"5px"}}>{this.formatSqFt(this.props.property)}</p>
               </Col>
             </Row>
           </div>
@@ -259,6 +370,8 @@ class SearchBar extends React.Component {
 }
 class Filters extends React.Component {
   render() {
+    const sortButtonStyle = {height:"40px", color:"#49A3DC", borderColor:"#CCCCCC"};
+    const selectedSortButtonStyle = {borderColor: "#49A3DC", height:"40px", color:"#49A3DC", marginLeft:"0px", marginRight:"1px"};
     return(
       <div style={{backgroundColor:"#FFFFFF", width:"100%", height:"100%", padding: this.props.padded ? "10px" : "0", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
         {/* Filters label */}
@@ -328,9 +441,9 @@ class Filters extends React.Component {
           </Col>
           <Col xs={10} sm={11} md={10} style={{paddingRight:"10px"}}>
             <ButtonGroup style={{width:"100%", height:"40px"}}>
-              <Button className="filterSortButtonWidthRS" style={{height:"40px", color:"#49A3DC", borderColor:"#CCCCCC"}}>Retail Score</Button>
-              <Button className="filterSortButtonWidthPrice" style={{height:"40px", color:"#49A3DC", borderColor:"#CCCCCC"}}>Price</Button>
-              <Button className="filterSortButtonWidthSq" style={{borderColor: "#49A3DC", height:"40px", color:"#49A3DC"}}>Sq. Feet</Button>
+              <Button onClick={() => this.props.onUpdateSort(Actions.FILTER_RS)} className="filterSortButtonWidthRS" style={this.props.selectedSort == Actions.FILTER_RS ? selectedSortButtonStyle : sortButtonStyle}>Retail Score</Button>
+              <Button onClick={() => this.props.onUpdateSort(Actions.FILTER_PRICE)} className="filterSortButtonWidthPrice" style={this.props.selectedSort == Actions.FILTER_PRICE ? selectedSortButtonStyle : sortButtonStyle}>Price</Button>
+              <Button onClick={() => this.props.onUpdateSort(Actions.FILTER_SQ_FT)} className="filterSortButtonWidthSq" style={this.props.selectedSort == Actions.FILTER_SQ_FT ? selectedSortButtonStyle : sortButtonStyle}>Sq. Feet</Button>
             </ButtonGroup>
           </Col>
           {/* If on Mobile add a Save/Done button since cannot see the changes reflected easily, user needs way to dismiss the slide out */}
@@ -343,4 +456,15 @@ class Filters extends React.Component {
   }
 }
 
-export default Test;
+Test.contextTypes = {
+  mixpanel: React.PropTypes.object.isRequired
+};
+
+const mapStateToProps = (state) => {
+  return {
+    server_side: state.server_side,
+    properties: state.properties
+  };
+};
+
+export default connect(mapStateToProps, Actions)(Test);
