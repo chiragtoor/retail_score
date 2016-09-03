@@ -238,6 +238,16 @@ MOVE TO SRP.CSS AFTER
 .filtersLabelSize {
   height: 60px;
 }
+/* on all devices split the width of filter sort buttons equally */
+.filterSortButtonWidthRS {
+  width: 33.33%;
+}
+.filterSortButtonWidthPrice {
+  width: 33.33%;
+}
+.filterSortButtonWidthSq {
+  width: 33.33%;
+}
 /* classes relating to the SRP Tiles and all their inner parts */
 .listingsDiv {
   /* On mobile the height is 100% of parent (which is 55% of the screen height from above) - 
@@ -277,6 +287,10 @@ MOVE TO SRP.CSS AFTER
 .srpTilePanelImageHeight {
   height: 100px;
 }
+/* For mobile phones limit height or tileRetailScore to 90px, this is used for button space if no CP given */
+.tileRetailScore {
+  height: 80px;
+}
 /* on mobile devices generally we have enough space to limit the RS reasoning text to 3 lines, use line-clamp to limit and cut off remaining text */
 .lineClamp {
   /* text-align left to get as much on screen as possible in given space */
@@ -299,6 +313,16 @@ MOVE TO SRP.CSS AFTER
 
 /* on smaller width mobile phones (iPhone 4 and 5) we cannot fit a lot of text or the contact button */
 @media(max-width: 320px) {
+  /* on all devices split the width of filter sort buttons equally */
+  .filterSortButtonWidthRS {
+    width: 40%;
+  }
+  .filterSortButtonWidthPrice {
+    width: 30%;
+  }
+  .filterSortButtonWidthSq {
+    width: 30%;
+  }
   /* limit RS description to 1 line only */
   .lineClamp {
     -webkit-line-clamp: 1;
@@ -306,6 +330,10 @@ MOVE TO SRP.CSS AFTER
   /* cut image size down to 80px */
   .srpTilePanelImageHeight {
     height: 80px;
+  }
+  /* For smaller mobile phones cut the tileCP Button area in half, not enough space vertically */
+  .tileRetailScore {
+    height: 45px;
   }
   /* take out the contact button */
   .srpContactButton {
@@ -335,7 +363,12 @@ MOVE TO SRP.CSS AFTER
   }
   /* can support a larger image */
   .srpTilePanelImageHeight {
-    height: 200px;
+    height: 195px;
+  }
+  /* For tablets add a minHeight, otherwise in case of no profile given the add retail score button does not take up much space and then the panel has */
+  /*  a bunch of extra whitespace on the bottom under Contact button */
+  .tileRetailScore {
+    min-height: 95px;
   }
 }
 /* dekstop and larger screens */
@@ -369,6 +402,8 @@ MOVE TO SRP.CSS AFTER
     /*  this gives desktop the correct placement of tiles in pairs down vertically */
     flex-wrap: wrap;
     width: 100%;
+    /* for spacing at bottom of last tile */
+    padding-bottom: 10px;
     /* had issues doing this height correctly without the important flag, not sure why */
     /* height accounts for all the items above listingsDiv on desktop (app bar, filters, etc.) */
     height: -webkit-calc(100% - 270px) !important;
@@ -396,6 +431,11 @@ MOVE TO SRP.CSS AFTER
     width: 100%;
     margin-left: 0;
   }
+  /* For desktop add a minHeight, otherwise in case of no profile given the add retail score button does not take up much space and then the panel has */
+  /*  a bunch of extra whitespace on the bottom under Contact button */
+  .tileRetailScore {
+    min-height: 85px;
+  }
   /* larger than mobile but smaller than tablet images supported on desktop */
   .srpTilePanelImageHeight {
     height: 150px;
@@ -420,12 +460,19 @@ MOVE TO SRP.CSS AFTER
   transition: transform;
   transition-duration: 3s;
 }
-/* animation used to fadeIn in place, used by app bar on top of SRP */
+/* animation used to fadeIn in place, used by app bar on top of SRP, mobile dimDiv */
 .fadeIn-enter {
   opacity: 0.01;
 }
 .fadeIn-enter.fadeIn-enter-active {
   opacity: 1;
+  transition: opacity 500ms ease-in;
+}
+.fadeIn-leave {
+  opacity: 0.9;
+}
+.fadeIn-leave.fadeIn-leave-active {
+  opacity: 0;
   transition: opacity 500ms ease-in;
 }
 /* animation to bounceIn in place, used on CP form and homepage */
@@ -434,7 +481,7 @@ MOVE TO SRP.CSS AFTER
     animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
   }
   0% {
-    opacity: 0;
+    opacity: 1;
     transform: scale3d(.3, .3, .3);
   }
   20% {
@@ -467,8 +514,23 @@ MOVE TO SRP.CSS AFTER
   animation-timing-function: linear;
 }
 .fadedBounceIn-enter.fadedBounceIn-enter-active {
+  opacity: 0.01;
+}
+/* Animation for dimmed out div around mobile filters, CP, menu */
+.dimFade-enter {
   opacity: 1;
   transition: opacity 500ms ease-in;
+}
+.dimFade-enter-active {
+  background-color: rgba(0,0,0,0.5);
+  transition: 0.5s ease-in all;
+}
+.dimFade-leave {
+  background-color: rgba(0,0,0,0.5);
+}
+.dimFade-leave-active {
+  background-color: rgba(0,0,0,0.0);
+  transition: 0.5s ease-in all;
 }
 /* UI REFACTOR CSS END */
 
@@ -576,23 +638,7 @@ IE 10+
 }
 
 
-.dimFade-enter {
-  background-color: rgba(0,0,0,0.0);
-}
 
-.dimFade-enter-active {
-  background-color: rgba(0,0,0,0.5);
-  transition: 0.5s ease-in all;
-}
-
-.dimFade-leave {
-  background-color: rgba(0,0,0,0.5);
-}
-
-.dimFade-leave-active {
-  background-color: rgba(0,0,0,0.0);
-  transition: 0.5s ease-in all;
-}
 
 .desktopListings {
   height: -webkit-calc(100% - 50px);
