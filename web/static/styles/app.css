@@ -310,6 +310,10 @@ MOVE TO SRP.CSS AFTER
 .srpContactButton {
   display: block;
 }
+.dropdown-menu {
+  max-height: 200px;
+  overflow: scroll;
+}
 
 /* on smaller width mobile phones (iPhone 4 and 5) we cannot fit a lot of text or the contact button */
 @media(max-width: 320px) {

@@ -3,9 +3,13 @@ import axios from 'axios';
 /*
  * Constants used across App
  */
-export const FILTER_RS = 0;
-export const FILTER_PRICE = 1;
-export const FILTER_SQ_FT = 2;
+export const SORT_RS = 0;
+export const SORT_PRICE = 1;
+export const SORT_SQ_FT = 2;
+
+export function numberToString(number) {
+  return number.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
+}
 
 /*
  * API Endpoints

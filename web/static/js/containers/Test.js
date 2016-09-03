@@ -5,6 +5,7 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import { Row, Col, InputGroup, FormGroup, ButtonGroup, Button, FormControl, DropdownButton, MenuItem } from 'react-bootstrap';
 
 import * as Actions from '../actions';
+import * as Util from '../Util';
 
 import GoogleMap from '../components/GoogleMap';
 
@@ -30,9 +31,16 @@ export class Test extends React.Component {
       mounted: false,
       // used to highlight the correct tile on mobile and desktop, will be used to pass into the map which pin to enlarge and center on
       mobileSelectedIndex: 0,
+      // flag for whether to show the container for filters, CP
       mobileShowSecondaryContent: false,
       city: thisCity,
-      currentFilter: Actions.FILTER_RS
+      // type of sort currently being applied
+      currentSort: Actions.SORT_RS,
+      // default filter values are all null, this way initial text displays in filter dropdowns
+      filterPriceMin: null,
+      filterPriceMax: null,
+      filterSqFtMin: null,
+      filterSqFtMax: null
     }
   }
 
@@ -88,11 +96,11 @@ export class Test extends React.Component {
 
   sortByPrice(properties) {
     // properties can have null values for price, need to account for that and concat the filtered out ones
-    var filteredPopertiesToSort = properties.filter(property => property.rental_rate_min != null);
-    var filteredPopertiesToConcat = properties.filter(property => property.rental_rate_min == null);
+    var popertiesToSort = properties.filter(property => property.rental_rate_min != null);
+    var popertiesToConcat = properties.filter(property => property.rental_rate_min == null);
 
     // > because we want to go from low to high
-    filteredPopertiesToSort.sort((propertyA, propertyB) => {
+    popertiesToSort.sort((propertyA, propertyB) => {
       if(propertyA.rental_rate_min > propertyB.rental_rate_min) {
         return 1;
       } else {
@@ -100,16 +108,16 @@ export class Test extends React.Component {
       }
     });
     // add the properties with nothing to sort by to the end, their place was unknown
-    return filteredPopertiesToSort.concat(filteredPopertiesToConcat);
+    return popertiesToSort.concat(popertiesToConcat);
   }
 
   sortBySqFt(properties) {
     // properties can have null values for price, need to account for that and concat the filtered out ones
-    var filteredPopertiesToSort = properties.filter(property => property.min_sq_feet != null);
-    var filteredPopertiesToConcat = properties.filter(property => property.min_sq_feet == null);
+    var propertiesToSort = properties.filter(property => property.min_sq_feet != null);
+    var propertiesToConcat = properties.filter(property => property.min_sq_feet == null);
 
     // > because we want to go from low to high
-    filteredPopertiesToSort.sort((propertyA, propertyB) => {
+    propertiesToSort.sort((propertyA, propertyB) => {
       if(propertyA.min_sq_feet > propertyB.min_sq_feet) {
         return 1;
       } else {
@@ -117,21 +125,111 @@ export class Test extends React.Component {
       }
     });
     // add the properties with nothing to sort by to the end, their place was unknown
-    return filteredPopertiesToSort.concat(filteredPopertiesToConcat);
+    return propertiesToSort.concat(propertiesToConcat);
+  }
+
+  // if minFlag is true this will filter with price as a lower bound, otherwise upper bound
+  filterByPrice(properties, price, minFlag) {
+    // since max price can only be there if a min is already there, we use min to grab filter and concat lists
+    var propertiesToFilter = properties.filter(property => property.rental_rate_min != null);
+    var propertiesToConcat = properties.filter(property => property.rental_rate_min == null);
+
+    var filteredProperties = propertiesToFilter.filter((property) => {
+      // check with lower bound
+      if(minFlag) {
+        // if the property rental rate is over the limit, keep it in
+        if(property.rental_rate_min > price) {
+          return true;
+        // else if property has a range and the upper bound of range is over limit, keep it in
+        } else if(property.rental_rate_max && property.rental_rate_max > price) {
+          return true;
+        }
+        // otherwise filter it out
+        return false;
+      } else {
+      // filter out with price as upper bound, only need to check if min is < price because
+      //  if property has a max value it will be > min, so just checking min is enough
+        // if the property rental rate is under the limit, keep it in
+        if(property.rental_rate_min < price) {
+          return true;
+        }
+        // otherwise filter it out
+        return false;
+      }
+      
+    });
+
+    return filteredProperties.concat(propertiesToConcat);
+  }
+
+  // if minFlag is true this will filter with price as a lower bound, otherwise upper bound
+  filterBySqFt(properties, sqFt, minFlag) {
+    // since max price can only be there if a min is already there, we use min to grab filter and concat lists
+    var propertiesToFilter = properties.filter(property => property.min_sq_feet != null);
+    var propertiesToConcat = properties.filter(property => property.min_sq_feet == null);
+
+    var filteredProperties = propertiesToFilter.filter((property) => {
+      // check with lower bound
+      if(minFlag) {
+        // if the property sq ft is over the limit, keep it in
+        if(property.min_sq_feet > sqFt) {
+          return true;
+        // else if property has a range and the upper bound of range is over limit, keep it in
+        } else if(property.max_sq_feet && property.max_sq_feet > sqFt) {
+          return true;
+        }
+        // otherwise filter it out
+        return false;
+      } else {
+      // filter out with sq ft as upper bound, only need to check if min is < sq ft because
+      //  if property has a max value it will be > min, so just checking min is enough
+        // if the property sq ft is under the limit, keep it in
+        if(property.min_sq_feet < sqFt) {
+          return true;
+        }
+        // otherwise filter it out
+        return false;
+      }
+      
+    });
+
+    return filteredProperties.concat(propertiesToConcat);
   }
 
   render() {
     var properties = this.props.properties;
 
-    // sort properties by the current filter
-    switch(this.state.currentFilter) {
-      case Actions.FILTER_RS:
+    // filter out properties according to user selection
+    if(this.state.filterPriceMin != null) {
+      // if user selected min price, filter out anything above
+      properties = this.filterByPrice(properties, this.state.filterPriceMin, true);
+    }
+    if(this.state.filterPriceMax != null) {
+      // if user selected max price, filter out anything below
+      properties = this.filterByPrice(properties, this.state.filterPriceMax, false);
+    }
+    if(this.state.filterSqFtMin != null) {
+      // if user selected min price, filter out anything above
+      properties = this.filterBySqFt(properties, this.state.filterSqFtMin, true);
+    }
+    if(this.state.filterSqFtMax != null) {
+      // if user selected max price, filter out anything below
+      properties = this.filterBySqFt(properties, this.state.filterSqFtMax, false);
+    }
+
+    // Sorting has to be done after the filtering, otherwise it wont be in proper order
+    // sort properties by the current selected sort method 
+    switch(this.state.currentSort) {
+      // sort by retail score
+      case Actions.SORT_RS:
         properties = this.sortByRetailScore(properties);
         break;
-      case Actions.FILTER_PRICE:
+      // sort by price
+      case Actions.SORT_PRICE:
         properties = this.sortByPrice(properties);
         break;
-      case Actions.FILTER_SQ_FT:
+      // sort by sq feet
+      case Actions.SORT_SQ_FT:
         properties = this.sortBySqFt(properties);
         break;
     }
@@ -189,7 +287,17 @@ export class Test extends React.Component {
                 </div>
                 {/* Filters are opened by a button on mobile, so hide in that case */}
                 <div className="hidden-sm hidden-xs" style={{marginBottom:"10px"}}>
-                  <Filters selectedSort={this.state.currentFilter} onUpdateSort={(newValue) => this.setState({currentFilter: newValue})}/>
+                  <Filters 
+                    filterPriceMin={this.state.filterPriceMin}
+                    filterPriceMax={this.state.filterPriceMax}
+                    filterSqFtMin={this.state.filterSqFtMin}
+                    filterSqFtMax={this.state.filterSqFtMax}
+                    onUpdatePriceMin={(value) => this.setState({filterPriceMin: value})}
+                    onUpdatePriceMax={(value) => this.setState({filterPriceMax: value})}
+                    onUpdateSqFtMin={(value) => this.setState({filterSqFtMin: value})}
+                    onUpdateSqFtMax={(value) => this.setState({filterSqFtMax: value})}
+                    selectedSort={this.state.currentSort}
+                    onUpdateSort={(newValue) => this.setState({currentSort: newValue})}/>
                 </div>
                 {/* Button for CP edit, # of Listings, and if on mobile button for Filters */}
                 <div style={{borderTop:"solid thin #CCCCCC", borderBottom:"solid thin #CCCCCC", height:"40px", display:"flex", alignItems:"center"}}>
@@ -239,7 +347,19 @@ export class Test extends React.Component {
           {this.state.mobileShowSecondaryContent ?
             <div onClick={() => this.setState({mobileShowSecondaryContent: false})} style={{width:"100%", height:"100%", position:"absolute", left:"0", top:"0", zIndex:"10", display:"flex", justifyContent:"center", alignItems:"center"}}>
               <div onClick={(e) => e.stopPropagation()} style={{width:"95%", height:"70%"}}>
-                <Filters selectedSort={this.state.currentFilter} onUpdateSort={(newValue) => this.setState({currentFilter: newValue})} onSave={() => this.setState({mobileShowSecondaryContent: false})} padded={true} />
+                <Filters 
+                  filterPriceMin={this.state.filterPriceMin}
+                  filterPriceMax={this.state.filterPriceMax}
+                  filterSqFtMin={this.state.filterSqFtMin}
+                  filterSqFtMax={this.state.filterSqFtMax}
+                  onUpdatePriceMin={(value) => this.setState({filterPriceMin: value})}
+                  onUpdatePriceMax={(value) => this.setState({filterPriceMax: value})}
+                  onUpdateSqFtMin={(value) => this.setState({filterSqFtMin: value})}
+                  onUpdateSqFtMax={(value) => this.setState({filterSqFtMax: value})}
+                  selectedSort={this.state.currentSort} 
+                  onUpdateSort={(newValue) => this.setState({currentSort: newValue})} 
+                  onSave={() => this.setState({mobileShowSecondaryContent: false})} 
+                  padded={true} />
               </div>
             </div>
           :
@@ -251,22 +371,17 @@ export class Test extends React.Component {
   }
 }
 class PropertyTile extends React.Component {
-
-  numberToString(number) {
-    return number.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",")
-  }
-
   formatPrice(property) {
     // properties will either have null for both, only a min, or a min and max value
     //  will never have a max and no min
     if(property.rental_rate_min == null) {
       return "Unknown Rate"
     } else if(property.rental_rate_min != null && property.rental_rate_max == null) {
-      return "$" + this.numberToString(property.rental_rate_min) + "/mo"; 
+      return "$" + Actions.numberToString(property.rental_rate_min) + "/mo"; 
     } else if(property.rental_rate_min == property.rental_rate_max){
-      return "$" + this.numberToString(property.rental_rate_min) + "/mo";
+      return "$" + Actions.numberToString(property.rental_rate_min) + "/mo";
     } else {
-      return "$" + this.numberToString(property.rental_rate_min) + " - " + this.numberToString(property.rental_rate_max) + "/mo";
+      return "$" + Actions.numberToString(property.rental_rate_min) + " - " + Actions.numberToString(property.rental_rate_max) + "/mo";
     }
   }
 
@@ -276,11 +391,11 @@ class PropertyTile extends React.Component {
     if(property.min_sq_feet == null) {
       return "Unknown Size"
     } else if(property.min_sq_feet != null && property.max_sq_feet == null) {
-      return this.numberToString(property.rental_rate_min) + "Sq. Ft."; 
+      return Actions.numberToString(property.rental_rate_min) + " Sq.Ft."; 
     } else if(property.min_sq_feet == property.max_sq_feet) {
-      return this.numberToString(property.min_sq_feet) + "Sq. Ft.";
+      return Actions.numberToString(property.min_sq_feet) + " Sq.Ft.";
     } else {
-      return this.numberToString(property.min_sq_feet) + " - " + this.numberToString(property.max_sq_feet) + "Sq. Ft.";
+      return Actions.numberToString(property.min_sq_feet) + " - " + Actions.numberToString(property.max_sq_feet) + " Sq.Ft.";
     }
   }
 
@@ -369,9 +484,32 @@ class SearchBar extends React.Component {
   }
 }
 class Filters extends React.Component {
+  // price and sq foot options are stored in the Util.js file
   render() {
     const sortButtonStyle = {height:"40px", color:"#49A3DC", borderColor:"#CCCCCC"};
     const selectedSortButtonStyle = {borderColor: "#49A3DC", height:"40px", color:"#49A3DC", marginLeft:"0px", marginRight:"1px"};
+
+    // for min price options, filter out anything greater than the max (if not null)
+    var minPriceOptions = Util.prices;
+    if(this.props.filterPriceMax != null) {
+      minPriceOptions = minPriceOptions.filter(price => price < this.props.filterPriceMax);
+    }
+    // for max price options, filter out anything less than the min (if not null)
+    var maxPriceOptions = Util.prices;
+    if(this.props.filterPriceMin != null) {
+      maxPriceOptions = maxPriceOptions.filter(price => price > this.props.filterPriceMin);
+    }
+    // for min sqft options, filter out anything greater than the max (if not null)
+    var minSqFtOptions = Util.square_feet;
+    if(this.props.filterSqFtMax != null) {
+      minSqFtOptions = minSqFtOptions.filter(sqFeet => sqFeet < this.props.filterSqFtMax);
+    }
+    // for max sqft options, filter out anything less than the min (if not null)
+    var maxSqFtOptions = Util.square_feet;
+    if(this.props.filterSqFtMin != null) {
+      maxSqFtOptions = maxSqFtOptions.filter(sqFeet => sqFeet > this.props.filterSqFtMin);
+    }
+
     return(
       <div style={{backgroundColor:"#FFFFFF", width:"100%", height:"100%", padding: this.props.padded ? "10px" : "0", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
         {/* Filters label */}
@@ -388,22 +526,30 @@ class Filters extends React.Component {
           <Col xs={2} sm={1} md={6} className="hidden-sm hidden-xs filtersLabelSize" style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
             <label className="control-label" style={{fontSize:"16px", marginLeft:"10px", color:"#656565"}}>Size:</label>
           </Col>
-          {/* On desktop this will be under a label and sharing space with teh Sq Ft dropdowns, so half space there and majority space on mobile where it will be in its own row with just a label */}
+          {/* On desktop this will be under a label and sharing space with the Sq Ft dropdowns, so half space there and majority space on mobile where it will be in its own row with just a label */}
           <Col xs={10} sm={11} md={6}>
             <InputGroup style={{padding:"10px", height:"40px", width:"100%"}}>
               <DropdownButton
+                onSelect={((newValue) => this.props.onUpdatePriceMin(newValue))}
                 componentClass={InputGroup.Button}
                 id="input-dropdown-addon"
-                title="Minimum"
+                title={this.props.filterPriceMin == null ? "Minimum" : ("$" + Actions.numberToString(this.props.filterPriceMin) + "/mo")}
                 style={{height:"40px", width:"100%", color:"#49A3DC", borderColor:"#CCCCCC"}}>
-                <MenuItem key="1">Item</MenuItem>
+                {this.props.filterPriceMin != null ? <MenuItem key={index} eventKey={null}>None</MenuItem> : false}
+                {minPriceOptions.map((price, index) => {
+                  return <MenuItem key={index} eventKey={price}>{Actions.numberToString(price)}</MenuItem>
+                })}
               </DropdownButton>
               <DropdownButton
+                onSelect={((newValue) => this.props.onUpdatePriceMax(newValue))}
                 componentClass={InputGroup.Button}
                 id="input-dropdown-addon"
-                title="Maximum"
+                title={this.props.filterPriceMax == null ? "Maximum" : ("$" + Actions.numberToString(this.props.filterPriceMax) + "/mo")}
                 style={{height:"40px", width:"100%", color:"#49A3DC", borderColor:"#CCCCCC"}}>
-                <MenuItem key="1">Item</MenuItem>
+                {this.props.filterPriceMax != null ? <MenuItem key={index} eventKey={null}>None</MenuItem> : false}
+                {maxPriceOptions.map((price, index) => {
+                  return <MenuItem key={index} eventKey={price}>{Actions.numberToString(price)}</MenuItem>
+                })}
               </DropdownButton>
             </InputGroup>
           </Col>
@@ -417,18 +563,26 @@ class Filters extends React.Component {
           <Col xs={10} sm={11} md={6}>
             <InputGroup style={{padding:"10px", height:"40px", width:"100%"}}>
               <DropdownButton
+                onSelect={((newValue) => this.props.onUpdateSqFtMin(newValue))}
                 componentClass={InputGroup.Button}
                 id="input-dropdown-addon"
-                title="Min Sq. Feet"
+                title={this.props.filterSqFtMin == null ? "Min Sq. Feet" : (Actions.numberToString(this.props.filterSqFtMin) + " Sq.Ft.")}
                 style={{height:"40px", width:"100%", color:"#49A3DC", borderColor:"#CCCCCC"}}>
-                <MenuItem key="1">Item</MenuItem>
+                {this.props.filterSqFtMin != null ? <MenuItem key={index} eventKey={null}>None</MenuItem> : false}
+                {minSqFtOptions.map((sqFt, index) => {
+                  return <MenuItem key={index} eventKey={sqFt}>{Actions.numberToString(sqFt)}</MenuItem>
+                })}
               </DropdownButton>
               <DropdownButton
+                onSelect={((newValue) => this.props.onUpdateSqFtMax(newValue))}
                 componentClass={InputGroup.Button}
                 id="input-dropdown-addon"
-                title="Max Sq. Feet"
+                title={this.props.filterSqFtMax == null ? "Max Sq. Feet" : (Actions.numberToString(this.props.filterSqFtMax) + " Sq.Ft.")}
                 style={{height:"40px", width:"100%", color:"#49A3DC", borderColor:"#CCCCCC"}}>
-                <MenuItem key="1">Item</MenuItem>
+                {this.props.filterSqFtMax != null ? <MenuItem key={index} eventKey={null}>None</MenuItem> : false}
+                {maxSqFtOptions.map((sqFt, index) => {
+                  return <MenuItem key={index} eventKey={sqFt}>{Actions.numberToString(sqFt)}</MenuItem>
+                })}
               </DropdownButton>
             </InputGroup>
           </Col>
@@ -441,9 +595,9 @@ class Filters extends React.Component {
           </Col>
           <Col xs={10} sm={11} md={10} style={{paddingRight:"10px"}}>
             <ButtonGroup style={{width:"100%", height:"40px"}}>
-              <Button onClick={() => this.props.onUpdateSort(Actions.FILTER_RS)} className="filterSortButtonWidthRS" style={this.props.selectedSort == Actions.FILTER_RS ? selectedSortButtonStyle : sortButtonStyle}>Retail Score</Button>
-              <Button onClick={() => this.props.onUpdateSort(Actions.FILTER_PRICE)} className="filterSortButtonWidthPrice" style={this.props.selectedSort == Actions.FILTER_PRICE ? selectedSortButtonStyle : sortButtonStyle}>Price</Button>
-              <Button onClick={() => this.props.onUpdateSort(Actions.FILTER_SQ_FT)} className="filterSortButtonWidthSq" style={this.props.selectedSort == Actions.FILTER_SQ_FT ? selectedSortButtonStyle : sortButtonStyle}>Sq. Feet</Button>
+              <Button onClick={() => this.props.onUpdateSort(Actions.SORT_RS)} className="filterSortButtonWidthRS" style={this.props.selectedSort == Actions.SORT_RS ? selectedSortButtonStyle : sortButtonStyle}>Retail Score</Button>
+              <Button onClick={() => this.props.onUpdateSort(Actions.SORT_PRICE)} className="filterSortButtonWidthPrice" style={this.props.selectedSort == Actions.SORT_PRICE ? selectedSortButtonStyle : sortButtonStyle}>Price</Button>
+              <Button onClick={() => this.props.onUpdateSort(Actions.SORT_SQ_FT)} className="filterSortButtonWidthSq" style={this.props.selectedSort == Actions.SORT_SQ_FT ? selectedSortButtonStyle : sortButtonStyle}>Sq. Feet</Button>
             </ButtonGroup>
           </Col>
           {/* If on Mobile add a Save/Done button since cannot see the changes reflected easily, user needs way to dismiss the slide out */}
