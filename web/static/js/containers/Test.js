@@ -80,7 +80,7 @@ export class Test extends React.Component {
                on desktop and larger screens
               srpContnetHeight uses media queries to make the height of the two 50% on mobile and full 100% otherwise
           */}
-          <div className="col-xs-12 col-md-6 col-md-push-6 srpContentHeight">
+          <div className="col-xs-12 col-md-6 col-md-push-6 srpMapSection">
             <ReactCSSTransitionGroup transitionName="fadeInLeft" transitionEnterTimeout={500} transitionLeaveTimeout={500}>
             {this.state.mounted ?
               <div style={{width:"100%", height:"100%"}}>
@@ -96,7 +96,7 @@ export class Test extends React.Component {
             </ReactCSSTransitionGroup>
           </div>
           {/* Listings section */}
-          <div className="col-xs-12 col-md-6 col-md-pull-6 srpContentHeightOther">
+          <div className="col-xs-12 col-md-6 col-md-pull-6 srpListingsSection">
             <ReactCSSTransitionGroup transitionName="fadeInUp" transitionEnterTimeout={500} transitionLeaveTimeout={500}>
             {this.state.mounted ?
               <div style={{width:"100%", height:"100%", maxHeight:"100%"}}>
@@ -111,7 +111,7 @@ export class Test extends React.Component {
                 {/* Button for CP edit, # of Listings, and if on mobile button for Filters */}
                 <div style={{borderTop:"solid thin #CCCCCC", borderBottom:"solid thin #CCCCCC", height:"40px", display:"flex", alignItems:"center"}}>
                   <Button style={{marginTop:"5px", marginBottom:"5px", marginLeft:"15px", border:"none",fontSize:"16px", fontWeight:"400"}}><i className="fa fa-user" style={{color:"#49A3DC"}}/></Button>
-                  <label className="control-label" style={{fontSize:"16px", flexGrow:"1", textAlign:"center"}}>25 Spaces for Lease</label>
+                  <label className="control-label" style={{fontSize:"16px", flexGrow:"1", textAlign:"center", color:"#656565"}}>25 Spaces for Lease</label>
                   <Button className="hidden-md hidden-lg" style={{marginTop:"5px", marginBottom:"5px", marginRight:"15px", border:"none",fontSize:"16px", fontWeight:"400"}}><i className="fa fa-filter" style={{color:"#49A3DC"}}/></Button>
                 </div>
                 {/* 
@@ -163,11 +163,11 @@ class PropertyTile extends React.Component {
     }
 
     return(
-      <div className="panelContainer" onMouseOver={() => this.props.mobile ? false : this.props.onHover(this.props.index)}>
+      <div className="propertyTileContainer" onMouseOver={() => this.props.mobile ? false : this.props.onHover(this.props.index)}>
       {/* For desktop we want hover to put this panel in focus, so check flag and call prop function if needed */}
         {/* Panels are of a fixed height, using media queries to adjust based on device width */}
-      {/* If a panel is selected we want the blue action color, otherwise the gray normal color */}
-        <div className="panel b text-center srpTilePanel" style={this.props.selected ? selectedPanelContainerStyle : {borderColor:"#CCCCCC", borderWidth:"2px", marginBottom:"0px"}}>
+        {/* If a panel is selected we want the blue action color, otherwise the gray normal color */}
+        <div className="panel b text-center propertyTile" style={this.props.selected ? selectedPanelContainerStyle : {borderColor:"#CCCCCC", borderWidth:"1px", marginBottom:"0px"}}>
           <div className="panel-body" style={{padding:"0px"}}>
             {/* Image is of a specific height, this changes in CSS depending on screen width */}
             <div className="srpTilePanelImageHeight" style={{backgroundColor:"rgba(255,0,0,0.1)"}} />
@@ -200,7 +200,7 @@ class PropertyTile extends React.Component {
 }
 class SearchBar extends React.Component {
   render() {
-  {/* styles to use when on mobile to give sharp edges on top bar, round edges stick out */}
+    {/* styles to use when on mobile to give sharp edges on top bar, round edges stick out */}
     const mobileMenuButtonStyle = {height:"50px", borderColor:"#CCCCCC", borderRadius: "0", borderTop:"none", borderLeft:"none", borderBottom:"none"};
     const mobileSearchBarStyle = {height:"50px", borderColor:"#CCCCCC", borderRadius: "0", borderTop:"none", borderLeft:"none", borderBottom:"none"};
     const mobileSearchButtonStyle = {height:"50px", borderColor:"#CCCCCC", borderRadius: "0", borderTop:"none", borderRight:"none", borderBottom:"none"};
@@ -225,18 +225,18 @@ class Filters extends React.Component {
     return(
       <div>
         {/* Filters label */}
-        <center><label className="control-label" style={{fontSize:"18px", marginBottom:"0px"}}>Filters</label></center>
+        <center><label className="control-label" style={{fontSize:"18px", marginBottom:"0px", color:"#656565"}}>Filters</label></center>
         {/* Use bootstrap responsive columns to arrange filters section differently for mobile and desktop */}
         <Row>
           {/* On mobile we want this label on the left side, on desktop we want it on top of the corresponding dropdowns */}
           {/* Use flexbox to center the label vertically, <center> tag to center it horizontally in the column */}
           <Col xs={2} sm={1} md={6} className="filtersLabelSize" style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
-            <label className="control-label" style={{fontSize:"16px", marginLeft:"10px"}}>Rent:</label>
+            <label className="control-label" style={{fontSize:"16px", marginLeft:"10px", color:"#656565"}}>Rent:</label>
           </Col>
           {/* Bootstrap column pushing/pulling doesn't work when wrapping columns, so using hidden-[size], for this one label only */}
           {/* Use flexbox to center the label vertically, <center> tag to center it horizontally in the column */}
           <Col xs={2} sm={1} md={6} className="hidden-sm hidden-xs filtersLabelSize" style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
-            <label className="control-label" style={{fontSize:"16px", marginLeft:"10px"}}>Size:</label>
+            <label className="control-label" style={{fontSize:"16px", marginLeft:"10px", color:"#656565"}}>Size:</label>
           </Col>
           {/* On desktop this will be under a label and sharing space with teh Sq Ft dropdowns, so half space there and majority space on mobile where it will be in its own row with just a label */}
           <Col xs={10} sm={11} md={6}>
@@ -287,7 +287,7 @@ class Filters extends React.Component {
         <Row style={{marginLeft:"0px", marginRight:"0px", marginTop:"5px", marginBottom:"20px"}}>
           {/* Use flexbox to center the label vertically, <center> tag to center it horizontally in the column */}
           <Col xs={2} sm={1} md={2} style={{display:"flex", flexDirection:"column", justifyContent:"center", height:"40px"}}>
-            <label className="control-label" style={{fontSize:"16px"}}>Sort:</label>
+            <label className="control-label" style={{fontSize:"16px", color:"#656565"}}>Sort:</label>
           </Col>
           <Col xs={10} sm={11} md={10} style={{paddingRight:"10px"}}>
             <ButtonGroup style={{width:"100%", height:"40px"}}>

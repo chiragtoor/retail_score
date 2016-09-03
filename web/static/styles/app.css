@@ -215,149 +215,194 @@ MOVE TO SRP.CSS AFTER
 }
 
 
+/* UI REFACTOR CSS */
+/* Mobile First CSS -> setup CSS for mobile and then use media queries to edit for larger devices */
 
-/* Mobile First CSS -> use media queries to edit for desktop */
-.srpContentHeight {
-  height: 45%;
-  padding-left: 15px;
-}
-.srpContentHeightOther {
-  height: 55%;
-  padding-right: 15px;
-}
-.filtersLabelSize {
-  height: 60px;
-}
-.filtersAlign {
-  align-items: flex-start;
-  margin-left: 10px;
-}
-.srpTilePanel {
-  width: 100%;
-  margin-left: 5px;
-}
-.srpTilePanelImageHeight {
-  height: 100px;
-}
+/* On mobile the SRP is device height - what is needed for the top search and action bar */
 .contentSRP {
   height: -webkit-calc(100% - 50px);
 }
+/* 
+ * On mobile the map and listings are stacked on top of each other, give listings a little bit more space to fit all the
+ *  info they need to display, most important reason for doing this was to make room for the 1-Tap Contact button on mobile
+ */
+.srpMapSection {
+  height: 45%;
+  padding-left: 15px;
+}
+.srpListingsSection {
+  height: 55%;
+  padding-right: 15px;
+}
+/* Labels for the filters on mobile */
+.filtersLabelSize {
+  height: 60px;
+}
+/* classes relating to the SRP Tiles and all their inner parts */
 .listingsDiv {
+  /* On mobile the height is 100% of parent (which is 55% of the screen height from above) - 
+   *  40 to account for the controls bar (# properties, filter & CP button)
+   */ 
   height: -webkit-calc(100% - 40px);
-  width: 100%;
+  /* for mobile we scroll horizontally and use flex to align items in that direction */
   overflow-x: scroll;
   overflow-y: hidden;
   display: flex;
 }
-.panelContainer {
+/* 
+ * panelContainer is the outermost part of a single tile, has set width on mobile and uses flex-shrink 
+ *  so tiles do not squish to fit horizontally, they stretch out to into a scrollView
+ */
+.propertyTileContainer {
+  /* full height and fixed width */
   height: 100%;
   width: 250px;
+  /* padding so tiles have some spacing between other parts of the SRP */
   padding-top: 5px;
   padding-bottom: 5px;
+  /* left margin only, this way all space between tiles is the same */
   margin-left: 15px;
-  align-items: center;
+  /* flex-shrink is what makes it so tiles are not squished to fit width of flex container, we want them to extend and container to scroll */
   flex-shrink: 0;
+  /* use nested flex in column direction to make it so on mobiel the tiles are always in the center of the listingsDiv */
   display: flex;
   flex-direction: column;
   justify-content: center;
 }
+.propertyTile {
+  /* for mobile propertyTile's are width of their container, defined above */
+  width: 100%;
+}
+/* set image height on small mobile devices */
+.srpTilePanelImageHeight {
+  height: 100px;
+}
+/* on mobile devices generally we have enough space to limit the RS reasoning text to 3 lines, use line-clamp to limit and cut off remaining text */
 .lineClamp {
+  /* text-align left to get as much on screen as possible in given space */
   text-align: left;
+  /* overflow:hidden; is required for clamping to work properly */
   overflow: hidden;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
+  /* override text spacing to make it fit the tile consistently */
   padding-left: 5px;
   padding-right: 5px;
   margin-bottom: 0;
   padding-bottom: 5px;
 }
+/* for general device we want to display the contact button, so set it to display:block; to be visible */
 .srpContactButton {
   display: block;
 }
 
+/* on smaller width mobile phones (iPhone 4 and 5) we cannot fit a lot of text or the contact button */
 @media(max-width: 320px) {
+  /* limit RS description to 1 line only */
   .lineClamp {
     -webkit-line-clamp: 1;
   }
+  /* cut image size down to 80px */
   .srpTilePanelImageHeight {
     height: 80px;
   }
+  /* take out the contact button */
   .srpContactButton {
     display: none;
   }
 }
-
+/* larger mobile devices, tablets */
 @media(min-width: 768px) {
-  .srpContentHeight {
-    height: 55%;
+  /* for tablet devices split the map and listings 50/50 since there is enough space for both */
+  .srpMapSection {
+    height: 50%;
   }
-  .srpContentHeightOther {
-    height: 45%;
+  .srpListingsSection {
+    height: 50%;
   }
-  .srpTilePanel {
-    height: 365px;
-    width: 100%;
-    margin-left: 15px;
-  }
-  .srpTilePanelImageHeight {
-    height: 200px;
-  }
-  .panelContainer {
+  /* bigger width propertyTile supported, enough space */
+  .propertyTileContainer {
     width: 500px;
     margin-left: 50px;
   }
+  /* give the tile a larger set height, this is centered vertically by listingsDiv flex properties */
+  .propertyTile {
+    height: 365px;
+    width: 100%;
+    /* since tablets have more space there will be more room above and below the tile, add more margin so spacing does not look super off */
+    margin-left: 15px;
+  }
+  /* can support a larger image */
+  .srpTilePanelImageHeight {
+    height: 200px;
+  }
 }
-
+/* dekstop and larger screens */
 @media(min-width:992px) {
-  .srpContentHeight {
-    height: 100%;
-    padding-left: 0px;
-  }
-  .srpContentHeightOther {
-    height: 100%;
-    padding-right: 0;
-    overflow: scroll;
-  }
-  .filtersLabelSize {
-    height: 10px;
-  }
+  /* desktop top bar is larger than mobile search action bar */
   .contentSRP {
     height: -webkit-calc(100% - 60px);
   }
-  .filtersAlign {
-    align-items: flex-start;
-    margin-left: 10px;
+  /* on desktop screens listings and the map are lined up side by side, both can be 100% height */
+  /* uses Bootstrap Columns, update padding here to get rid of default gutter between columns */
+  .srpMapSection {
+    height: 100%;
+    padding-left: 0;
   }
-  .srpTilePanel {
-    height: 315px;
+  .srpListingsSection {
+    height: 100%;
+    padding-right: 0;
+  }
+  /* smaller size for labels works fine on desktop */
+  .filtersLabelSize {
+    height: 10px;
+  }
+  /* desktop listings div is scrolling vertically with tiles in pairs side by side */
+  .listingsDiv {
+    /* set scroll direction to vertical */
+    overflow-x: hidden;
+    overflow: scroll;
+    /* use flex-box to get the desktop tiles to align correctly */
+    display: flex;
+    /* flex-wrap:wrap; makes it so instead of moving out horizontally any content after the edge wraps down and gets placed under the current content */
+    /*  this gives desktop the correct placement of tiles in pairs down vertically */
+    flex-wrap: wrap;
     width: 100%;
-    margin-left: 0;
+    /* had issues doing this height correctly without the important flag, not sure why */
+    /* height accounts for all the items above listingsDiv on desktop (app bar, filters, etc.) */
+    height: -webkit-calc(100% - 270px) !important;
   }
-  .srpTilePanelImageHeight {
-    height: 150px;
-  }
-  .panelContainer {
+  .propertyTileContainer {
+    /* larger height supported on desktop */
     height: 315px;
+    /* tiles on desktop are placed side-by-side in pairs, so width is 50% - amount needed for margins around tiles side edges */
+    /* subtracted amount is not exactly margins of both sides, little extra to make sure there is room for 2 tiles in a row */
     width: -webkit-calc(50% - 25px);
+    /* make sure tiles do not squish to fit width, this way they are the width we want and desktop settings will wrap them into a vertical list */
     flex-shrink: 0;
     padding-top: 10px;
     padding-bottom: 10px;
     margin-left: 10px;
     margin-right: 10px;
     margin-bottom: 10px;
+    /* without this positioning of tiles gets incorrect, on mobile containers are of fixed height and use flex to position in center vertically */
+    /* need to make it so container does not use flex, so set display:block; */
     display: block;
   }
-  .listingsDiv {
-    overflow-x: hidden;
-    overflow: scroll;
-    display: flex;
-    flex-wrap: wrap;
+  /* desktop propertyTiles support larger height */
+  .propertyTile {
+    height: 315px;
     width: 100%;
-    height: -webkit-calc(100% - 270px) !important;
+    margin-left: 0;
+  }
+  /* larger than mobile but smaller than tablet images supported on desktop */
+  .srpTilePanelImageHeight {
+    height: 150px;
   }
 }
 
+/* animation to fadeUp from bottom of screen, used on SRP for listings section */
 .fadeInUp-enter {
   transform: translateY(100%);
 }
@@ -366,7 +411,7 @@ MOVE TO SRP.CSS AFTER
   transition: transform;
   transition-duration: 3s;
 }
-
+/* animation to fadeIn from left of screen, used on SRP for map section */
 .fadeInLeft-enter {
   transform: translateX(100%);
 }
@@ -375,12 +420,15 @@ MOVE TO SRP.CSS AFTER
   transition: transform;
   transition-duration: 3s;
 }
-
-.noPaddingColumn {
-  padding-left: 0;
-  padding-right: 0;
+/* animation used to fadeIn in place, used by app bar on top of SRP */
+.fadeIn-enter {
+  opacity: 0.01;
 }
-
+.fadeIn-enter.fadeIn-enter-active {
+  opacity: 1;
+  transition: opacity 500ms ease-in;
+}
+/* animation to bounceIn in place, used on CP form and homepage */
 @keyframes bounceIn {
   from, 20%, 40%, 60%, 80%, to {
     animation-timing-function: cubic-bezier(0.215, 0.610, 0.355, 1.000);
@@ -422,16 +470,17 @@ MOVE TO SRP.CSS AFTER
   opacity: 1;
   transition: opacity 500ms ease-in;
 }
+/* UI REFACTOR CSS END */
 
 
-.fadeIn-enter {
-  opacity: 0.01;
-}
 
-.fadeIn-enter.fadeIn-enter-active {
-  opacity: 1;
-  transition: opacity 500ms ease-in;
-}
+
+
+
+
+
+
+
 .productField::-webkit-input-placeholder {
     color: white;
     font-size: 5vw;
