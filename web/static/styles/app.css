@@ -289,6 +289,12 @@ MOVE TO SRP.CSS AFTER
 }
 
 @media(min-width: 768px) {
+  .srpContentHeight {
+    height: 55%;
+  }
+  .srpContentHeightOther {
+    height: 45%;
+  }
   .srpTilePanel {
     height: 365px;
     width: 100%;
