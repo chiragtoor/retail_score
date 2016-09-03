@@ -100,12 +100,12 @@ export class Test extends React.Component {
                 </div>
                 <div className="listingsDiv hidden-sm hidden-xs">
                   {properties.map((property, index) => {
-                    return <PropertyTile key={index} selected={false} style={{flexShrink: "1"}} ref={c => this._propertyTiles.set(index, c)}/>
+                    return <PropertyTile mobile={false} key={index} index={index} onHover={(index) => this.setState({mobileSelectedIndex: index})} selected={this.state.mobileSelectedIndex == index} style={{flexShrink: "1"}} ref={c => this._propertyTiles.set(index, c)}/>
                   })}
                 </div>
                 <div className="listingsDiv hidden-md hidden-lg" onScroll={this.listingsDivScrolled}>
                   {properties.map((property, index) => {
-                    return <PropertyTile key={index} selected={this.state.mobileSelectedIndex == index} style={{flexShrink: "1"}} ref={c => this._propertyTiles.set(index, c)}/>
+                    return <PropertyTile mobile={true} key={index} index={index} selected={this.state.mobileSelectedIndex == index} style={{flexShrink: "1"}} ref={c => this._propertyTiles.set(index, c)}/>
                   })}
                 </div>
               </div>
@@ -124,7 +124,7 @@ class PropertyTile extends React.Component {
     const selectedPanelContainerStyle = {display:"flex", flexDirection:"column", borderColor:"#49A3DC", borderWidth:"2px", boxShadow:"0 0 2px gray", marginBottom:"0px"};
     const panelBordersColor = this.props.selected ? "#49A3DC" : "#CCCCCC";
     return(
-      <div className="panelContainer">
+      <div className="panelContainer" onMouseOver={() => this.props.onHover(this.props.index)}>
         <div className="panel b text-center srpTilePanel" style={this.props.selected ? selectedPanelContainerStyle : {display:"flex", flexDirection:"column", borderColor:"#CCCCCC", borderWidth:"2px", marginBottom:"0px"}}>
           <div className="panel-body" style={{padding:"0px"}}>
             <div className="srpTilePanelImageHeight" style={{backgroundColor:"rgba(255,0,0,0.1)"}} />
