@@ -12,6 +12,7 @@ export class Test extends React.Component {
     super(props);
 
     this.listingsDivScrolled = this.listingsDivScrolled.bind(this);
+    this.filterButtonClicked = this.filterButtonClicked.bind(this);
 
     // used on mobile to store all propertyTile refs
     this._propertyTiles = new Map();
@@ -19,12 +20,18 @@ export class Test extends React.Component {
     this.state = {
       mounted: false,
       // used to highlight the correct tile on mobile and desktop, will be used to pass into the map which pin to enlarge and center on
-      mobileSelectedIndex: 0
+      mobileSelectedIndex: 0,
+      mobileShowSecondaryContent: false
     }
   }
 
   componentDidMount() {
     this.setState({mounted: true});
+  }
+
+  // mobile only filter button clicked
+  filterButtonClicked() {
+    this.setState({mobileShowSecondaryContent: true});
   }
 
   // method is called on mobile when the listingsDiv (which contains all tiles horizontally) is scrolled
@@ -110,16 +117,18 @@ export class Test extends React.Component {
                 </div>
                 {/* Button for CP edit, # of Listings, and if on mobile button for Filters */}
                 <div style={{borderTop:"solid thin #CCCCCC", borderBottom:"solid thin #CCCCCC", height:"40px", display:"flex", alignItems:"center"}}>
-                  <Button style={{marginTop:"5px", marginBottom:"5px", marginLeft:"15px", border:"none",fontSize:"16px", fontWeight:"400"}}><i className="fa fa-user" style={{color:"#49A3DC"}}/></Button>
-                  <label className="control-label" style={{fontSize:"16px", flexGrow:"1", textAlign:"center", color:"#656565"}}>25 Spaces for Lease</label>
-                  <Button className="hidden-md hidden-lg" style={{marginTop:"5px", marginBottom:"5px", marginRight:"15px", border:"none",fontSize:"16px", fontWeight:"400"}}><i className="fa fa-filter" style={{color:"#49A3DC"}}/></Button>
+                  <Button style={{marginLeft:"15px", border:"none",fontSize:"16px", fontWeight:"100"}}><i className="fa fa-user" style={{color:"#49A3DC"}}/></Button>
+                  <label className="control-label" style={{fontSize:"16px", flexGrow:"1", textAlign:"center", color:"#656565", padding:"0"}}>25 Properties</label>
+                  {/* Add a empty div for desktop the same size as Filter button, this way the # properties text stays centered with flexbox */}
+                  <div className="hidden-sm hidden-xs" style={{width:"36px", height:"10px", marginRight: "15px"}} />
+                  <Button onClick={() => this.filterButtonClicked()} className="hidden-md hidden-lg" style={{marginRight:"15px", border:"none",fontSize:"16px", fontWeight:"100"}}><i className="fa fa-filter" style={{color:"#49A3DC"}}/></Button>
                 </div>
                 {/* 
-                    listingsDiv is what controls the horizontal v vertical scrolling, by default it is mobile first and uses flex-box to go in a row with 
-                      flex-shrink 0 on children so they take up desired width, on mobile width is a set value
-                    on desktops it is still in a row direction, but ads a wrap to it with a set width on listingsDiv, this way content automatically wraps
-                      in order with tile specific sizing CSS setting it to 50% of available space on desktop listings, so there are pairs of 2 going down
-                  */}
+                  listingsDiv is what controls the horizontal v vertical scrolling, by default it is mobile first and uses flex-box to go in a row with 
+                    flex-shrink 0 on children so they take up desired width, on mobile width is a set value
+                  on desktops it is still in a row direction, but ads a wrap to it with a set width on listingsDiv, this way content automatically wraps
+                    in order with tile specific sizing CSS setting it to 50% of available space on desktop listings, so there are pairs of 2 going down
+                */}
                 {/* Rendered twice and hidden, this is to pass in the needed functionality and a flag so that the component does only what is needed only */}
                 {/* Bootstrap hidden is using display:none, so performance of doing this should not be a issue. But even so with pagination we should be avoiding any perfomance problem with many tiles */}
                 <div className="listingsDiv hidden-sm hidden-xs">
@@ -140,6 +149,27 @@ export class Test extends React.Component {
             </ReactCSSTransitionGroup>
           </div>
         </Row>
+        {/* For content that animates in from buttons, we want to dim out the SRP and display content on top so it is easy to read */}
+        {/* Below transition fades in a dimDiv */}
+        <ReactCSSTransitionGroup transitionName="fadeIn" transitionEnterTimeout={500} transitionLeaveTimeout={500}>
+          {this.state.mobileShowSecondaryContent ?
+            <div onClick={() => this.setState({mobileShowSecondaryContent: false})} style={{backgroundColor:"rgba(0,0,0,0.5)", width:"100%", height:"100%", position:"absolute", left:"0", top:"0", zIndex:"10"}} />
+          :
+            false
+          }
+        </ReactCSSTransitionGroup>
+      {/* Below transition bouncesIn Content we want to display */}
+        <ReactCSSTransitionGroup transitionName="fadedBounceIn" transitionEnterTimeout={500} transitionLeaveTimeout={500}>
+          {this.state.mobileShowSecondaryContent ?
+            <div onClick={() => this.setState({mobileShowSecondaryContent: false})} style={{width:"100%", height:"100%", position:"absolute", left:"0", top:"0", zIndex:"10", display:"flex", justifyContent:"center", alignItems:"center"}}>
+              <div onClick={(e) => e.stopPropogation()} style={{width:"95%", height:"70%"}}>
+                <Filters onSave={() => this.setState({mobileShowSecondaryContent: false})} padded={true} />
+              </div>
+            </div>
+          :
+            false
+          }
+        </ReactCSSTransitionGroup>
       </div>
     );
   }
@@ -172,13 +202,20 @@ class PropertyTile extends React.Component {
             {/* Image is of a specific height, this changes in CSS depending on screen width */}
             <div className="srpTilePanelImageHeight" style={{backgroundColor:"rgba(255,0,0,0.1)"}} />
           </div>
-          {/* RS and explanation, explanation uses CSS text cutoof technique on smaller devices with varying # of lines depending on screen width */}
-          <div className="panel-body bt" style={{padding:"2px", borderColor: panelBordersColor}}>
-            {retailScore}
-            <p className="lineClamp">6 other businesses in this area attract high-end shoppers looking for casual clothing, by locating here your business will be another option for these customers.</p>
-          </div>
+          {/* If CP given we have a RS for each property, otherwise we add a button  */}
+          {this.props.index % 2 == 0 ?
+            <div className="panel-body bt" style={{padding:"2px", borderColor: panelBordersColor}}>
+              {/* RS and explanation, explanation uses CSS text cutoof technique on smaller devices with varying # of lines depending on screen width */}
+              {retailScore}
+              <p className="lineClamp">6 other businesses in this area attract high-end shoppers looking for casual clothing, by locating here your business will be another option for these customers.</p>
+            </div>
+          :
+            <div className="panel-body bt tileRetailScore" style={{padding:"0px", borderColor: panelBordersColor}}>
+              <Button className="tileRetailScore" style={{border:"none", color:"#49A3DC", width:"100%"}}><i className="fa fa-user" style={{color:"#49A3DC"}}/>&nbsp;&nbsp;Add Customer Profile for Score</Button>
+            </div>
+          }
           {/* Price and SQ FT info shown side by side, margins are different to account for padding of other elements */}
-          <div className="panel-body bt" style={{padding:"2px", borderColor: panelBordersColor}}>
+          <div className="panel-body bt" style={{padding:"2px", borderColor: panelBordersColor, marginTop:"2px"}}>
             <Row>
               <Col xs={6} className="br" style={{borderColor: panelBordersColor}}>
                 <p style={{marginBottom:"7px", marginTop:"5px"}}>$2,500/mo</p>
@@ -223,7 +260,7 @@ class SearchBar extends React.Component {
 class Filters extends React.Component {
   render() {
     return(
-      <div>
+      <div style={{backgroundColor:"#FFFFFF", width:"100%", height:"100%", padding: this.props.padded ? "10px" : "0", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
         {/* Filters label */}
         <center><label className="control-label" style={{fontSize:"18px", marginBottom:"0px", color:"#656565"}}>Filters</label></center>
         {/* Use bootstrap responsive columns to arrange filters section differently for mobile and desktop */}
@@ -284,20 +321,23 @@ class Filters extends React.Component {
           </Col>
         </Row>
         {/* Sort filters are always side by side with the label, only adjust sizing for white-space on tablets */}
-        <Row style={{marginLeft:"0px", marginRight:"0px", marginTop:"5px", marginBottom:"20px"}}>
+        <Row style={{marginLeft:"0px", marginRight:"0px", marginTop:"5px", marginBottom:"20px", width:"100%"}}>
           {/* Use flexbox to center the label vertically, <center> tag to center it horizontally in the column */}
           <Col xs={2} sm={1} md={2} style={{display:"flex", flexDirection:"column", justifyContent:"center", height:"40px"}}>
             <label className="control-label" style={{fontSize:"16px", color:"#656565"}}>Sort:</label>
           </Col>
           <Col xs={10} sm={11} md={10} style={{paddingRight:"10px"}}>
             <ButtonGroup style={{width:"100%", height:"40px"}}>
-              <Button style={{height:"40px", width:"33.33%", color:"#49A3DC", borderColor:"#CCCCCC"}}>Retail Score</Button>
-              <Button style={{height:"40px", width:"33.33%", color:"#49A3DC", borderColor:"#CCCCCC"}}>Price</Button>
-              <Button style={{borderColor: "#49A3DC", height:"40px", width:"33.33%", color:"#49A3DC"}}>Sq. Feet</Button>
+              <Button className="filterSortButtonWidthRS" style={{height:"40px", color:"#49A3DC", borderColor:"#CCCCCC"}}>Retail Score</Button>
+              <Button className="filterSortButtonWidthPrice" style={{height:"40px", color:"#49A3DC", borderColor:"#CCCCCC"}}>Price</Button>
+              <Button className="filterSortButtonWidthSq" style={{borderColor: "#49A3DC", height:"40px", color:"#49A3DC"}}>Sq. Feet</Button>
             </ButtonGroup>
           </Col>
           {/* If on Mobile add a Save/Done button since cannot see the changes reflected easily, user needs way to dismiss the slide out */}
         </Row>
+        <div className="hidden-md hidden-lg" style={{width:"100%", flexGrow:"1", display:"flex", justifyContent:"center", alignItems:"center"}}>
+          <Button onClick={this.props.onSave} style={{height:"40px", width:"50%", color:"#49A3DC", borderColor:"#CCCCCC"}}>Save</Button>
+        </div>
       </div>
     );
   }
