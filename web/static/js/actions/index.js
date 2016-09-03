@@ -3,6 +3,9 @@ import axios from 'axios';
 /*
  * Constants used across App
  */
+export const FILTER_RS = 0;
+export const FILTER_PRICE = 1;
+export const FILTER_SQ_FT = 2;
 
 /*
  * API Endpoints

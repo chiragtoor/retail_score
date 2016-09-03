@@ -22,6 +22,7 @@ defmodule RetailScore.Router do
     get "/targetcustomer/1", PageController, :index
     get "/targetcustomer/2", PageController, :index
     get "/test", PageController, :index
+    get "/test/:city", PageController, :srp_page
     get "/homepage", PageController, :index
     get "/retail-space-for-lease/:city", PageController, :srp_page
     get "/properties/:propertyId", PageController, :pdp_page

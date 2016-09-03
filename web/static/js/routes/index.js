@@ -17,7 +17,7 @@ export default (
 
 	  <Route path="/" component={HomepageContainer} />
 	  <Route path='/customer' component={CustomerProfile} />
-	  <Route path='/test' component={Test} />
+	  <Route path='/test/:city' component={Test} />
 	  <Route path='/targetcustomer/1' component={TargetCustomerSearch} />
     <Route path='/targetcustomer/2' component={CP} />
 	  <Route path="/pdp" component={PDPContainer} />
