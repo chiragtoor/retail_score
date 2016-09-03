@@ -1,15 +1,23 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import { Row, Col, InputGroup, FormGroup, FormControl, DropdownButton, MenuItem } from 'react-bootstrap';
+import { Row, Col, InputGroup, FormGroup, ButtonGroup, Button, FormControl, DropdownButton, MenuItem } from 'react-bootstrap';
 
 import GoogleMap from '../components/GoogleMap';
+    
+const properties = [1, 2, 3, 4];
 
 export class Test extends React.Component {
   constructor(props) {
     super(props);
 
+    this.listingsDivScrolled = this.listingsDivScrolled.bind(this);
+
+    this._propertyTiles = new Map();
+
     this.state = {
-      mounted: false
+      mounted: false,
+      mobileSelectedIndex: 0
     }
   }
 
@@ -17,9 +25,24 @@ export class Test extends React.Component {
     this.setState({mounted: true});
   }
 
+  listingsDivScrolled() {
+    const minTuple = Array.from(this._propertyTiles.values()).filter(propertyTile => propertyTile != null)
+      .map((propertyTile) => {
+        return ReactDOM.findDOMNode(propertyTile).getBoundingClientRect().left;
+      }).reduce((minToLimit, leftEdge, index) => {
+        if(Math.abs(leftEdge - 100) < Math.abs(minToLimit.value - 125)) {
+          return {index: index, value: leftEdge};
+        } else {
+          return minToLimit;
+        }
+      }, {index: -1, value: 10000});
+
+    this.setState({mobileSelectedIndex: minTuple.index});
+  }
+
   render() {
     return(
-      <div style={{width:"100%", height:"100%", margin:"0px", padding:"0px", display:"flex", flexDirection:"column", justifyContent:"space-around"}}>
+      <div style={{width:"100%", height:"100%", margin:"0px", padding:"0px"}}>
         {/* Use flex-box so that we can automatically resize the content below the desktop only header bar when it dissapears on mobile */}
         {/* header bar that has the logo and app color, only visible on desktop and larger sizes */}
         <ReactCSSTransitionGroup transitionName="fadeIn" transitionEnterTimeout={500} transitionLeaveTimeout={500}>
@@ -37,7 +60,7 @@ export class Test extends React.Component {
         }
         </ReactCSSTransitionGroup>
         {/* main content of the SRP page, this has flex = 1 so that it takes up all remaining space when the bar is there and 100% of screen when bar is not there */}
-        <Row style={{flex:"1"}}>
+        <Row className="contentSRP" style={{flex:"1"}}>
           {/* 
               Since we want the map on top on mobile and to the right on desktop, we need to place them in accordance to smaller screens and then use
                col-[size]-[push|pull]-[value] in order to reorder them
@@ -63,12 +86,27 @@ export class Test extends React.Component {
           <div className="col-xs-12 col-md-6 col-md-pull-6 srpContentHeightOther">
             <ReactCSSTransitionGroup transitionName="fadeInUp" transitionEnterTimeout={500} transitionLeaveTimeout={500}>
             {this.state.mounted ?
-              <div style={{width:"100%", height:"100%"}}>
+              <div style={{width:"100%", height:"100%", maxHeight:"100%"}}>
                 <div className="hidden-sm hidden-xs">
                   <SearchBar />
                 </div>
-                <div>
+                <div className="hidden-sm hidden-xs" style={{marginBottom:"10px"}}>
                   <Filters />
+                </div>
+                <div style={{borderTop:"solid thin #CCCCCC", borderBottom:"solid thin #CCCCCC", height:"40px", display:"flex", alignItems:"center"}}>
+                  <Button style={{marginTop:"5px", marginBottom:"5px", marginLeft:"15px", float:"right", border:"none",fontSize:"16px", fontWeight:"400"}}><i className="fa fa-user" style={{color:"#49A3DC"}}/></Button>
+                  <label className="control-label" style={{fontSize:"16px", flexGrow:"1", textAlign:"center"}}>25 Spaces for Lease</label>
+                  <Button className="hidden-md hidden-lg" style={{marginTop:"5px", marginBottom:"5px", marginRight:"15px", float:"right", border:"none",fontSize:"16px", fontWeight:"400"}}><i className="fa fa-filter" style={{color:"#49A3DC"}}/></Button>
+                </div>
+                <div className="listingsDiv hidden-sm hidden-xs">
+                  {properties.map((property, index) => {
+                    return <PropertyTile key={index} selected={false} style={{flexShrink: "1"}} ref={c => this._propertyTiles.set(index, c)}/>
+                  })}
+                </div>
+                <div className="listingsDiv hidden-md hidden-lg" onScroll={this.listingsDivScrolled}>
+                  {properties.map((property, index) => {
+                    return <PropertyTile key={index} selected={this.state.mobileSelectedIndex == index} style={{flexShrink: "1"}} ref={c => this._propertyTiles.set(index, c)}/>
+                  })}
                 </div>
               </div>
             :
@@ -81,15 +119,58 @@ export class Test extends React.Component {
     );
   }
 }
-
+class PropertyTile extends React.Component {
+  render() {
+    const selectedPanelContainerStyle = {display:"flex", flexDirection:"column", borderColor:"#49A3DC", borderWidth:"2px", boxShadow:"0 0 2px gray", marginBottom:"0px"};
+    const panelBordersColor = this.props.selected ? "#49A3DC" : "#CCCCCC";
+    return(
+      <div className="panelContainer">
+        <div className="panel b text-center srpTilePanel" style={this.props.selected ? selectedPanelContainerStyle : {display:"flex", flexDirection:"column", borderColor:"#CCCCCC", borderWidth:"2px", marginBottom:"0px"}}>
+          <div className="panel-body" style={{padding:"0px"}}>
+            <div className="srpTilePanelImageHeight" style={{backgroundColor:"rgba(255,0,0,0.1)"}} />
+          </div>
+          <div className="panel-body bt" style={{padding:"2px", borderColor: panelBordersColor, flexGrow:"1", maxHeight:"100px"}}>
+            <div style={{display:"flex", justifyContent:"space-around", alignItems:"center"}}>
+              <label className="control-label" style={{fontSize:"12px", marginLeft:"10px", color:"#27ae60", borderBottom:"solid thin"}}>Retail Score: <i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/></label>
+            </div>
+            <p className="lineClamp">6 other businesses in this area attract high-end shoppers looking for casual clothing, by locating here your business will be another option for these customers.</p>
+          </div>
+          <div className="panel-body bt" style={{padding:"2px", borderColor: panelBordersColor}}>
+            <Row>
+              <Col xs={6} className="br" style={{borderColor: panelBordersColor}}>
+                <p style={{marginBottom:"7px", marginTop:"5px"}}>$2,500/mo</p>
+              </Col>
+              <Col xs={6}>
+                <p style={{marginBottom:"7px", marginTop:"5px"}}>600 Sq. Ft.</p>
+              </Col>
+            </Row>
+          </div>
+          <div className="panel-body bt srpContactButton" style={{borderColor: panelBordersColor, margin:"0px", padding:"0px"}}>
+            <Button style={{border:"none", color:"#49A3DC", width:"100%"}}>Contact</Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+}
 class SearchBar extends React.Component {
   render() {
+    const mobileMenuButtonStyle = {height:"50px", borderColor:"#CCCCCC", borderRadius: "0", borderTop:"none", borderLeft:"none", borderBottom:"none"};
+    const mobileSearchBarStyle = {height:"50px", borderColor:"#CCCCCC", borderRadius: "0", borderTop:"none", borderLeft:"none", borderBottom:"none"};
+    const mobileSearchButtonStyle = {height:"50px", borderColor:"#CCCCCC", borderRadius: "0", borderTop:"none", borderRight:"none", borderBottom:"none"};
     return(
-      <InputGroup style={{padding: this.props.noPadding ? "0px" : "10px", height:"50px"}}>
-        <InputGroup.Addon style={{backgroundColor:"#49A3DC"}}>&nbsp;&nbsp;<i className="fa fa-users" style={{color:"#FFFFFF"}}/>&nbsp;&nbsp;</InputGroup.Addon>
-        <FormControl type="text" style={{height:"50px"}}/>
-        <InputGroup.Addon style={{backgroundColor:"#49A3DC"}}>&nbsp;&nbsp;<i className="fa fa-search" style={{color:"#FFFFFF"}}/>&nbsp;&nbsp;</InputGroup.Addon>
-      </InputGroup>
+      <div>
+        <InputGroup className="searchBar" style={{borderRadius: "0", padding: this.props.noPadding ? "0px" : "10px", height:"50px", width:"100%", backgroundColor:"#FFFFFF"}}>
+          <InputGroup.Button className="hidden-md hidden-lg"><Button style={this.props.noPadding ? mobileMenuButtonStyle : {height:"50px", borderColor:"#CCCCCC"}}>&nbsp;&nbsp;<i className="fa fa-list" style={{color:"#49A3DC"}}/>&nbsp;&nbsp;</Button></InputGroup.Button>
+          <FormControl type="text" style={this.props.noPadding ? mobileSearchBarStyle : {height:"50px"}}/>
+          <InputGroup.Button><Button style={this.props.noPadding ? mobileSearchButtonStyle : {height:"50px", borderColor:"#CCCCCC"}}>&nbsp;&nbsp;<i className="fa fa-search" style={{color:"#49A3DC"}}/>&nbsp;&nbsp;</Button></InputGroup.Button>
+        </InputGroup>
+        {this.props.noPadding ?
+          <div style={{borderTop:"solid thin #CCCCCC"}} />
+        :
+          false
+        }
+      </div>
     );
   }
 }
@@ -97,66 +178,79 @@ class Filters extends React.Component {
   render() {
     return(
       <div>
-        <center><label className="control-label" style={{fontSize:"18px"}}>Filters: </label></center>
-        <Row style={{paddingLeft:"0px", paddingRight:"0px"}}>
-          <Col xs={3} sm={2} md={2} className="noPaddingColumn">
-            <div style={{backgroundColor:"#FF0000", height:"20px"}} />
-          </Col>
-          <Col xs={9} sm={10} md={4} className="noPaddingColumn">
-            <div style={{backgroundColor:"#00FF00", height:"20px"}} />
-          </Col>
-          <Col xs={3} sm={2} md={2}  className="noPaddingColumn">
-            <div style={{backgroundColor:"#0000FF", height:"20px"}} />
-          </Col>
-          <Col xs={9} sm={10} md={4} className="noPaddingColumn">
-            <div style={{backgroundColor:"#FF00FF", height:"20px"}} />
-          </Col>
-        </Row>
+        {/* Filters label */}
+        <center><label className="control-label" style={{fontSize:"18px", marginBottom:"0px"}}>Filters</label></center>
+        {/* Use bootstrap responsive columns to arrange filters section differently for mobile and desktop */}
         <Row>
-          <Col xs={2} sm={1} style={{display:"flex", flexDirection:"column", justifyContent:"center", height:"60px"}}>
-            <label className="control-label" style={{fontSize:"16px", marginLeft:"10px"}}>Rent: </label>
+          {/* On mobile we want this label on the left side, on desktop we want it on top of the corresponding dropdowns */}
+          {/* Use flexbox to center the label vertically, <center> tag to center it horizontally in the column */}
+          <Col xs={2} sm={1} md={6} className="filtersLabelSize" style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
+            <label className="control-label" style={{fontSize:"16px", marginLeft:"10px"}}>Rent:</label>
           </Col>
-          <Col xs={10}  sm={11}>
+          {/* Bootstrap column pushing/pulling doesn't work when wrapping columns, so using hidden-[size], for this one label only */}
+          {/* Use flexbox to center the label vertically, <center> tag to center it horizontally in the column */}
+          <Col xs={2} sm={1} md={6} className="hidden-sm hidden-xs filtersLabelSize" style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
+            <label className="control-label" style={{fontSize:"16px", marginLeft:"10px"}}>Size:</label>
+          </Col>
+          {/* On desktop this will be under a label and sharing space with teh Sq Ft dropdowns, so half space there and majority space on mobile where it will be in its own row with just a label */}
+          <Col xs={10} sm={11} md={6}>
             <InputGroup style={{padding:"10px", height:"40px", width:"100%"}}>
               <DropdownButton
                 componentClass={InputGroup.Button}
                 id="input-dropdown-addon"
                 title="Minimum"
-                style={{height:"40px", width:"100%"}}>
+                style={{height:"40px", width:"100%", color:"#49A3DC", borderColor:"#CCCCCC"}}>
                 <MenuItem key="1">Item</MenuItem>
               </DropdownButton>
               <DropdownButton
                 componentClass={InputGroup.Button}
                 id="input-dropdown-addon"
                 title="Maximum"
-                style={{height:"40px", width:"100%"}}>
+                style={{height:"40px", width:"100%", color:"#49A3DC", borderColor:"#CCCCCC"}}>
                 <MenuItem key="1">Item</MenuItem>
               </DropdownButton>
             </InputGroup>
           </Col>
-        </Row>
-        <Row>
-          <Col xs={2} sm={1} style={{display:"flex", flexDirection:"column", justifyContent:"center", height:"60px"}}>
-            <label className="control-label" style={{fontSize:"16px", marginLeft:"10px"}}>Size: </label>
+          {/* On mobile we want this label on the left side, on desktop we want it on top of the corresponding dropdowns */}
+          {/* Hide this on desktop screens because of the wrap issue, this way we reuse the whole layout except this label */}
+          {/* Use flexbox to center the label vertically, <center> tag to center it horizontally in the column */}
+          <Col xs={2} sm={1} md={6} className="hidden-md hidden-lg filtersLabelSize" style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
+            <label className="control-label" style={{fontSize:"16px", marginLeft:"10px"}}>Size:</label>
           </Col>
-          <Col xs={10} sm={11}>
+          {/* On desktop this will be under a label and sharing space with teh Sq Ft dropdowns, so half space there and majority space on mobile where it will be in its own row with just a label */}
+          <Col xs={10} sm={11} md={6}>
             <InputGroup style={{padding:"10px", height:"40px", width:"100%"}}>
               <DropdownButton
                 componentClass={InputGroup.Button}
                 id="input-dropdown-addon"
                 title="Min Sq. Feet"
-                style={{height:"40px", width:"100%"}}>
+                style={{height:"40px", width:"100%", color:"#49A3DC", borderColor:"#CCCCCC"}}>
                 <MenuItem key="1">Item</MenuItem>
               </DropdownButton>
               <DropdownButton
                 componentClass={InputGroup.Button}
                 id="input-dropdown-addon"
                 title="Max Sq. Feet"
-                style={{height:"40px", width:"100%"}}>
+                style={{height:"40px", width:"100%", color:"#49A3DC", borderColor:"#CCCCCC"}}>
                 <MenuItem key="1">Item</MenuItem>
               </DropdownButton>
             </InputGroup>
           </Col>
+        </Row>
+        {/* Sort filters are always side by side with the label, only adjust sizing for white-space on tablets */}
+        <Row style={{marginLeft:"0px", marginRight:"0px", marginTop:"5px", marginBottom:"20px"}}>
+          {/* Use flexbox to center the label vertically, <center> tag to center it horizontally in the column */}
+          <Col xs={2} sm={1} md={2} style={{display:"flex", flexDirection:"column", justifyContent:"center", height:"40px"}}>
+            <label className="control-label" style={{fontSize:"16px"}}>Sort:</label>
+          </Col>
+          <Col xs={10} sm={11} md={10} style={{paddingRight:"10px"}}>
+            <ButtonGroup style={{width:"100%", height:"40px"}}>
+              <Button style={{height:"40px", width:"33.33%", color:"#49A3DC", borderColor:"#CCCCCC"}}>Retail Score</Button>
+              <Button style={{height:"40px", width:"33.33%", color:"#49A3DC", borderColor:"#CCCCCC"}}>Price</Button>
+              <Button style={{borderColor: "#49A3DC", height:"40px", width:"33.33%", color:"#49A3DC"}}>Sq. Feet</Button>
+            </ButtonGroup>
+          </Col>
+          {/* If on Mobile add a Save/Done button since cannot see the changes reflected easily, user needs way to dismiss the slide out */}
         </Row>
       </div>
     );

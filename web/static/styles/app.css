@@ -216,37 +216,136 @@ MOVE TO SRP.CSS AFTER
 
 
 
-/* HERE HERE HERE */
+/* Mobile First CSS -> use media queries to edit for desktop */
 .srpContentHeight {
-  height: 100%;
-  padding-left: 0;
+  height: 45%;
+  padding-left: 15px;
 }
-@media(max-width:992px) {
-  .srpContentHeight {
-    height: 50%;
-    padding-left: 15px;
+.srpContentHeightOther {
+  height: 55%;
+  padding-right: 15px;
+}
+.filtersLabelSize {
+  height: 60px;
+}
+.filtersAlign {
+  align-items: flex-start;
+  margin-left: 10px;
+}
+.srpTilePanel {
+  width: 100%;
+  margin-left: 5px;
+}
+.srpTilePanelImageHeight {
+  height: 100px;
+}
+.contentSRP {
+  height: -webkit-calc(100% - 50px);
+}
+.listingsDiv {
+  height: -webkit-calc(100% - 40px);
+  width: 100%;
+  overflow-x: scroll;
+  overflow-y: hidden;
+  display: flex;
+}
+.panelContainer {
+  height: 100%;
+  width: 250px;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  margin-left: 15px;
+  align-items: center;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+.lineClamp {
+  text-align: left;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  padding-left: 5px;
+  padding-right: 5px;
+  margin-bottom: 0;
+  padding-bottom: 5px;
+}
+.srpContactButton {
+  display: block;
+}
+
+@media(max-width: 320px) {
+  .lineClamp {
+    -webkit-line-clamp: 1;
+  }
+  .srpTilePanelImageHeight {
+    height: 80px;
+  }
+  .srpContactButton {
+    display: none;
   }
 }
+
+@media(min-width: 768px) {
+  .srpTilePanel {
+    height: 365px;
+    width: 100%;
+    margin-left: 15px;
+  }
+  .srpTilePanelImageHeight {
+    height: 200px;
+  }
+  .panelContainer {
+    width: 500px;
+    margin-left: 50px;
+  }
+}
+
 @media(min-width:992px) {
   .srpContentHeight {
     height: 100%;
     padding-left: 0px;
   }
-}
-.srpContentHeightOther {
-  height: 100%;
-  padding-right: 0;
-}
-@media(max-width:992px) {
-  .srpContentHeightOther {
-    height: 50%;
-    padding-right: 15px;
-  }
-}
-@media(min-width:992px) {
   .srpContentHeightOther {
     height: 100%;
     padding-right: 0;
+    overflow: scroll;
+  }
+  .filtersLabelSize {
+    height: 10px;
+  }
+  .contentSRP {
+    height: -webkit-calc(100% - 60px);
+  }
+  .filtersAlign {
+    align-items: flex-start;
+    margin-left: 10px;
+  }
+  .srpTilePanel {
+    height: 315px;
+    width: 100%;
+    margin-left: 0;
+  }
+  .srpTilePanelImageHeight {
+    height: 150px;
+  }
+  .panelContainer {
+    height: 315px;
+    width: -webkit-calc(50% - 10px);
+    flex-shrink: 0;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin-left: 5px;
+    margin-right: 5px;
+    display: block;
+  }
+  .listingsDiv {
+    overflow-x: hidden;
+    overflow: scroll;
+    display: flex;
+    height: -webkit-calc(100% - 270px) !important;
   }
 }
 
