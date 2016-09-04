@@ -9,13 +9,41 @@ import * as Util from '../Util';
 
 import GoogleMap from '../components/GoogleMap';
 
+// size of pages when splitting property tiles for pagination
+const PAGE_SIZE = 20;
+
 export class Test extends React.Component {
+
+  /*
+   * Using bootstrap and css media queries, desktop and mobile share the same layout, but there are parts of the logic that are
+   *  handled differently for the two. Components are mostly the same in both and render once, except for ones that are rendered
+   *  in very different locations between the two, or the listings section because we pass in different params to the tiles.
+   *
+   * Search Bar, Filters, are rendered twice and hidden on either mobile or desktop once for proper placement.
+   *
+   * Logic wise, the main difference between the two is how we select the current main property, which is the one highlighted in the UI.
+   *  
+   * On mobile the scrolling is left to right and the one that is at the tile whose left edge is closest to the phone's left edge is what is
+   *  considered the current main property. To do this, we render the mobileListingsDiv and store a ref to each tile. onScroll we use a timer
+   *  setup to only check for the current main property when the user stops scrolling, at that point we go through all stored refs and
+   *  use ReactDOM to get the actual DOM info and check the left edges to get what is closest to the phone left edge.
+   *
+   * On desktop we render a separate desktopListingsDiv and pass in a onHover to the propertyTile, this callback method takes in a index
+   *  (which is passed as a ref to each tile) and updates the current main property that way.
+   *
+   * Properties and tile's displayed are not the same thing, properties come in as a array of listings. The filters and sorting operate directly
+   *  on this full property list. For pagination we take what is left after filter and sort and cut it into pages of PAGE_SIZE, that is
+   *  propertyTile's and that is what we map over and render each propertyTile with.
+   */
+
   constructor(props) {
     super(props);
 
     this.listingsDivScrolled = this.listingsDivScrolled.bind(this);
     this.filterButtonClicked = this.filterButtonClicked.bind(this);
     this.pageSelect = this.pageSelect.bind(this);
+    this.updateMainProperty = this.updateMainProperty.bind(this);
+    this.isMainProperty = this.isMainProperty.bind(this);
 
     // used on mobile to store all propertyTile refs
     this._propertyTiles = new Map();
@@ -33,7 +61,7 @@ export class Test extends React.Component {
     this.state = {
       mounted: false,
       // used to highlight the correct tile on mobile and desktop, will be used to pass into the map which pin to enlarge and center on
-      mobileSelectedIndex: 0,
+      selectedPropertyIndex: 0,
       // flag for whether to show the container for filters, CP
       mobileShowSecondaryContent: false,
       city: thisCity,
@@ -93,8 +121,8 @@ export class Test extends React.Component {
           }
         // initial values are a null index and very large distance that any tile will be considered closer to
         }, {index: -1, value: 10000});
-      // set the state to the new closest tile's index, this way the right tile is highlighted on the device
-      this.setState({mobileSelectedIndex: minTuple.index});
+      // use helper method to update current main index based on pagination
+      this.updateMainProperty(minTuple.index);
     }, 50);
   }
 
@@ -214,15 +242,32 @@ export class Test extends React.Component {
 
   // handle when user selects another page from pagination, passed as prop to listings component
   pageSelect(page, mobileFlag) {
+    // update the current page
     this.setState({currentPage: page});
+    // update the current main property, will be the first one on this page
+    // this.updateMainProperty(0);
     if(mobileFlag) {
-      console.log("Moving to the left");
       // move the scrolled div back to the left
-      ReactDOM.findDOMNode(this.refs.desktopListingsDiv).scrollLeft = -100000;
+      ReactDOM.findDOMNode(this.refs.mobileListingsDiv).scrollLeft = 0;
     } else {
       // move the scrolled div back to the top, pagination is on bottom
-      ReactDOM.findDOMNode(this.refs.mobileListingsDiv).scrollTop = 0;
+      ReactDOM.findDOMNode(this.refs.desktopListingsDiv).scrollTop = 0;
     }
+    // due to weird issue where this.state.currentPage is still the old value even after above update (race condition?)
+    //  use the page and update current main property without the helper method
+    //  otherwise on mobile when going back to previous page the current main property does not update on its own, only when
+    //  you scroll
+    this.setState({selectedPropertyIndex: (0 + (page - 1) * PAGE_SIZE)});
+  }
+
+  // method to update the main property based on index selected and current page
+  updateMainProperty(index) {
+    this.setState({selectedPropertyIndex: (index + (this.state.currentPage - 1) * PAGE_SIZE)});
+  }
+
+  // boolean method to check if a index is the current main property based on current page
+  isMainProperty(index) {
+    return this.state.selectedPropertyIndex == (index + (this.state.currentPage - 1) * PAGE_SIZE);
   }
 
   render() {
@@ -263,19 +308,30 @@ export class Test extends React.Component {
         break;
     }
 
-    // Paginate remaining properties in blocks of 20 so UI does not freeze up for the listings section, map will still have all properties up
-    var numPages = Math.floor(properties.length / 20);
-    if(properties.length % 20 != 0) {
+    // Paginate remaining properties in blocks of PAGE_SIZE so UI does not freeze up for the listings section, map will still have all properties up
+    var numPages = Math.floor(properties.length / PAGE_SIZE);
+    if(properties.length % PAGE_SIZE != 0) {
       numPages = numPages + 1;
     }
-    // get the min and max of the current page to cut those 20 properties out
-    var min = 20 * (this.state.currentPage - 1);
-    var max = min + 20;
+    // get the min and max index of the current page to cut those 20 properties out
+    var min = PAGE_SIZE * (this.state.currentPage - 1);
+    var max = min + PAGE_SIZE;
     // cut out the 20 properties, these are what to display now
     var propertyTiles = properties.slice(min, max);
 
-    console.log("numPages: " + numPages);
-    console.log("currentPage: " + this.state.currentPage);
+    // current main property, this is the one that is highlighted on the UI -> this is used by the map to enlarge corresponding pin
+    // have to look in full properties, not the cut out propertyTiles from above
+    var mainProperty = properties[this.state.selectedPropertyIndex];
+
+    // console.log("INFO START");
+    // console.log("properties: " + properties.length);
+    // console.log("numPages: " + numPages);
+    // console.log("currentPage: " + this.state.currentPage);
+    // console.log("min: " + min);
+    // console.log("max: " + max);
+    // console.log("propertyTiles: " + propertyTiles.length);
+    // console.log("selectedPropertyIndex: " + this.state.selectedPropertyIndex);
+    // console.log("INFO END");
 
     return(
       <div style={{width:"100%", height:"100%", margin:"0px", padding:"0px"}}>
@@ -284,7 +340,7 @@ export class Test extends React.Component {
         <ReactCSSTransitionGroup transitionName="fadeIn" transitionEnterTimeout={500} transitionLeaveTimeout={500}>
         {this.state.mounted ?
           <div>
-            <div className="hidden-sm hidden-xs" style={{color:"#FFFFFF", backgroundColor:"#49A3DC", paddingTop:"5px", paddingBottom:"5px"}}>
+            <div className="hidden-sm hidden-xs" style={{color:"#FFFFFF", backgroundColor:"#49A3DC", paddingTop:"5px", paddingBottom:"5px", boxShadow:"0px 1px 3px 1px #7f8c8d", position:"relative", zIndex:"10"}}>
               <img style={{height:"45px", marginLeft:"15px"}} src="https://s3-us-west-2.amazonaws.com/homepage-image-assets/retail_score_logo_white.png" />
             </div>
             <div className="hidden-md hidden-lg" style={{backgroundColor:"#49A3DC"}}>
@@ -310,9 +366,10 @@ export class Test extends React.Component {
               <div style={{width:"100%", height:"100%"}}>
                 <GoogleMap 
                   id={"desktop"} 
-                  properties={[]} 
+                  properties={properties}
                   pinClick={() => false}
-                  city={"Test"}/>
+                  currentPropertyMarker={mainProperty}
+                  city={this.state.city}/>
               </div>
             :
               false
@@ -320,7 +377,7 @@ export class Test extends React.Component {
             </ReactCSSTransitionGroup>
           </div>
           {/* Listings section */}
-          <div className="col-xs-12 col-md-6 col-md-pull-6 srpListingsSection">
+          <div className="col-xs-12 col-md-6 col-md-pull-6 srpListingsSection" style={{boxShadow:"2px 0px 3px -1px #7f8c8d", position:"relative", zIndex:"5"}}>
             <ReactCSSTransitionGroup transitionName="fadeInUp" transitionEnterTimeout={500} transitionLeaveTimeout={500}>
             {this.state.mounted ?
               <div style={{width:"100%", height:"100%", maxHeight:"100%"}}>
@@ -329,6 +386,7 @@ export class Test extends React.Component {
                   <SearchBar />
                 </div>
                 {/* Filters are opened by a button on mobile, so hide in that case */}
+                {/* on filter update set currentPage to 1 in case user was looking at other pages */}
                 <div className="hidden-sm hidden-xs" style={{marginBottom:"10px"}}>
                   <Filters 
                     filterPriceMin={this.state.filterPriceMin}
@@ -343,7 +401,7 @@ export class Test extends React.Component {
                     onUpdateSort={(newValue) => this.setState({currentSort: newValue, currentPage: 1})}/>
                 </div>
                 {/* Button for CP edit, # of Listings, and if on mobile button for Filters */}
-                <div style={{borderTop:"solid thin #CCCCCC", borderBottom:"solid thin #CCCCCC", height:"40px", display:"flex", alignItems:"center"}}>
+                <div style={{borderTop:"solid thin #CCCCCC", borderBottom:"solid thin #CCCCCC", height:"40px", display:"flex", alignItems:"center", boxShadow:"0px 1px 3px -1px #7f8c8d", position:"relative", zIndex:"10"}}>
                   <Button style={{marginLeft:"15px", border:"none",fontSize:"16px", fontWeight:"100"}}><i className="fa fa-user" style={{color:"#49A3DC"}}/></Button>
                   <label className="control-label" style={{fontSize:"16px", flexGrow:"1", textAlign:"center", color:"#656565", padding:"0"}}>{properties.length} Properties</label>
                   {/* Add a empty div for desktop the same size as Filter button, this way the # properties text stays centered with flexbox */}
@@ -360,7 +418,7 @@ export class Test extends React.Component {
                 {/* Bootstrap hidden is using display:none, so performance of doing this should not be a issue. But even so with pagination we should be avoiding any perfomance problem with many tiles */}
                 <div ref="desktopListingsDiv" className="listingsDiv hidden-sm hidden-xs">
                   {propertyTiles.map((property, index) => {
-                    return <PropertyTile property={property} mobile={false} key={index} index={(index + (this.state.currentPage - 1) * 20)} onHover={(index) => this.setState({mobileSelectedIndex: index})} selected={this.state.mobileSelectedIndex == index} style={{flexShrink: "1"}}/>
+                    return <PropertyTile property={property} mobile={false} key={index} index={index} onHover={(index) => this.updateMainProperty(index)} selected={this.isMainProperty(index)} style={{flexShrink: "1"}}/>
                   })}
                   {numPages >= 2 ?
                     <div style={{width:"100%", height:"80px", display:"flex", justifyContent:"center", alignItems:"center"}}>
@@ -383,7 +441,7 @@ export class Test extends React.Component {
                   }
                   {propertyTiles.map((property, index) => {
                     {/* Add the ref of this to the mobile tiles ref storage, this is used for calculating which element is in the main scroll position */}
-                    return <PropertyTile property={property} mobile={true} key={index} index={(index + (this.state.currentPage - 1) * 20)} selected={this.state.mobileSelectedIndex == index} style={{flexShrink: "1"}} ref={c => this._propertyTiles.set(index, c)}/>
+                    return <PropertyTile property={property} mobile={true} key={index} index={index} selected={this.isMainProperty(index)} style={{flexShrink: "1"}} ref={c => this._propertyTiles.set(index, c)}/>
                   })}
                   {(numPages >= 2 && this.state.currentPage != numPages) ?
                     <Button onClick={() => this.pageSelect(this.state.currentPage + 1, true)} style={{width:"150px", height:"100%", flexShrink: "1", backgroundColor:"rgba(255,0,0,0.4)"}}>Next</Button>
@@ -410,8 +468,11 @@ export class Test extends React.Component {
       {/* Below transition bouncesIn Content we want to display */}
         <ReactCSSTransitionGroup transitionName="fadedBounceIn" transitionEnterTimeout={500} transitionLeaveTimeout={500}>
           {this.state.mobileShowSecondaryContent ?
-            <div onClick={() => this.setState({mobileShowSecondaryContent: false})} style={{width:"100%", height:"100%", position:"absolute", left:"0", top:"0", zIndex:"10", display:"flex", justifyContent:"center", alignItems:"center"}}>
-              <div onClick={(e) => e.stopPropagation()} style={{width:"95%", height:"70%"}}>
+            <div onClick={() => this.setState({mobileShowSecondaryContent: false})} style={{width:"100%", height:"100%", position:"absolute", left:"0", top:"0", zIndex:"10", display:"flex", justifyContent:"center", alignItems:"center"}}> 
+              {/* If user clicks outside dimDiv we want it to close the secondary content */}
+              {/* Clicking inside the secondary content (buttons, dropdowns) should not close it, so use stopPropogation so that event does not go to the outer div above and close */}
+              {/* on filter update set currentPage to 1 in case user was looking at other pages */}
+              <div onClick={(e) => e.stopPropagation()} style={{width:"95%", height:"60%"}}>
                 <Filters 
                   filterPriceMin={this.state.filterPriceMin}
                   filterPriceMax={this.state.filterPriceMax}
@@ -495,8 +556,8 @@ class PropertyTile extends React.Component {
         <div className="panel b text-center propertyTile" style={this.props.selected ? selectedPanelContainerStyle : {borderColor:"#CCCCCC", borderWidth:"1px", marginBottom:"0px"}}>
           <div className="panel-body" style={{padding:"0px"}}>
             {/* Image is of a specific height, this changes in CSS depending on screen width */}
-            <div className="srpTilePanelImageHeight">
-              <img style={{minWidth:"100%", height:"auto"}} src={this.getImageUrl(this.props.property)} />
+            <div className="srpTilePanelImageHeight" style={{backgroundColor:"#CCCCCC"}}>
+              <img src={this.getImageUrl(this.props.property)} />
             </div>
           </div>
           {/* If CP given we have a RS for each property, otherwise we add a button  */}
@@ -504,7 +565,7 @@ class PropertyTile extends React.Component {
             <div className="panel-body bt" style={{padding:"2px", borderColor: panelBordersColor}}>
               {/* RS and explanation, explanation uses CSS text cutoof technique on smaller devices with varying # of lines depending on screen width */}
               {retailScore}
-              <p className="lineClamp">6 other businesses in this area attract high-end shoppers looking for casual clothing, by locating here your business will be another option for these customers.</p>
+              <p className="lineClamp">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
             </div>
           :
             <div className="panel-body bt tileRetailScore" style={{padding:"0px", borderColor: panelBordersColor}}>
@@ -540,13 +601,13 @@ class SearchBar extends React.Component {
     const mobileSearchButtonStyle = {height:"50px", borderColor:"#CCCCCC", borderRadius: "0", borderTop:"none", borderRight:"none", borderBottom:"none"};
     return(
       <div>
-        <InputGroup className="searchBar" style={{borderRadius: "0", padding: this.props.noPadding ? "0px" : "10px", height:"50px", width:"100%", backgroundColor:"#FFFFFF"}}>
-          <InputGroup.Button className="hidden-md hidden-lg"><Button style={this.props.noPadding ? mobileMenuButtonStyle : {height:"50px", borderColor:"#CCCCCC"}}>&nbsp;&nbsp;<i className="fa fa-list" style={{color:"#49A3DC"}}/>&nbsp;&nbsp;</Button></InputGroup.Button>
+        <InputGroup className="searchBar" style={{borderRadius: "0", padding: this.props.noPadding ? "0px" : "20px", height:"50px", width:"100%", backgroundColor:"#FFFFFF"}}>
+          {/* <InputGroup.Button className="hidden-md hidden-lg"><Button style={this.props.noPadding ? mobileMenuButtonStyle : {height:"50px", borderColor:"#CCCCCC"}}>&nbsp;&nbsp;<i className="fa fa-list" style={{color:"#49A3DC"}}/>&nbsp;&nbsp;</Button></InputGroup.Button> */}
           <FormControl type="text" style={this.props.noPadding ? mobileSearchBarStyle : {height:"50px"}}/>
           <InputGroup.Button><Button style={this.props.noPadding ? mobileSearchButtonStyle : {height:"50px", borderColor:"#CCCCCC"}}>&nbsp;&nbsp;<i className="fa fa-search" style={{color:"#49A3DC"}}/>&nbsp;&nbsp;</Button></InputGroup.Button>
         </InputGroup>
         {this.props.noPadding ?
-          <div style={{borderTop:"solid thin #CCCCCC"}} />
+          <div style={{width:"100%", height:"1px", borderTop:"solid thin #CCCCCC", boxShadow:"0px 1px 3px 1px #7f8c8d", position:"relative", zIndex:"10"}} />
         :
           false
         }

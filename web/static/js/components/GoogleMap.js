@@ -173,27 +173,32 @@ export default class GoogleMap extends Component {
 
   componentWillReceiveProps(nextProps){
 
-    if(nextProps.city && (this.state.city != nextProps.city)){
+    // if(nextProps.city && (this.state.city != nextProps.city)){
 
-      this.state.city = nextProps.city;
-      this.setState(this.state);
+    //   this.state.city = nextProps.city;
+    //   this.setState(this.state);
 
-      var geocoder = new google.maps.Geocoder();
-      var me = this;
+    //   var geocoder = new google.maps.Geocoder();
+    //   var me = this;
 
-      geocoder.geocode({
-          'address': nextProps.city
-      }, function(results, status) {
-          if (status == google.maps.GeocoderStatus.OK) {
-            me.state.map.setCenter(results[0].geometry.location);
-            me.setState(me.state);
-          }
-      });
-    }
+    //   geocoder.geocode({
+    //       'address': nextProps.city
+    //   }, function(results, status) {
+    //       if (status == google.maps.GeocoderStatus.OK) {
+    //         me.state.map.setCenter(results[0].geometry.location);
+    //         me.setState(me.state);
+    //       }
+    //   });
+    // }
+    
 
     if(nextProps.currentPropertyMarker){
-      if(this.state.highlightedId != nextProps.currentPropertyMarker.id)
-      this.highlightMarker(nextProps.currentPropertyMarker);
+      if(this.state.highlightedId != nextProps.currentPropertyMarker.id) {
+        this.state.map.setCenter({lat: nextProps.currentPropertyMarker.lat, lng: nextProps.currentPropertyMarker.lng});
+
+        this.highlightMarker(nextProps.currentPropertyMarker);
+      }
+      
     }
   }
 
