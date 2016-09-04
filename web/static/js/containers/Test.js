@@ -2,7 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from "react-redux";
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import { Row, Col, InputGroup, FormGroup, ButtonGroup, Button, FormControl, DropdownButton, MenuItem } from 'react-bootstrap';
+import { Row, Col, InputGroup, FormGroup, ButtonGroup, Button, FormControl, DropdownButton, MenuItem, Pagination } from 'react-bootstrap';
 
 import * as Actions from '../actions';
 import * as Util from '../Util';
@@ -15,9 +15,12 @@ export class Test extends React.Component {
 
     this.listingsDivScrolled = this.listingsDivScrolled.bind(this);
     this.filterButtonClicked = this.filterButtonClicked.bind(this);
+    this.pageSelect = this.pageSelect.bind(this);
 
     // used on mobile to store all propertyTile refs
     this._propertyTiles = new Map();
+    // timeout used for only performing computations on end of mobile scroll
+    this._scrollTimeout = null;
 
     // store current city in state
     var thisCity = this.props.params.city;
@@ -40,7 +43,9 @@ export class Test extends React.Component {
       filterPriceMin: null,
       filterPriceMax: null,
       filterSqFtMin: null,
-      filterSqFtMax: null
+      filterSqFtMax: null,
+      // page # used with pagination
+      currentPage: 1
     }
   }
 
@@ -58,28 +63,39 @@ export class Test extends React.Component {
   }
 
   // method is called on mobile when the listingsDiv (which contains all tiles horizontally) is scrolled
+  // use a timer so that check is not done on every little bit of a scroll, we only want to check when user is done
+  //  scrolling so give it a 50ms timer before checking
+  // on every scroll reset the timer, this way during a scroll no checks happen
   listingsDivScrolled() {
-    // value to compare the left edge of all propertyTile's distance to, whichever tile is closest to this value (measured to the right of the left edge)
-    //  is what is considered the main scroll psoition tile
-    const edgeLimit = 100;
-    // method loops through all current mobile property tiles on screen and gets the one in the main scroll position
-    // filter out possible null values
-    const minTuple = Array.from(this._propertyTiles.values()).filter(propertyTile => propertyTile != null)
-      // map over and get the actual dom elements left edge using ReactDOM
-      .map((propertyTile) => {
-        return ReactDOM.findDOMNode(propertyTile).getBoundingClientRect().left;
-      // reduce the array to find which tile's left edge is closest to the main scroll position
-      }).reduce((minToLimit, leftEdge, index) => {
-        if(Math.abs(leftEdge - edgeLimit) < Math.abs(minToLimit.value - edgeLimit)) {
-          return {index: index, value: leftEdge};
-        } else {
-          return minToLimit;
-        }
-      // initial values are a null index and very large distance that any tile will be considered closer to
-      }, {index: -1, value: 10000});
-
-    // set the state to the new closest tile's index, this way the right tile is highlighted on the device
-    this.setState({mobileSelectedIndex: minTuple.index});
+    // if a timeout is already set, clear it and restart timer
+    if(this._scrollTimeout) {
+      clearTimeout(this._scrollTimeout);
+    }
+    // set a timer so that we only perform computation on the end of a scroll
+    this._scrollTimeout = setTimeout(() => {
+      this._scrollTimeout = null;
+      
+      // value to compare the left edge of all propertyTile's distance to, whichever tile is closest to this value (measured to the right of the left edge)
+      //  is what is considered the main scroll psoition tile
+      const edgeLimit = 50;
+      // method loops through all current mobile property tiles on screen and gets the one in the main scroll position
+      // filter out possible null values
+      const minTuple = Array.from(this._propertyTiles.values()).filter(propertyTile => propertyTile != null)
+        // map over and get the actual dom elements left edge using ReactDOM
+        .map((propertyTile) => {
+          return ReactDOM.findDOMNode(propertyTile).getBoundingClientRect().left;
+        // reduce the array to find which tile's left edge is closest to the main scroll position
+        }).reduce((minToLimit, leftEdge, index) => {
+          if(Math.abs(leftEdge - edgeLimit) < Math.abs(minToLimit.value - edgeLimit)) {
+            return {index: index, value: leftEdge};
+          } else {
+            return minToLimit;
+          }
+        // initial values are a null index and very large distance that any tile will be considered closer to
+        }, {index: -1, value: 10000});
+      // set the state to the new closest tile's index, this way the right tile is highlighted on the device
+      this.setState({mobileSelectedIndex: minTuple.index});
+    }, 50);
   }
 
   sortByRetailScore(properties) {
@@ -196,6 +212,19 @@ export class Test extends React.Component {
     return filteredProperties.concat(propertiesToConcat);
   }
 
+  // handle when user selects another page from pagination, passed as prop to listings component
+  pageSelect(page, mobileFlag) {
+    this.setState({currentPage: page});
+    if(mobileFlag) {
+      console.log("Moving to the left");
+      // move the scrolled div back to the left
+      ReactDOM.findDOMNode(this.refs.desktopListingsDiv).scrollLeft = -100000;
+    } else {
+      // move the scrolled div back to the top, pagination is on bottom
+      ReactDOM.findDOMNode(this.refs.mobileListingsDiv).scrollTop = 0;
+    }
+  }
+
   render() {
     var properties = this.props.properties;
 
@@ -233,6 +262,20 @@ export class Test extends React.Component {
         properties = this.sortBySqFt(properties);
         break;
     }
+
+    // Paginate remaining properties in blocks of 20 so UI does not freeze up for the listings section, map will still have all properties up
+    var numPages = Math.floor(properties.length / 20);
+    if(properties.length % 20 != 0) {
+      numPages = numPages + 1;
+    }
+    // get the min and max of the current page to cut those 20 properties out
+    var min = 20 * (this.state.currentPage - 1);
+    var max = min + 20;
+    // cut out the 20 properties, these are what to display now
+    var propertyTiles = properties.slice(min, max);
+
+    console.log("numPages: " + numPages);
+    console.log("currentPage: " + this.state.currentPage);
 
     return(
       <div style={{width:"100%", height:"100%", margin:"0px", padding:"0px"}}>
@@ -292,17 +335,17 @@ export class Test extends React.Component {
                     filterPriceMax={this.state.filterPriceMax}
                     filterSqFtMin={this.state.filterSqFtMin}
                     filterSqFtMax={this.state.filterSqFtMax}
-                    onUpdatePriceMin={(value) => this.setState({filterPriceMin: value})}
-                    onUpdatePriceMax={(value) => this.setState({filterPriceMax: value})}
-                    onUpdateSqFtMin={(value) => this.setState({filterSqFtMin: value})}
-                    onUpdateSqFtMax={(value) => this.setState({filterSqFtMax: value})}
+                    onUpdatePriceMin={(value) => this.setState({filterPriceMin: value, currentPage: 1})}
+                    onUpdatePriceMax={(value) => this.setState({filterPriceMax: value, currentPage: 1})}
+                    onUpdateSqFtMin={(value) => this.setState({filterSqFtMin: value, currentPage: 1})}
+                    onUpdateSqFtMax={(value) => this.setState({filterSqFtMax: value, currentPage: 1})}
                     selectedSort={this.state.currentSort}
-                    onUpdateSort={(newValue) => this.setState({currentSort: newValue})}/>
+                    onUpdateSort={(newValue) => this.setState({currentSort: newValue, currentPage: 1})}/>
                 </div>
                 {/* Button for CP edit, # of Listings, and if on mobile button for Filters */}
                 <div style={{borderTop:"solid thin #CCCCCC", borderBottom:"solid thin #CCCCCC", height:"40px", display:"flex", alignItems:"center"}}>
                   <Button style={{marginLeft:"15px", border:"none",fontSize:"16px", fontWeight:"100"}}><i className="fa fa-user" style={{color:"#49A3DC"}}/></Button>
-                  <label className="control-label" style={{fontSize:"16px", flexGrow:"1", textAlign:"center", color:"#656565", padding:"0"}}>25 Properties</label>
+                  <label className="control-label" style={{fontSize:"16px", flexGrow:"1", textAlign:"center", color:"#656565", padding:"0"}}>{properties.length} Properties</label>
                   {/* Add a empty div for desktop the same size as Filter button, this way the # properties text stays centered with flexbox */}
                   <div className="hidden-sm hidden-xs" style={{width:"36px", height:"10px", marginRight: "15px"}} />
                   <Button onClick={() => this.filterButtonClicked()} className="hidden-md hidden-lg" style={{marginRight:"15px", border:"none",fontSize:"16px", fontWeight:"100"}}><i className="fa fa-filter" style={{color:"#49A3DC"}}/></Button>
@@ -315,16 +358,38 @@ export class Test extends React.Component {
                 */}
                 {/* Rendered twice and hidden, this is to pass in the needed functionality and a flag so that the component does only what is needed only */}
                 {/* Bootstrap hidden is using display:none, so performance of doing this should not be a issue. But even so with pagination we should be avoiding any perfomance problem with many tiles */}
-                <div className="listingsDiv hidden-sm hidden-xs">
-                  {properties.map((property, index) => {
-                    return <PropertyTile property={property} mobile={false} key={index} index={index} onHover={(index) => this.setState({mobileSelectedIndex: index})} selected={this.state.mobileSelectedIndex == index} style={{flexShrink: "1"}}/>
+                <div ref="desktopListingsDiv" className="listingsDiv hidden-sm hidden-xs">
+                  {propertyTiles.map((property, index) => {
+                    return <PropertyTile property={property} mobile={false} key={index} index={(index + (this.state.currentPage - 1) * 20)} onHover={(index) => this.setState({mobileSelectedIndex: index})} selected={this.state.mobileSelectedIndex == index} style={{flexShrink: "1"}}/>
                   })}
+                  {numPages >= 2 ?
+                    <div style={{width:"100%", height:"80px", display:"flex", justifyContent:"center", alignItems:"center"}}>
+                      <div style={{width:"100%", textAlign:"center", display:"inline-block"}}>
+                        <Pagination
+                          bsSize="medium"
+                          items={numPages}
+                          activePage={this.state.currentPage}
+                          maxButtons={5}
+                          onSelect={(page) => this.pageSelect(page, false)} />
+                      </div> 
+                    </div>
+                  : false}
                 </div>
-                <div className="listingsDiv hidden-md hidden-lg" onScroll={this.listingsDivScrolled}>
-                  {properties.map((property, index) => {
+                <div ref="mobileListingsDiv" className="listingsDiv hidden-md hidden-lg" onScroll={this.listingsDivScrolled}>
+                  {(numPages >= 2 && this.state.currentPage > 1) ?
+                    <Button onClick={() => this.pageSelect(this.state.currentPage - 1, true)} style={{width:"150px", height:"100%", flexShrink: "1", backgroundColor:"rgba(255,0,0,0.4)"}}>Back</Button>
+                  :
+                    false
+                  }
+                  {propertyTiles.map((property, index) => {
                     {/* Add the ref of this to the mobile tiles ref storage, this is used for calculating which element is in the main scroll position */}
-                    return <PropertyTile property={property} mobile={true} key={index} index={index} selected={this.state.mobileSelectedIndex == index} style={{flexShrink: "1"}} ref={c => this._propertyTiles.set(index, c)}/>
+                    return <PropertyTile property={property} mobile={true} key={index} index={(index + (this.state.currentPage - 1) * 20)} selected={this.state.mobileSelectedIndex == index} style={{flexShrink: "1"}} ref={c => this._propertyTiles.set(index, c)}/>
                   })}
+                  {(numPages >= 2 && this.state.currentPage != numPages) ?
+                    <Button onClick={() => this.pageSelect(this.state.currentPage + 1, true)} style={{width:"150px", height:"100%", flexShrink: "1", backgroundColor:"rgba(255,0,0,0.4)"}}>Next</Button>
+                  :
+                    false
+                  }
                 </div>
               </div>
             :
@@ -352,12 +417,12 @@ export class Test extends React.Component {
                   filterPriceMax={this.state.filterPriceMax}
                   filterSqFtMin={this.state.filterSqFtMin}
                   filterSqFtMax={this.state.filterSqFtMax}
-                  onUpdatePriceMin={(value) => this.setState({filterPriceMin: value})}
-                  onUpdatePriceMax={(value) => this.setState({filterPriceMax: value})}
-                  onUpdateSqFtMin={(value) => this.setState({filterSqFtMin: value})}
-                  onUpdateSqFtMax={(value) => this.setState({filterSqFtMax: value})}
+                  onUpdatePriceMin={(value) => this.setState({filterPriceMin: value, currentPage: 1})}
+                  onUpdatePriceMax={(value) => this.setState({filterPriceMax: value, currentPage: 1})}
+                  onUpdateSqFtMin={(value) => this.setState({filterSqFtMin: value, currentPage: 1})}
+                  onUpdateSqFtMax={(value) => this.setState({filterSqFtMax: value, currentPage: 1})}
                   selectedSort={this.state.currentSort} 
-                  onUpdateSort={(newValue) => this.setState({currentSort: newValue})} 
+                  onUpdateSort={(newValue) => this.setState({currentSort: newValue, currentPage: 1})} 
                   onSave={() => this.setState({mobileShowSecondaryContent: false})} 
                   padded={true} />
               </div>
@@ -399,6 +464,10 @@ class PropertyTile extends React.Component {
     }
   }
 
+  getImageUrl(property) {
+    return `https://maps.googleapis.com/maps/api/streetview?size=200x150&location=${property.image_lat},${property.image_lng}&heading=${property.image_heading}&key=AIzaSyASv9f24GcF78YIKRsX3uCRkj58JzZ8NaA`;
+  }
+
   render() {
     {/* styles and color to use when a tile is currently selected, this is hovered over on desktop and in the main scroll position on mobile */}
     const selectedPanelContainerStyle = {display:"flex", flexDirection:"column", borderColor:"#49A3DC", borderWidth:"2px", boxShadow:"0 0 2px #49A3DC", marginBottom:"0px"};
@@ -426,7 +495,9 @@ class PropertyTile extends React.Component {
         <div className="panel b text-center propertyTile" style={this.props.selected ? selectedPanelContainerStyle : {borderColor:"#CCCCCC", borderWidth:"1px", marginBottom:"0px"}}>
           <div className="panel-body" style={{padding:"0px"}}>
             {/* Image is of a specific height, this changes in CSS depending on screen width */}
-            <div className="srpTilePanelImageHeight" style={{backgroundColor:"rgba(255,0,0,0.1)"}} />
+            <div className="srpTilePanelImageHeight">
+              <img style={{minWidth:"100%", height:"auto"}} src={this.getImageUrl(this.props.property)} />
+            </div>
           </div>
           {/* If CP given we have a RS for each property, otherwise we add a button  */}
           {true ?
