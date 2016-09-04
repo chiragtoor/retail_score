@@ -286,6 +286,8 @@ MOVE TO SRP.CSS AFTER
 /* set image height on small mobile devices */
 .srpTilePanelImageHeight {
   height: 100px;
+  width: 100%;
+  overflow: hidden;
 }
 /* For mobile phones limit height or tileRetailScore to 90px, this is used for button space if no CP given */
 .tileRetailScore {
