@@ -95,6 +95,7 @@ export class Test extends React.Component {
   //  scrolling so give it a 50ms timer before checking
   // on every scroll reset the timer, this way during a scroll no checks happen
   listingsDivScrolled() {
+    console.log("listingsDivScrolled");
     // if a timeout is already set, clear it and restart timer
     if(this._scrollTimeout) {
       clearTimeout(this._scrollTimeout);
@@ -130,7 +131,7 @@ export class Test extends React.Component {
     // no property will have a null retail score, so sort by just comparing the two values
     // < because we want to go from high to low
     return properties.sort((propertyA, propertyB) => {
-      if(propertyA.retail_score < propertyB.retail_score) {
+      if(propertyA.retail_score <= propertyB.retail_score) {
         return 1;
       } else {
         return -1;
@@ -145,7 +146,7 @@ export class Test extends React.Component {
 
     // > because we want to go from low to high
     popertiesToSort.sort((propertyA, propertyB) => {
-      if(propertyA.rental_rate_min > propertyB.rental_rate_min) {
+      if(propertyA.rental_rate_min >= propertyB.rental_rate_min) {
         return 1;
       } else {
         return -1;
@@ -162,7 +163,7 @@ export class Test extends React.Component {
 
     // > because we want to go from low to high
     propertiesToSort.sort((propertyA, propertyB) => {
-      if(propertyA.min_sq_feet > propertyB.min_sq_feet) {
+      if(propertyA.min_sq_feet >= propertyB.min_sq_feet) {
         return 1;
       } else {
         return -1;
@@ -271,7 +272,10 @@ export class Test extends React.Component {
   }
 
   render() {
-    var properties = this.props.properties;
+    // use slice() on the props because we want to clone and then apply sorting and filtering,
+    //  if you do just var = props.properties then below when var properties is sorted and filtered
+    //  it does the same on the props.properties -> need to confirm this was the issue
+    var properties = this.props.properties.slice();
 
     // filter out properties according to user selection
     if(this.state.filterPriceMin != null) {
@@ -322,16 +326,6 @@ export class Test extends React.Component {
     // current main property, this is the one that is highlighted on the UI -> this is used by the map to enlarge corresponding pin
     // have to look in full properties, not the cut out propertyTiles from above
     var mainProperty = properties[this.state.selectedPropertyIndex];
-
-    // console.log("INFO START");
-    // console.log("properties: " + properties.length);
-    // console.log("numPages: " + numPages);
-    // console.log("currentPage: " + this.state.currentPage);
-    // console.log("min: " + min);
-    // console.log("max: " + max);
-    // console.log("propertyTiles: " + propertyTiles.length);
-    // console.log("selectedPropertyIndex: " + this.state.selectedPropertyIndex);
-    // console.log("INFO END");
 
     return(
       <div style={{width:"100%", height:"100%", margin:"0px", padding:"0px"}}>
