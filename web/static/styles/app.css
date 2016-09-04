@@ -142,10 +142,6 @@ hr {
   height: 100%;
 }
 
-.searchBar {
-  height: 100%;
-  width: -webkit-calc(100% - 60px);
-}
 
 [data-now] {
   display: inline-block; }
@@ -381,7 +377,7 @@ MOVE TO SRP.CSS AFTER
 @media(min-width:992px) {
   /* desktop top bar is larger than mobile search action bar */
   .contentSRP {
-    height: -webkit-calc(100% - 60px);
+    height: -webkit-calc(100% - 55px);
   }
   /* on desktop screens listings and the map are lined up side by side, both can be 100% height */
   /* uses Bootstrap Columns, update padding here to get rid of default gutter between columns */
@@ -412,7 +408,7 @@ MOVE TO SRP.CSS AFTER
     padding-bottom: 10px;
     /* had issues doing this height correctly without the important flag, not sure why */
     /* height accounts for all the items above listingsDiv on desktop (app bar, filters, etc.) */
-    height: -webkit-calc(100% - 270px) !important;
+    height: -webkit-calc(100% - 300px) !important;
   }
   .propertyTileContainer {
     /* larger height supported on desktop */
