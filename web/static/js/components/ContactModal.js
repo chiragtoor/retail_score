@@ -10,25 +10,39 @@ export default class ContactModal extends Component {
     this.submitContact = this.submitContact.bind(this);
 
     this.state = {
-      name: "",
-      email: "",
-      message: "Hello, I am intered in this property and want some more information."
-    };
+      name: (localStorage.getItem('name') || ""),
+      email: (localStorage.getItem('email') || ""),
+      message: (localStorage.getItem('message') || "Hello, I am interested in this property and want some more information.")
+    }
   }
+
 
   updateName(name) {
     this.state.name = name.target.value;
     this.setState(this.state);
+
+    if (typeof(Storage) !== "undefined") {
+      localStorage.setItem("name", this.state.name);
+    } 
   }
 
   updateEmail(email) {
     this.state.email = email.target.value;
     this.setState(this.state);
+
+    if (typeof(Storage) !== "undefined") {
+      localStorage.setItem("email", this.state.email);
+    } 
   }
 
   updateMessage(message) {
     this.state.message = message.target.value;
     this.setState(this.state);
+
+    if (typeof(Storage) !== "undefined") {
+      localStorage.setItem("message", this.state.message);
+    } 
+
   }
 
   submitContact() {

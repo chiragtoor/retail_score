@@ -40,12 +40,33 @@ class PDP extends React.Component {
         dimDiv: null,
         modal: null,
         desktopContactSuccess: false,
-        desktopContactFailure: false
+        desktopContactFailure: false,
+        mobileContactSuccess: false
       }
     }
 
     showContactModal(){
-      if(this.props.property.agents) {
+
+      var name = localStorage.getItem('name');
+      var email = localStorage.getItem('email');
+      var message = localStorage.getItem('message');
+
+
+      //if we already have the data we need to contact then 1-tap contact
+      if(name && email){
+        if(!message) {
+          message = "Hello, I am interested in this property and want some more information.";
+        }
+        this.submitContact({
+          "message":{
+            "contact_name": name,
+            "contact_email_address": email,
+            "body": message,
+            "property_id": this.props.property.id
+          }
+        });
+      } else if(this.props.property.agents) {
+        console.log("show the modal");
         this.state.modal = <div style={{height:"300px", width:"100%", backgroundColor:"#FFFFFF", position:"fixed", zIndex:"3", bottom:"0", right:"0"}}>
                       <ContactModal contactFailed={this.mobileContactFailed} submitContact={this.submitContactAndHideModal} propertyId={this.props.property.id} agent={this.props.property.agents[0]} mixpanel={this.context.mixpanel} />
                      </div>;
@@ -59,6 +80,7 @@ class PDP extends React.Component {
     submitContact(data){
       this.props.submitContact(data);
       this.state.desktopContactSuccess = true;
+      this.state.mobileContactSuccess = true;
       this.setState(this.state);
     }
 
@@ -126,6 +148,18 @@ class PDP extends React.Component {
         };
 
 
+        var contactButtonText = "I want more information";
+
+        if (typeof(Storage) !== "undefined") {
+          if(localStorage.getItem('name') && localStorage.getItem('email')){
+            contactButtonText = "1-Tap Contact";
+          }
+        } 
+
+        if(this.state.mobileContactSuccess == true){
+          contactButtonText = "Expect to hear back soon!";
+        }
+
         return (
             <ContentWrapper unwrap>
                 {/*MOBILE AND TABLET HTML*/}
@@ -160,7 +194,7 @@ class PDP extends React.Component {
                         </Col>
                     </Row>
                     <div className="hidden-md hidden-lg" style={{width:"100%", height:"50px"}}/>
-                    <Button className="hidden-md hidden-lg" onClick={this.showContactModal} style={{width:"100%", height:"50px", fontSize:"20px", fontWeight:"300px", backgroundColor:"#49A3DC", color:"#FFFFFF", position:"fixed", bottom:"0", left:"0", zIndex:"2"}}>I want more information</Button>
+                    <Button className="hidden-md hidden-lg" onClick={this.showContactModal} style={{width:"100%", height:"50px", fontSize:"20px", fontWeight:"300px", backgroundColor:"#49A3DC", color:"#FFFFFF", position:"fixed", bottom:"0", left:"0", zIndex:"2"}}>{contactButtonText}</Button>
                 </div>
 
                 {/*DESKTOP HTML*/}
