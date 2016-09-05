@@ -44,27 +44,26 @@ export class Test extends React.Component {
     this.pageSelect = this.pageSelect.bind(this);
     this.updateMainProperty = this.updateMainProperty.bind(this);
     this.isMainProperty = this.isMainProperty.bind(this);
+    this.searchCity = this.searchCity.bind(this);
+
+    // get the properties for the current city
+    const city = this.props.params.city.replace("-", " ");
+    const cityParts = city.split(",");
+    this.props.loadProperties(cityParts[0], cityParts[1].trim());
 
     // used on mobile to store all propertyTile refs
     this._propertyTiles = new Map();
     // timeout used for only performing computations on end of mobile scroll
     this._scrollTimeout = null;
 
-    // store current city in state
-    var thisCity = this.props.params.city;
-    thisCity = thisCity.replace("-", " ");
-    //if the city doesnt contain the state it wont match against the cities in the array
-    if(!thisCity.includes(',')) {
-      thisCity = thisCity + ", CA";
-    }
-
     this.state = {
       mounted: false,
+      // current city results being shown on page
+      currentCity: city,
       // used to highlight the correct tile on mobile and desktop, will be used to pass into the map which pin to enlarge and center on
       selectedPropertyIndex: 0,
       // flag for whether to show the container for filters, CP
       mobileShowSecondaryContent: false,
-      city: thisCity,
       // type of sort currently being applied
       currentSort: Actions.SORT_RS,
       // default filter values are all null, this way initial text displays in filter dropdowns
@@ -80,9 +79,14 @@ export class Test extends React.Component {
   componentDidMount() {
     // used for flag on animations, on mount animations don't work if they are rendered, so we wait till mount to run animation
     this.setState({mounted: true});
-    // get the properties for the current city
-    const cityString = this.state.city.split(',')[0];
-    this.props.loadProperties(cityString, "CA");
+  }
+
+  // search and get properties for a city
+  searchCity(city) {
+    const cityParts = city.split(',');
+    this.props.loadProperties(cityParts[0], cityParts[1].trim());
+    // update local state to keep track of where SRP is
+    this.setState({currentCity: city});
   }
 
   // mobile only filter button clicked
@@ -95,7 +99,6 @@ export class Test extends React.Component {
   //  scrolling so give it a 50ms timer before checking
   // on every scroll reset the timer, this way during a scroll no checks happen
   listingsDivScrolled() {
-    console.log("listingsDivScrolled");
     // if a timeout is already set, clear it and restart timer
     if(this._scrollTimeout) {
       clearTimeout(this._scrollTimeout);
@@ -338,7 +341,7 @@ export class Test extends React.Component {
               <img style={{height:"45px", marginLeft:"15px"}} src="https://s3-us-west-2.amazonaws.com/homepage-image-assets/retail_score_logo_white.png" />
             </div>
             <div className="hidden-md hidden-lg" style={{backgroundColor:"#49A3DC"}}>
-              <SearchBar noPadding={true} />
+              <SearchBar noPadding={true} value={this.state.currentCity} onSearch={this.searchCity} />
             </div>
           </div>
         :
@@ -362,8 +365,7 @@ export class Test extends React.Component {
                   id={"desktop"} 
                   properties={properties}
                   pinClick={() => false}
-                  currentPropertyMarker={mainProperty}
-                  city={this.state.city}/>
+                  currentPropertyMarker={mainProperty} />
               </div>
             :
               false
@@ -377,7 +379,7 @@ export class Test extends React.Component {
               <div style={{width:"100%", height:"100%", maxHeight:"100%"}}>
                 {/* Search Bar is above at top on mobile, so hide in that case */}
                 <div className="hidden-sm hidden-xs">
-                  <SearchBar />
+                  <SearchBar value={this.state.currentCity} onSearch={this.searchCity} />
                 </div>
                 {/* Filters are opened by a button on mobile, so hide in that case */}
                 {/* on filter update set currentPage to 1 in case user was looking at other pages */}
@@ -597,11 +599,15 @@ class SearchBar extends React.Component {
       <div>
         <InputGroup className="searchBar" style={{borderRadius: "0", padding: this.props.noPadding ? "0px" : "20px", height:"50px", width:"100%", backgroundColor:"#FFFFFF"}}>
           {/* <InputGroup.Button className="hidden-md hidden-lg"><Button style={this.props.noPadding ? mobileMenuButtonStyle : {height:"50px", borderColor:"#CCCCCC"}}>&nbsp;&nbsp;<i className="fa fa-list" style={{color:"#49A3DC"}}/>&nbsp;&nbsp;</Button></InputGroup.Button> */}
-          <FormControl type="text" style={this.props.noPadding ? mobileSearchBarStyle : {height:"50px"}}/>
+          {/* <FormControl type="text" style={this.props.noPadding ? mobileSearchBarStyle : {height:"50px"}}/> */}
+          <GooglePlacesTypeahead
+            onChange={(e) => e[0] != null ? this.props.onSearch(e[0].display) : false}
+            placeHolder={"Enter a City"} 
+            value={this.props.value} />
           <InputGroup.Button><Button style={this.props.noPadding ? mobileSearchButtonStyle : {height:"50px", borderColor:"#CCCCCC"}}>&nbsp;&nbsp;<i className="fa fa-search" style={{color:"#49A3DC"}}/>&nbsp;&nbsp;</Button></InputGroup.Button>
         </InputGroup>
         {this.props.noPadding ?
-          <div style={{width:"100%", height:"1px", borderTop:"solid thin #CCCCCC", boxShadow:"0px 1px 3px 1px #7f8c8d", position:"relative", zIndex:"10"}} />
+          <div style={{width:"100%", height:"1px", borderTop:"solid thin #CCCCCC", boxShadow:"0px 1px 4px 1px #7f8c8d", position:"relative", zIndex:"10"}} />
         :
           false
         }
@@ -735,6 +741,138 @@ class Filters extends React.Component {
     );
   }
 }
+
+import TypeAhead from 'react-bootstrap-typeahead';
+
+class GooglePlacesTypeahead extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.handleInputChange = this.handleInputChange.bind(this);
+    this.onChange = this.onChange.bind(this);
+    this.onBlur = this.onBlur.bind(this);
+
+    this.state = {
+      cities: this.props.value ? [this.props.value] : [],
+      neighborhoods: [],
+      // flag to use custom css to override and hide the menu since it breaks on Safari
+      hideMenu: true
+    };
+  }
+
+  componentDidMount() {
+    var googleMaps = this.props.googleMaps
+      || (google && google.maps) || this.googleMaps;
+
+    if (!googleMaps) {
+      console.error('Google map api was not found in the page.');
+    } else {
+      this.googleMaps = googleMaps;
+    }
+
+    this.autocompleteService = new googleMaps.places.AutocompleteService();
+
+  }
+
+  handleInputChange(input) {
+    this.setState({hideMenu: false});
+
+    if(input === "") {
+      return;
+    }
+
+    /*
+     * Querying just cities makes it so something like Venice, CA does not show up, so we query for cities
+     *  and neighborhoods from a general geocode query -> filter out what does not qualify and concatenate
+     *  the two to make it so we have a full dropdown of possible places
+     */
+
+    var options = {
+      input: input,
+      componentRestrictions: {country: "us"},
+      types: ['(cities)']
+    };
+    this.autocompleteService.getPlacePredictions(
+      options,
+      function(suggestsGoogle) {
+        if(suggestsGoogle == null) {
+          return null;
+        }
+
+        var cities = suggestsGoogle.map((place) => {
+          return place.terms[0].value + ", " + place.terms[1].value;
+        });
+
+        this.setState({cities: cities});
+      }.bind(this)
+    );
+
+    options = {
+      input: input,
+      componentRestrictions: {country: "us"},
+      types: ['geocode']
+    };
+    this.autocompleteService.getPlacePredictions(
+      options,
+      function(suggestsGoogle) {
+
+        if(suggestsGoogle == null) {
+          return null;
+        }
+
+        var neighborhoods = suggestsGoogle.map((place, i) => {
+          if(place.types.includes("neighborhood")) {
+            return place.terms[0].value + ", " + place.terms[2].value;
+          } else {
+            return null;
+          }
+        }).filter((place) => place != null);
+
+        this.setState({neighborhoods: neighborhoods});
+      }.bind(this)
+    );
+  }
+
+  onChange(value) {
+    // anytime user selects a value, set the menu to hide
+    this.setState({hideMenu: true});
+    console.log("PropOnChange()");
+    this.props.onChange(value);
+  }
+
+  onBlur() {
+    // delay the hiding of menu, otherwise if clicking a option onBlur would hide menu before click
+    //  could get the value out -> especially bad for mobile
+    console.log("onBlur");
+    setTimeout(() => {
+      this.setState({hideMenu: true});
+    }, 500);
+  }
+
+  render() {
+    // concatenate the two sources so autocomplete displays full options
+    const dataSource = this.state.neighborhoods.concat(this.state.cities).map((place, index) => {
+      return {id: index, display: place};
+    });
+    return (
+      <div className={this.state.hideMenu ? "hideAutoCompleteMenu" : ""}>
+      {/* If flag is set, use the custom CSS to override and hide autocomplete menu, Safari does not work without this */}
+        <TypeAhead
+          onBlur={() => this.onBlur()}
+          onFocus={() => this.setState({hideMenu: false})}
+          labelKey="display"
+          selected={this.props.value ? [{display: this.props.value}] : []}
+          emptyLabel="Select one option"
+          onInputChange={this.handleInputChange}
+          onChange={(value) => this.onChange(value)}
+          options={dataSource}
+          placeholder={"Enter a City"}/>
+      </div>
+    );
+  }
+}
+
 
 Test.contextTypes = {
   mixpanel: React.PropTypes.object.isRequired

@@ -9,7 +9,7 @@
     "react-addons-css-transition-group": "^15.2.1",
     "react-autocomplete": "^1.1.0",
     "react-bootstrap": "^0.30.0-rc.2",
-    "react-bootstrap-typeahead": "^0.7.1",
+    "react-bootstrap-typeahead": "^0.9.1",
     "react-dom": "^15.3.0",
     "react-input-range": "^0.9.1",
     "react-mixpanel": "0.0.7",

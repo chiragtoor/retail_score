@@ -214,6 +214,36 @@ MOVE TO SRP.CSS AFTER
 /* UI REFACTOR CSS */
 /* Mobile First CSS -> setup CSS for mobile and then use media queries to edit for larger devices */
 
+/* 
+ * IMPORTANT -> override the styling for the react-bootstrap-typeahead library since it does not take in
+ *  styling as a parameter for the input. Need to make the input (for auto complete options), input element
+ *  (where user enters actual text), and the hint (that displays the closest auto complete match) all 50px
+ *  so it aligns properly
+ */
+.bootstrap-typeahead-input {
+  height: 50px;
+}
+/* On mobile we want the search bar on top in a input group, so get rid of left, top, and bottom border */
+/*  right border is kept because it is divider against the search button */
+.bootstrap-typeahead-input-main {
+  height: 50px;
+  border-color: #CCCCCC;
+  border-top: none;
+  border-left: none;
+  border-bottom: none;
+}
+.bootstrap-typeahead-input-hint {
+  height: 50px;
+}
+.hideAutoCompleteMenu > div > ul {
+  display: none !important;
+}
+
+.button {
+  background-color: #FFFFFF;
+  color: #49A3DC;
+  border-color: #CCCCCC;
+}
 /* On mobile the SRP is device height - what is needed for the top search and action bar */
 .contentSRP {
   height: -webkit-calc(100% - 50px);
@@ -375,6 +405,11 @@ MOVE TO SRP.CSS AFTER
 }
 /* dekstop and larger screens */
 @media(min-width:992px) {
+  /* On desktop we want the SRP auto complete to have a border around it */
+  .bootstrap-typeahead-input-main {
+    border: 1px solid #CCC;
+    border-radius: 4px;
+  }
   /* desktop top bar is larger than mobile search action bar */
   .contentSRP {
     height: -webkit-calc(100% - 55px);
@@ -1718,8 +1753,7 @@ _:-ms-lang(x), .layout-fixed .wrapper > .aside > .aside-inner {
     background-image: -webkit-linear-gradient(left, #23b7e5 0%, #51c6ea 100%);
     background-image: -o-linear-gradient(left, #23b7e5 0%, #51c6ea 100%);
     background-image: linear-gradient(to right, #23b7e5 0%, #51c6ea 100%);
-    background-repeat: repeat-x;
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF23B7E5', endColorstr='#FF51C6EA', GradientType=1); }
+    background-repeat: repeat-x;}
     @media only screen and (min-width: 768px) {
       .topnavbar .navbar-header {
         background-image: none; } }
@@ -1839,8 +1873,7 @@ _:-ms-lang(x), .layout-fixed .wrapper > .aside > .aside-inner {
     background-image: -webkit-linear-gradient(left, #23b7e5 0%, #51c6ea 100%);
     background-image: -o-linear-gradient(left, #23b7e5 0%, #51c6ea 100%);
     background-image: linear-gradient(to right, #23b7e5 0%, #51c6ea 100%);
-    background-repeat: repeat-x;
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#FF23B7E5', endColorstr='#FF51C6EA', GradientType=1); }
+    background-repeat: repeat-x;}
     .topnavbar .navbar-header {
       background-image: none;
       background-repeat: no-repeat;
