@@ -750,14 +750,10 @@ class GooglePlacesTypeahead extends React.Component {
     super(props);
 
     this.handleInputChange = this.handleInputChange.bind(this);
-    this.onChange = this.onChange.bind(this);
-    this.onBlur = this.onBlur.bind(this);
 
     this.state = {
       cities: this.props.value ? [this.props.value] : [],
-      neighborhoods: [],
-      // flag to use custom css to override and hide the menu since it breaks on Safari
-      hideMenu: true
+      neighborhoods: []
     };
   }
 
@@ -834,41 +830,20 @@ class GooglePlacesTypeahead extends React.Component {
     );
   }
 
-  onChange(value) {
-    // anytime user selects a value, set the menu to hide
-    this.setState({hideMenu: true});
-    console.log("PropOnChange()");
-    this.props.onChange(value);
-  }
-
-  onBlur() {
-    // delay the hiding of menu, otherwise if clicking a option onBlur would hide menu before click
-    //  could get the value out -> especially bad for mobile
-    console.log("onBlur");
-    setTimeout(() => {
-      this.setState({hideMenu: true});
-    }, 500);
-  }
-
   render() {
     // concatenate the two sources so autocomplete displays full options
     const dataSource = this.state.neighborhoods.concat(this.state.cities).map((place, index) => {
       return {id: index, display: place};
     });
     return (
-      <div className={this.state.hideMenu ? "hideAutoCompleteMenu" : ""}>
-      {/* If flag is set, use the custom CSS to override and hide autocomplete menu, Safari does not work without this */}
-        <TypeAhead
-          onBlur={() => this.onBlur()}
-          onFocus={() => this.setState({hideMenu: false})}
-          labelKey="display"
-          selected={this.props.value ? [{display: this.props.value}] : []}
-          emptyLabel="Select one option"
-          onInputChange={this.handleInputChange}
-          onChange={(value) => this.onChange(value)}
-          options={dataSource}
-          placeholder={"Enter a City"}/>
-      </div>
+      <TypeAhead
+        labelKey="display"
+        selected={this.props.value ? [{display: this.props.value}] : []}
+        emptyLabel="Select one option"
+        onInputChange={this.handleInputChange}
+        onChange={this.props.onChange}
+        options={dataSource}
+        placeholder={"Enter a City"}/>
     );
   }
 }
