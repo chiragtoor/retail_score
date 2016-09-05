@@ -16,6 +16,9 @@ defmodule RetailScore.Property do
     field :image_lat, :float
     field :image_lng, :float
     field :image_heading, :float
+    field :food_count, :integer
+    field :fashion_count, :integer
+    field :wellness_count, :integer
     has_many :property_agents, RetailScore.PropertyAgent
     has_many :agents, through: [:property_agents, :agent]
     has_many :demographics, RetailScore.Demographic
@@ -29,7 +32,7 @@ defmodule RetailScore.Property do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:street_address, :city, :state, :postal_code, :lat, :lng, :active, :description, :retail_score, :image_lat, :image_lng, :image_heading])
+    |> cast(params, [:street_address, :city, :state, :postal_code, :lat, :lng, :active, :description, :retail_score, :image_lat, :image_lng, :image_heading, :food_count,:fashion_count,:wellness_count])
     |> validate_required([:street_address, :city, :state, :postal_code, :active, :retail_score])
   end
 
