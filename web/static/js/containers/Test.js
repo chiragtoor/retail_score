@@ -357,6 +357,21 @@ export class Test extends React.Component {
     return this.state.selectedPropertyIndex == (index + (this.state.currentPage - 1) * PAGE_SIZE);
   }
 
+  updateScoreType(scoreType) {
+    this.setState({mobileShowSecondaryContent: false});
+    switch(scoreType) {
+      case Actions.SCORE_FASHION:
+        this.props.scoreByFashion();
+        break;
+      case Actions.SCORE_WELLNESS:
+        this.props.scoreByWellness();
+        break;
+      case Actions.SCORE_RESTAURANT:
+        this.props.scoreByRestaurant();
+        break;
+    }
+  }
+
   render() {
     // use slice() on the props because we want to clone and then apply sorting and filtering,
     //  if you do just var = props.properties then below when var properties is sorted and filtered
@@ -442,7 +457,11 @@ export class Test extends React.Component {
       case SECONDARY_CP:
         secondaryContent = <div onClick={(e) => e.stopPropagation()} style={{width:"95%", height:"55%"}}>
                               <CPForm 
-                                onSave={() => this.setState({mobileShowSecondaryContent: false})} />
+                                onFashionClick={() => this.updateScoreType(Actions.SCORE_FASHION)}
+                                onWellnessClick={() => this.updateScoreType(Actions.SCORE_WELLNESS)}
+                                onRestaurantClick={() => this.updateScoreType(Actions.SCORE_RESTAURANT)}
+                                onSave={() => this.setState({mobileShowSecondaryContent: false})}
+                                selectedStyle={this.props.scoreType} />
                             </div>;
         break;
     }
@@ -531,7 +550,7 @@ export class Test extends React.Component {
                 {/* Bootstrap hidden is using display:none, so performance of doing this should not be a issue. But even so with pagination we should be avoiding any perfomance problem with many tiles */}
                 <div ref="desktopListingsDiv" className="listingsDiv hidden-sm hidden-xs">
                   {propertyTiles.map((property, index) => {
-                    return <PropertyTile onClick={this.propertyClick} oneTapContact={this.state.oneTapContact} onContact={this.contactProperty} property={property} mobile={false} key={index} index={index} onHover={(index) => this.updateMainProperty(index)} selected={this.isMainProperty(index)} style={{flexShrink: "1"}}/>
+                    return <PropertyTile scoreType={this.props.scoreType} onClick={this.propertyClick} oneTapContact={this.state.oneTapContact} onContact={this.contactProperty} property={property} mobile={false} key={index} index={index} onHover={(index) => this.updateMainProperty(index)} selected={this.isMainProperty(index)} style={{flexShrink: "1"}}/>
                   })}
                   {numPages >= 2 ?
                     <div style={{width:"100%", height:"80px", display:"flex", justifyContent:"center", alignItems:"center"}}>
@@ -554,7 +573,7 @@ export class Test extends React.Component {
                   }
                   {propertyTiles.map((property, index) => {
                     {/* Add the ref of this to the mobile tiles ref storage, this is used for calculating which element is in the main scroll position */}
-                    return <PropertyTile onClick={this.propertyClick} oneTapContact={this.state.oneTapContact} onContact={this.contactProperty} property={property} mobile={true} key={index} index={index} selected={this.isMainProperty(index)} style={{flexShrink: "1"}} ref={c => this._propertyTiles.set(index, c)}/>
+                    return <PropertyTile scoreType={this.props.scoreType} onClick={this.propertyClick} oneTapContact={this.state.oneTapContact} onContact={this.contactProperty} property={property} mobile={true} key={index} index={index} selected={this.isMainProperty(index)} style={{flexShrink: "1"}} ref={c => this._propertyTiles.set(index, c)}/>
                   })}
                   {(numPages >= 2 && this.state.currentPage != numPages) ?
                     <Button onClick={() => this.pageSelect(this.state.currentPage + 1, true)} style={{width:"150px", height:"100%", flexShrink: "1", backgroundColor:"rgba(255,0,0,0.4)"}}>Next</Button>
@@ -646,13 +665,31 @@ class PropertyTile extends React.Component {
 
     {/* Below code gets the correct RS color and stars depending on score value */}
     var retailScore = false;
-    if(this.props.property.retail_score >= 90) {
+    var retailScoreValue = 0;
+    var retailScoreText = "";
+
+    switch(this.props.scoreType) {
+      case Actions.SCORE_FASHION:
+        retailScoreValue = this.props.property.fashion_count;
+        retailScoreText = retailScoreValue + " other fashion businesses in this area"
+        break;
+      case Actions.SCORE_WELLNESS:
+        retailScoreValue = this.props.property.wellness_count;
+        retailScoreText = retailScoreValue + " other wellness businesses in this area"
+        break;
+      case Actions.SCORE_RESTAURANT:
+        retailScoreValue = this.props.property.restaurant_count;
+        retailScoreText = retailScoreValue + " other restaurant businesses in this area"
+        break;
+    }
+
+    if(retailScoreValue == 5) {
       retailScore = <label className="control-label" style={{fontSize:"12px", marginLeft:"10px", color:"#27ae60", borderBottom:"solid thin"}}>Retail Score: <i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/></label>;
-    } else if(this.props.property.retail_score >= 80) {
+    } else if(retailScoreValue == 4) {
       retailScore = <label className="control-label" style={{fontSize:"12px", marginLeft:"10px", color:"#f1c40f", borderBottom:"solid thin"}}>Retail Score: <i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/></label>;
-    } else if(this.props.property.retail_score >= 70) {
+    } else if(retailScoreValue == 3) {
       retailScore = <label className="control-label" style={{fontSize:"12px", marginLeft:"10px", color:"#e67e22", borderBottom:"solid thin"}}>Retail Score: <i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/></label>;
-    } else if(this.props.property.retail_score >= 60) {
+    } else if(retailScoreValue == 2) {
       retailScore = <label className="control-label" style={{fontSize:"12px", marginLeft:"10px", color:"#c0392b", borderBottom:"solid thin"}}>Retail Score: <i className="fa fa-star"/><i className="fa fa-star"/></label>;
     } else {
       retailScore = <label className="control-label" style={{fontSize:"12px", marginLeft:"10px", color:"#c0392b", borderBottom:"solid thin"}}>Retail Score: <i className="fa fa-star"/></label>;
@@ -675,7 +712,7 @@ class PropertyTile extends React.Component {
             <div className="panel-body bt" style={{padding:"2px", borderColor: panelBordersColor}}>
               {/* RS and explanation, explanation uses CSS text cutoof technique on smaller devices with varying # of lines depending on screen width */}
               {retailScore}
-              <p className="lineClamp">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+              <p className="lineClamp">{retailScoreText}</p>
             </div>
           :
             <div className="panel-body bt tileRetailScore" style={{padding:"0px", borderColor: panelBordersColor}}>
@@ -755,11 +792,6 @@ class Filters extends React.Component {
     if(this.props.filterSqFtMin != null) {
       maxSqFtOptions = maxSqFtOptions.filter(sqFeet => sqFeet > this.props.filterSqFtMin);
     }
-
-    console.log("FILTERS");
-    console.log(this.props.selectedSort);
-    console.log(this.props.filterSqFtMin);
-    console.log(this.props.filterSqFtMin == null);
 
     return(
       <div style={{backgroundColor:"#FFFFFF", width:"100%", height:"100%", padding: this.props.padded ? "10px" : "0", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
@@ -869,14 +901,18 @@ class CPForm extends React.Component {
   }
 
   render() {
+
+    const selectedStyle = {height:"40px", color:"#49A3DC", borderColor:"#49A3DC", marginBottom:"1px"};
+    const unselectedStyle = {height:"40px"};
+
     return (
       <div style={{backgroundColor:"#FFFFFF", width:"100%", height:"100%", padding:"10px", display:"flex", flexDirection:"column", justifyContent:"space-around", alignItems:"center"}}>
         <center><label className="control-label" style={{fontSize:"18px", marginBottom:"0px", color:"#656565"}}>What type of business are you starting?</label></center>
         <div style={{width:"60%"}}>
           <ButtonGroup vertical style={{width:"100%"}}>
-            <Button style={{height:"40px"}}>Fashion</Button>
-            <Button style={{height:"40px"}}>Wellness</Button>
-            <Button style={{height:"40px"}}>Restaurant</Button>
+            <Button onClick={() => this.props.onFashionClick()} style={this.props.selectedStyle == Actions.SCORE_FASHION ? selectedStyle : unselectedStyle}>Fashion</Button>
+            <Button onClick={() => this.props.onWellnessClick()} style={this.props.selectedStyle == Actions.SCORE_WELLNESS ? selectedStyle : unselectedStyle}>Wellness</Button>
+            <Button onClick={() => this.props.onRestaurantClick()} style={this.props.selectedStyle == Actions.SCORE_RESTAURANT ? selectedStyle : unselectedStyle}>Restaurant</Button>
           </ButtonGroup>
         </div>
         <div style={{width:"100%"}}>
@@ -1093,7 +1129,8 @@ Test.contextTypes = {
 const mapStateToProps = (state) => {
   return {
     server_side: state.server_side,
-    properties: state.properties
+    properties: state.properties,
+    scoreType: state.score_type
   };
 };
 

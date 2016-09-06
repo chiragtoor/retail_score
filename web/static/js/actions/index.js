@@ -3,6 +3,34 @@ import axios from 'axios';
 /*
  * Constants used across App
  */
+
+export const SCORE_FASHION = 0;
+export const SCORE_WELLNESS = 1;
+export const SCORE_RESTAURANT = 2;
+
+export const UPDATE_SCORE_TYPE = 'UPDATE_SCORE_TYPE';
+
+export function updateScoreType(scoreType) {
+  return {type: UPDATE_SCORE_TYPE, scoreType};
+}
+
+export function scoreByFashion() {
+  return function (dispatch) {
+    dispatch(updateScoreType(SCORE_FASHION));
+  }
+}
+export function scoreByWellness() {
+  return function (dispatch) {
+    dispatch(updateScoreType(SCORE_WELLNESS));
+  }
+}
+export function scoreByRestaurant() {
+  return function (dispatch) {
+    dispatch(updateScoreType(SCORE_RESTAURANT));
+  }
+}
+
+
 export const SORT_RS = 0;
 export const SORT_PRICE = 1;
 export const SORT_SQ_FT = 2;
