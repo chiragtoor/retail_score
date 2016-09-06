@@ -1,7 +1,5 @@
 defmodule RetailScore.Google do
-  @google_server_key "AIzaSyASv9f24GcF78YIKRsX3uCRkj58JzZ8NaA"
-
-  @second_key "AIzaSyBBGvDew1kCIONQ6wtaBhzXxYNSlOBUtG4"
+  @google_server_key "AIzaSyBJpQxrdy7Cx-S-voB5DTKA3sHVR3mAf00"
 
   # url set up with key, must append the address in google format (' ' -> +) to use
   @geocode_query_url "https://maps.googleapis.com/maps/api/geocode/json?key=#{@google_server_key}"
@@ -41,7 +39,6 @@ defmodule RetailScore.Google do
   end
 
   def radarSearch(propLat, propLng, type, map) do
-
     newMap = Map.new();
 
     #base case
@@ -63,18 +60,17 @@ defmodule RetailScore.Google do
         end)
         |> Map.new
       {:ok, %HTTPoison.Response{status_code: 404}} ->
-        nil
+        IO.inspect "error"
       {:error, %HTTPoison.Error{reason: _}} ->
-        nil
+        IO.inspect "error"
       _ ->
-        nil
+        IO.inspect
     end
 
     Map.merge(newMap, map)
   end
 
   def getDetails(ids, list) do
-    
     case tl ids do
       [] ->
         nil
@@ -88,16 +84,22 @@ defmodule RetailScore.Google do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         %{"result" => result } = Poison.Parser.parse!(body)
         case result do
-          %{"name" => name, "place_id" => placeId, "price_level" => price_level, "formatted_phone_number" => phone, "website" => website, "formatted_address" => address, "types" => types} ->
-            newList = [%{"name" => name, "place_id" => placeId, "price_level" => price_level, "formatted_phone_number" => phone, "formatted_address" => address, "website" => website, "types" => types}]
-          %{"name" => name, "place_id" => placeId, "price_level" => price_level, "formatted_phone_number" => phone, "formatted_address" => address, "types" => types} ->
-            newList = [%{"name" => name, "place_id" => placeId, "price_level" => price_level, "formatted_phone_number" => phone, "formatted_address" => address, "types" => types}]
-          %{"name" => name, "place_id" => placeId, "formatted_phone_number" => phone, "website" => website, "formatted_address" => address, "types" => types} ->
-            newList = [%{"name" => name, "place_id" => placeId, "formatted_phone_number" => phone, "website" => website, "formatted_address" => address, "types" => types}]
-          %{"name" => name, "place_id" => placeId, "formatted_phone_number" => phone, "formatted_address" => address, "types" => types} ->
-            newList = [%{"name" => name, "place_id" => placeId, "formatted_phone_number" => phone,"formatted_address" => address, "types" => types}]
+          %{"name" => name, "place_id" => placeId, "price_level" => price_level, "formatted_phone_number" => phone, "website" => website, "formatted_address" => address} ->
+            newList = %{"business_name" => name, "business_id" => placeId, "price_level" => price_level, "business_phone_number" => phone, "business_address" => address, "business_website" => website}
+          %{"name" => name, "place_id" => placeId, "price_level" => price_level, "formatted_phone_number" => phone, "formatted_address" => address} ->
+            newList = %{"business_name" => name, "business_id" => placeId, "price_level" => price_level, "business_phone_number" => phone, "business_address" => address}
+          %{"name" => name, "place_id" => placeId, "formatted_phone_number" => phone, "website" => website, "formatted_address" => address} ->
+            newList = %{"business_name" => name, "business_id" => placeId, "business_phone_number" => phone, "business_website" => website, "business_address" => address}
+          %{"name" => name, "place_id" => placeId, "formatted_phone_number" => phone, "formatted_address" => address} ->
+            newList = %{"business_name" => name, "business_id" => placeId, "business_phone_number" => phone,"business_address" => address}
           %{"name" => name, "place_id" => placeId} ->
-            newList = [%{"name" => name, "place_id" => placeId}]
+            newList = %{"business_name" => name, "business_id" => placeId}
+        end
+        case result do
+          %{"types" => types} ->
+            newList = Map.merge(newList, %{"restaurant" => Enum.member?(types, "restaurant"),"cafe" => Enum.member?(types, "cafe"),"bar" => Enum.member?(types, "bar"),"clothing_store" => Enum.member?(types, "clothing_store"),"shoe_store" => Enum.member?(types, "shoe_store"), "jewelry_store" => Enum.member?(types, "jewelry_store"),"beauty_salon" => Enum.member?(types, "beauty_salon"),"spa" => Enum.member?(types, "spa"), "hair_care" => Enum.member?(types, "hair_care")})
+          _->
+            nil
         end
       {:ok, %HTTPoison.Response{status_code: 404}} ->
         IO.inspect "404 error"
@@ -107,7 +109,7 @@ defmodule RetailScore.Google do
         IO.inspect "some other error"
     end
 
-    list ++ newList
+    list ++ [newList]
   end
 
   def get_directions_api_lat_lng_from_address(address) do

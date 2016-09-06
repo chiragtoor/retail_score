@@ -245,6 +245,36 @@ defmodule RetailScore.Processor do
     end)
   end
 
+  def get_businesses(file) do
+    IO.puts "Working on: #{file}"
+
+    IO.puts "Downloading from S3"
+    properties = RetailScore.S3.download("processed/#{file}")
+    |> Poison.decode!
+    # |> IO.inspect
+
+    IO.puts "Printing contents of the file"
+
+    finalData = properties
+    |> Enum.map(fn(property) ->
+        %{"property" => %{"street_address" => street_address,"lat" => lat, "lng" => lng}} = property
+        Map.merge(property, RetailScore.Scorer.score_property(lat, lng))
+        |> Poison.encode! 
+    end)
+    |> Enum.join(",")
+
+     
+    # %{"property" => %{"street_address" => street_address,"lat" => lat, "lng" => lng}} = Enum.at(properties, 0)
+    
+    
+    # finalData = Poison.encode!(Map.merge(Enum.at(properties, 0), RetailScore.Scorer.score_property(lat, lng)))
+
+    upload = "[" <> finalData <> "]"
+    RetailScore.S3.upload("scored/#{file}", upload)
+
+    IO.inspect "done"
+  end
+
   def insert_properties(files) do
     files
     |> Enum.map(fn(file) ->
