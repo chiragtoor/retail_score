@@ -134,15 +134,17 @@ export default class GoogleMap extends Component {
       if(property.id == me.state.highlightedId) {
         icon = {
           url: "https://s3-us-west-2.amazonaws.com/homepage-image-assets/competition_pin.png",
-          scaledSize: new google.maps.Size(70, 70),
-          zIndex: 1
+          size: new google.maps.Size(70, 70),
+          zIndex: 1,
+          scale: 3
         };
         zIndex = 1;
       } else {
         icon = {
           url: "https://s3-us-west-2.amazonaws.com/zamatics-images/propertyicon50x50.png",
-          scaledSize: new google.maps.Size(50, 50),
-          zIndex: 0
+          size: new google.maps.Size(50, 50),
+          zIndex: 0,
+          scale: 2
         };
         zIndex = 0;
       }
@@ -151,6 +153,7 @@ export default class GoogleMap extends Component {
         position: {lat: property.lat, lng: property.lng},
         zIndex:zIndex,
         map: me.state.map,
+        scale: 2,
         icon: icon});
 
       marker.set("id", property.id);

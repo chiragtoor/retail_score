@@ -235,9 +235,6 @@ MOVE TO SRP.CSS AFTER
 .bootstrap-typeahead-input-hint {
   height: 50px;
 }
-.hideAutoCompleteMenu > div > ul {
-  display: none !important;
-}
 
 .button {
   background-color: #FFFFFF;
@@ -503,14 +500,14 @@ MOVE TO SRP.CSS AFTER
 }
 .fadeIn-enter.fadeIn-enter-active {
   opacity: 1;
-  transition: opacity 500ms ease-in;
+  transition: opacity 200ms ease-in;
 }
 .fadeIn-leave {
   opacity: 0.9;
 }
 .fadeIn-leave.fadeIn-leave-active {
   opacity: 0;
-  transition: opacity 500ms ease-in;
+  transition: opacity 200ms ease-in;
 }
 /* animation to bounceIn in place, used on CP form and homepage */
 @keyframes bounceIn {
@@ -552,6 +549,13 @@ MOVE TO SRP.CSS AFTER
 }
 .fadedBounceIn-enter.fadedBounceIn-enter-active {
   opacity: 0.01;
+}
+.fadedBounceIn-leave {
+  opacity: 0.9;
+}
+.fadedBounceIn-leave.fadedBounceIn-leave-active {
+  opacity: 0;
+  transition: opacity 200ms ease-in;
 }
 /* Animation for dimmed out div around mobile filters, CP, menu */
 .dimFade-enter {
