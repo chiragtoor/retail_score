@@ -18,13 +18,12 @@ export default (
 
 	  <Route path="/" component={HomepageContainer} />
 	  <Route path='/customer' component={CustomerProfile} />
-	  <Route path='/test/:city' component={Test} />
+	  <Route path='/retail-space-for-lease/:city' component={Test} />
 	  <Route path='/targetcustomer/1' component={TargetCustomerSearch} />
     <Route path='/targetcustomer/2' component={CP} />
     <Route path='/scoreproperties' component={SurveyEnd} />
 	  <Route path="/pdp" component={PDPContainer} />
 	  <Route path='/properties/:propertyId' component={PDPContainer} />
-	  <Route path='/retail-space-for-lease/:city' component={SRPContainer} />
 
 	</Route>
 );
