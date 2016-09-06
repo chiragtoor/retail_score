@@ -655,7 +655,7 @@ class PropertyTile extends React.Component {
 
   contactClick(e) {
     e.stopPropagation();
-    this.props.onContact(this.props.property);
+    this.props.onContact(this.props.property.id);
   }
 
   render() {
