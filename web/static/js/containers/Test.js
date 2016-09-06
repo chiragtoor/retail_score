@@ -122,39 +122,19 @@ export class Test extends React.Component {
       case SECONDARY_FILTERS:
         this.setState({
           mobileShowSecondaryContent: true,
-          secondaryContent: <div onClick={(e) => e.stopPropagation()} style={{width:"95%", height:"60%"}}>
-                              <Filters 
-                                filterPriceMin={this.state.filterPriceMin}
-                                filterPriceMax={this.state.filterPriceMax}
-                                filterSqFtMin={this.state.filterSqFtMin}
-                                filterSqFtMax={this.state.filterSqFtMax}
-                                onUpdatePriceMin={(value) => this.setState({filterPriceMin: value, currentPage: 1})}
-                                onUpdatePriceMax={(value) => this.setState({filterPriceMax: value, currentPage: 1})}
-                                onUpdateSqFtMin={(value) => this.setState({filterSqFtMin: value, currentPage: 1})}
-                                onUpdateSqFtMax={(value) => this.setState({filterSqFtMax: value, currentPage: 1})}
-                                selectedSort={this.state.currentSort} 
-                                onUpdateSort={(newValue) => this.setState({currentSort: newValue, currentPage: 1})} 
-                                onSave={() => this.setState({mobileShowSecondaryContent: false})} 
-                                padded={true} />
-                            </div>
+          secondaryContent: SECONDARY_FILTERS
         });
         break;
       case SECONDARY_CONTACT:
         this.setState({
           mobileShowSecondaryContent: true,
-          secondaryContent: <div onClick={(e) => e.stopPropagation()} style={{width:"95%", height:"60%"}}>
-                              <ContactForm 
-                                onSubmit={(name, email, message) => this.submitContact(name, email, message, this.state.propertyToContact)}/>
-                            </div>
+          secondaryContent: SECONDARY_CONTACT
         });
         break;
       case SECONDARY_CP:
         this.setState({
           mobileShowSecondaryContent: true,
-          secondaryContent: <div onClick={(e) => e.stopPropagation()} style={{width:"95%", height:"55%"}}>
-                              <CPForm 
-                                onSave={() => this.setState({mobileShowSecondaryContent: false})} />
-                            </div>
+          secondaryContent: SECONDARY_CP
         })
         break;
     }
@@ -433,6 +413,40 @@ export class Test extends React.Component {
     // have to look in full properties, not the cut out propertyTiles from above
     var mainProperty = properties[this.state.selectedPropertyIndex];
 
+
+    var secondaryContent = false;
+    switch(this.state.secondaryContent) {
+      case SECONDARY_FILTERS:
+        secondaryContent = <div onClick={(e) => e.stopPropagation()} style={{width:"95%", height:"60%"}}>
+                              <Filters 
+                                filterPriceMin={this.state.filterPriceMin}
+                                filterPriceMax={this.state.filterPriceMax}
+                                filterSqFtMin={this.state.filterSqFtMin}
+                                filterSqFtMax={this.state.filterSqFtMax}
+                                onUpdatePriceMin={(value) => this.setState({filterPriceMin: value, currentPage: 1})}
+                                onUpdatePriceMax={(value) => this.setState({filterPriceMax: value, currentPage: 1})}
+                                onUpdateSqFtMin={(value) => this.setState({filterSqFtMin: value, currentPage: 1})}
+                                onUpdateSqFtMax={(value) => this.setState({filterSqFtMax: value, currentPage: 1})}
+                                selectedSort={this.state.currentSort} 
+                                onUpdateSort={(newValue) => this.setState({currentSort: newValue, currentPage: 1})} 
+                                onSave={() => this.setState({mobileShowSecondaryContent: false})} 
+                                padded={true} />
+                            </div>;
+        break;
+      case SECONDARY_CONTACT:
+        secondaryContent = <div onClick={(e) => e.stopPropagation()} style={{width:"95%", height:"60%"}}>
+                              <ContactForm 
+                                onSubmit={(name, email, message) => this.submitContact(name, email, message, this.state.propertyToContact)}/>
+                            </div>;
+        break;
+      case SECONDARY_CP:
+        secondaryContent = <div onClick={(e) => e.stopPropagation()} style={{width:"95%", height:"55%"}}>
+                              <CPForm 
+                                onSave={() => this.setState({mobileShowSecondaryContent: false})} />
+                            </div>;
+        break;
+    }
+
     return(
       <div style={{width:"100%", height:"100%", margin:"0px", padding:"0px"}}>
         {/* Use flex-box so that we can automatically resize the content below the desktop only header bar when it dissapears on mobile */}
@@ -571,7 +585,7 @@ export class Test extends React.Component {
               {/* If user clicks outside dimDiv we want it to close the secondary content */}
               {/* Clicking inside the secondary content (buttons, dropdowns) should not close it, so use stopPropogation so that event does not go to the outer div above and close */}
               {/* on filter update set currentPage to 1 in case user was looking at other pages */}
-              {this.state.secondaryContent}
+              {secondaryContent}
             </div>
           :
             false
@@ -741,6 +755,11 @@ class Filters extends React.Component {
     if(this.props.filterSqFtMin != null) {
       maxSqFtOptions = maxSqFtOptions.filter(sqFeet => sqFeet > this.props.filterSqFtMin);
     }
+
+    console.log("FILTERS");
+    console.log(this.props.selectedSort);
+    console.log(this.props.filterSqFtMin);
+    console.log(this.props.filterSqFtMin == null);
 
     return(
       <div style={{backgroundColor:"#FFFFFF", width:"100%", height:"100%", padding: this.props.padded ? "10px" : "0", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
