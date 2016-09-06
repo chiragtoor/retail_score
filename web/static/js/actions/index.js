@@ -44,7 +44,6 @@ export function loadProperties(city, state) {
 
 export function submitContact(data) {
   return function(dispatch) {
-    console.log("in submitContact function");
     axios.post(send_message_url, data).then(function (response) {
       console.log(response);
   }).catch(function (response) {

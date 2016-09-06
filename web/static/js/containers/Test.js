@@ -11,6 +11,16 @@ import GoogleMap from '../components/GoogleMap';
 
 // size of pages when splitting property tiles for pagination
 const PAGE_SIZE = 20;
+// flag for showing filters in secondary content
+const SECONDARY_FILTERS = 0;
+// flag for showing contact in secondary content
+const SECONDARY_CONTACT = 1;
+// flag for showing CP form in secondary content
+const SECONDARY_CP = 3;
+
+// constants for storage of contact info for one tap contact
+const CONTACT_NAME = 'name';
+const CONTACT_EMAIL = 'email';
 
 export class Test extends React.Component {
 
@@ -40,11 +50,13 @@ export class Test extends React.Component {
     super(props);
 
     this.listingsDivScrolled = this.listingsDivScrolled.bind(this);
-    this.filterButtonClicked = this.filterButtonClicked.bind(this);
     this.pageSelect = this.pageSelect.bind(this);
     this.updateMainProperty = this.updateMainProperty.bind(this);
     this.isMainProperty = this.isMainProperty.bind(this);
     this.searchCity = this.searchCity.bind(this);
+    this.contactProperty = this.contactProperty.bind(this);
+    this.submitContact = this.submitContact.bind(this);
+    this.propertyClick = this.propertyClick.bind(this);
 
     // get the properties for the current city
     const city = this.props.params.city.replace("-", " ");
@@ -56,6 +68,14 @@ export class Test extends React.Component {
     // timeout used for only performing computations on end of mobile scroll
     this._scrollTimeout = null;
 
+    // check if contact info is stored in localStorage, if so we are in one tap contact mode
+    var oneTapContact = false;
+    if (typeof(Storage) !== "undefined") {
+      if(localStorage.getItem(CONTACT_NAME) && localStorage.getItem(CONTACT_EMAIL)){
+        oneTapContact = true;
+      }
+    } 
+
     this.state = {
       mounted: false,
       // current city results being shown on page
@@ -64,6 +84,8 @@ export class Test extends React.Component {
       selectedPropertyIndex: 0,
       // flag for whether to show the container for filters, CP
       mobileShowSecondaryContent: false,
+      // the content to show in mobile modal
+      secondaryContent: null,
       // type of sort currently being applied
       currentSort: Actions.SORT_RS,
       // default filter values are all null, this way initial text displays in filter dropdowns
@@ -72,7 +94,11 @@ export class Test extends React.Component {
       filterSqFtMin: null,
       filterSqFtMax: null,
       // page # used with pagination
-      currentPage: 1
+      currentPage: 1,
+      // propertyId to contact -> for contact from SRP page functionality
+      propertyToContact: null,
+      // flag for if we are in one tap contact mode
+      oneTapContact: oneTapContact
     }
   }
 
@@ -84,14 +110,91 @@ export class Test extends React.Component {
   // search and get properties for a city
   searchCity(city) {
     const cityParts = city.split(',');
+    // trim because city comes with a space after the ',' and backend will return no properties for ' CA' as the state
     this.props.loadProperties(cityParts[0], cityParts[1].trim());
     // update local state to keep track of where SRP is
     this.setState({currentCity: city});
   }
 
-  // mobile only filter button clicked
-  filterButtonClicked() {
-    this.setState({mobileShowSecondaryContent: true});
+  // mobile secondary content helper function to bring up the correct modal
+  showSecondaryContent(content) {
+    switch (content) {
+      case SECONDARY_FILTERS:
+        this.setState({
+          mobileShowSecondaryContent: true,
+          secondaryContent: <div onClick={(e) => e.stopPropagation()} style={{width:"95%", height:"60%"}}>
+                              <Filters 
+                                filterPriceMin={this.state.filterPriceMin}
+                                filterPriceMax={this.state.filterPriceMax}
+                                filterSqFtMin={this.state.filterSqFtMin}
+                                filterSqFtMax={this.state.filterSqFtMax}
+                                onUpdatePriceMin={(value) => this.setState({filterPriceMin: value, currentPage: 1})}
+                                onUpdatePriceMax={(value) => this.setState({filterPriceMax: value, currentPage: 1})}
+                                onUpdateSqFtMin={(value) => this.setState({filterSqFtMin: value, currentPage: 1})}
+                                onUpdateSqFtMax={(value) => this.setState({filterSqFtMax: value, currentPage: 1})}
+                                selectedSort={this.state.currentSort} 
+                                onUpdateSort={(newValue) => this.setState({currentSort: newValue, currentPage: 1})} 
+                                onSave={() => this.setState({mobileShowSecondaryContent: false})} 
+                                padded={true} />
+                            </div>
+        });
+        break;
+      case SECONDARY_CONTACT:
+        this.setState({
+          mobileShowSecondaryContent: true,
+          secondaryContent: <div onClick={(e) => e.stopPropagation()} style={{width:"95%", height:"60%"}}>
+                              <ContactForm 
+                                onSubmit={(name, email, message) => this.submitContact(name, email, message, this.state.propertyToContact)}/>
+                            </div>
+        });
+        break;
+      case SECONDARY_CP:
+        this.setState({
+          mobileShowSecondaryContent: true,
+          secondaryContent: <div onClick={(e) => e.stopPropagation()} style={{width:"95%", height:"55%"}}>
+                              <CPForm 
+                                onSave={() => this.setState({mobileShowSecondaryContent: false})} />
+                            </div>
+        })
+        break;
+    }
+  }
+
+  propertyClick(property) {
+    this.props.history.push('/properties/' + property.id);
+  }
+
+  contactProperty(propertyId) {
+    // store the propertyId for the one we want to contact
+    this.setState({propertyToContact: propertyId});
+    // check cookies to see if contact form has been submitted, if so do one tap contact functionality
+    if(this.state.oneTapContact) {
+      // get info from cookies and submit contact, no need for modal
+      this.submitContact(localStorage.getItem(CONTACT_NAME), localStorage.getItem(CONTACT_EMAIL), "", propertyId);
+    } else {
+      // bring up the contact form since we have no contact info stored
+      this.showSecondaryContent(SECONDARY_CONTACT);
+    }
+    
+  }
+
+  submitContact(name, email, message, propertyId) {
+    this.props.submitContact({
+      "message":{
+        "contact_name": name,
+        "contact_email_address": email,
+        "body": message,
+        "property_id": propertyId
+      }
+    });
+    this.setState({propertyToContact: null, secondaryContent: null, mobileShowSecondaryContent: false});
+
+    // if not in one tap contact mode, store info and set to one tap contact mode
+    if(!this.state.oneTapContact) {
+      localStorage.setItem(CONTACT_NAME, name);
+      localStorage.setItem(CONTACT_EMAIL, email);
+      this.setState({oneTapContact: true});
+    }
   }
 
   // method is called on mobile when the listingsDiv (which contains all tiles horizontally) is scrolled
@@ -364,7 +467,7 @@ export class Test extends React.Component {
                 <GoogleMap 
                   id={"desktop"} 
                   properties={properties}
-                  pinClick={() => false}
+                  pinClick={this.propertyClick}
                   currentPropertyMarker={mainProperty} />
               </div>
             :
@@ -398,11 +501,11 @@ export class Test extends React.Component {
                 </div>
                 {/* Button for CP edit, # of Listings, and if on mobile button for Filters */}
                 <div style={{borderTop:"solid thin #CCCCCC", borderBottom:"solid thin #CCCCCC", height:"40px", display:"flex", alignItems:"center", boxShadow:"0px 1px 3px -1px #7f8c8d", position:"relative", zIndex:"10"}}>
-                  <Button style={{marginLeft:"15px", border:"none",fontSize:"16px", fontWeight:"100"}}><i className="fa fa-user" style={{color:"#49A3DC"}}/></Button>
+                  <Button onClick={() => this.showSecondaryContent(SECONDARY_CP)} style={{marginLeft:"15px", border:"none",fontSize:"16px", fontWeight:"100"}}><i className="fa fa-user" style={{color:"#49A3DC"}}/></Button>
                   <label className="control-label" style={{fontSize:"16px", flexGrow:"1", textAlign:"center", color:"#656565", padding:"0"}}>{properties.length} Properties</label>
                   {/* Add a empty div for desktop the same size as Filter button, this way the # properties text stays centered with flexbox */}
                   <div className="hidden-sm hidden-xs" style={{width:"36px", height:"10px", marginRight: "15px"}} />
-                  <Button onClick={() => this.filterButtonClicked()} className="hidden-md hidden-lg" style={{marginRight:"15px", border:"none",fontSize:"16px", fontWeight:"100"}}><i className="fa fa-filter" style={{color:"#49A3DC"}}/></Button>
+                  <Button onClick={() => this.showSecondaryContent(SECONDARY_FILTERS)} className="hidden-md hidden-lg" style={{marginRight:"15px", border:"none",fontSize:"16px", fontWeight:"100"}}><i className="fa fa-filter" style={{color:"#49A3DC"}}/></Button>
                 </div>
                 {/* 
                   listingsDiv is what controls the horizontal v vertical scrolling, by default it is mobile first and uses flex-box to go in a row with 
@@ -414,7 +517,7 @@ export class Test extends React.Component {
                 {/* Bootstrap hidden is using display:none, so performance of doing this should not be a issue. But even so with pagination we should be avoiding any perfomance problem with many tiles */}
                 <div ref="desktopListingsDiv" className="listingsDiv hidden-sm hidden-xs">
                   {propertyTiles.map((property, index) => {
-                    return <PropertyTile property={property} mobile={false} key={index} index={index} onHover={(index) => this.updateMainProperty(index)} selected={this.isMainProperty(index)} style={{flexShrink: "1"}}/>
+                    return <PropertyTile onClick={this.propertyClick} oneTapContact={this.state.oneTapContact} onContact={this.contactProperty} property={property} mobile={false} key={index} index={index} onHover={(index) => this.updateMainProperty(index)} selected={this.isMainProperty(index)} style={{flexShrink: "1"}}/>
                   })}
                   {numPages >= 2 ?
                     <div style={{width:"100%", height:"80px", display:"flex", justifyContent:"center", alignItems:"center"}}>
@@ -437,7 +540,7 @@ export class Test extends React.Component {
                   }
                   {propertyTiles.map((property, index) => {
                     {/* Add the ref of this to the mobile tiles ref storage, this is used for calculating which element is in the main scroll position */}
-                    return <PropertyTile property={property} mobile={true} key={index} index={index} selected={this.isMainProperty(index)} style={{flexShrink: "1"}} ref={c => this._propertyTiles.set(index, c)}/>
+                    return <PropertyTile onClick={this.propertyClick} oneTapContact={this.state.oneTapContact} onContact={this.contactProperty} property={property} mobile={true} key={index} index={index} selected={this.isMainProperty(index)} style={{flexShrink: "1"}} ref={c => this._propertyTiles.set(index, c)}/>
                   })}
                   {(numPages >= 2 && this.state.currentPage != numPages) ?
                     <Button onClick={() => this.pageSelect(this.state.currentPage + 1, true)} style={{width:"150px", height:"100%", flexShrink: "1", backgroundColor:"rgba(255,0,0,0.4)"}}>Next</Button>
@@ -468,21 +571,7 @@ export class Test extends React.Component {
               {/* If user clicks outside dimDiv we want it to close the secondary content */}
               {/* Clicking inside the secondary content (buttons, dropdowns) should not close it, so use stopPropogation so that event does not go to the outer div above and close */}
               {/* on filter update set currentPage to 1 in case user was looking at other pages */}
-              <div onClick={(e) => e.stopPropagation()} style={{width:"95%", height:"60%"}}>
-                <Filters 
-                  filterPriceMin={this.state.filterPriceMin}
-                  filterPriceMax={this.state.filterPriceMax}
-                  filterSqFtMin={this.state.filterSqFtMin}
-                  filterSqFtMax={this.state.filterSqFtMax}
-                  onUpdatePriceMin={(value) => this.setState({filterPriceMin: value, currentPage: 1})}
-                  onUpdatePriceMax={(value) => this.setState({filterPriceMax: value, currentPage: 1})}
-                  onUpdateSqFtMin={(value) => this.setState({filterSqFtMin: value, currentPage: 1})}
-                  onUpdateSqFtMax={(value) => this.setState({filterSqFtMax: value, currentPage: 1})}
-                  selectedSort={this.state.currentSort} 
-                  onUpdateSort={(newValue) => this.setState({currentSort: newValue, currentPage: 1})} 
-                  onSave={() => this.setState({mobileShowSecondaryContent: false})} 
-                  padded={true} />
-              </div>
+              {this.state.secondaryContent}
             </div>
           :
             false
@@ -493,6 +582,12 @@ export class Test extends React.Component {
   }
 }
 class PropertyTile extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.contactClick = this.contactClick.bind(this);
+
+  }
   formatPrice(property) {
     // properties will either have null for both, only a min, or a min and max value
     //  will never have a max and no min
@@ -525,6 +620,11 @@ class PropertyTile extends React.Component {
     return `https://maps.googleapis.com/maps/api/streetview?size=200x150&location=${property.image_lat},${property.image_lng}&heading=${property.image_heading}&key=AIzaSyASv9f24GcF78YIKRsX3uCRkj58JzZ8NaA`;
   }
 
+  contactClick(e) {
+    e.stopPropagation();
+    this.props.onContact(this.props.property);
+  }
+
   render() {
     {/* styles and color to use when a tile is currently selected, this is hovered over on desktop and in the main scroll position on mobile */}
     const selectedPanelContainerStyle = {display:"flex", flexDirection:"column", borderColor:"#49A3DC", borderWidth:"2px", boxShadow:"0 0 2px #49A3DC", marginBottom:"0px"};
@@ -545,7 +645,7 @@ class PropertyTile extends React.Component {
     }
 
     return(
-      <div className="propertyTileContainer" onMouseOver={() => this.props.mobile ? false : this.props.onHover(this.props.index)}>
+      <div className="propertyTileContainer" onMouseOver={() => this.props.mobile ? false : this.props.onHover(this.props.index)} onClick={() => this.props.onClick(this.props.property)}>
       {/* For desktop we want hover to put this panel in focus, so check flag and call prop function if needed */}
         {/* Panels are of a fixed height, using media queries to adjust based on device width */}
         {/* If a panel is selected we want the blue action color, otherwise the gray normal color */}
@@ -582,7 +682,7 @@ class PropertyTile extends React.Component {
           {/* Button that in 1-Tap contact mode sends a message to Broker, otherwise takes user to PDP -> this avoid more media query logic to take out the button and resize entire tile */}
           {/* Button is not visible on phones <= 320px wide (iPhone 4 and 5) because it will not fit, CSS media query catches this */}
           <div className="panel-body bt srpContactButton" style={{borderColor: panelBordersColor, margin:"0px", padding:"0px"}}>
-            <Button style={{border:"none", color:"#49A3DC", width:"100%", paddingBottom:"5px"}}>Contact</Button>
+            <Button onClick={this.contactClick} style={{border:"none", color:"#49A3DC", width:"100%", paddingBottom:"5px"}}>{this.props.oneTapContact ? "1 Tap Contact" : "Contact"}</Button>
           </div>
         </div>
       </div>
@@ -607,7 +707,7 @@ class SearchBar extends React.Component {
           <InputGroup.Button><Button style={this.props.noPadding ? mobileSearchButtonStyle : {height:"50px", borderColor:"#CCCCCC"}}>&nbsp;&nbsp;<i className="fa fa-search" style={{color:"#49A3DC"}}/>&nbsp;&nbsp;</Button></InputGroup.Button>
         </InputGroup>
         {this.props.noPadding ?
-          <div style={{width:"100%", height:"1px", borderTop:"solid thin #CCCCCC", boxShadow:"0px 1px 4px 1px #7f8c8d", position:"relative", zIndex:"10"}} />
+          <div style={{width:"100%", height:"1px", borderTop:"solid thin #CCCCCC"}} />
         :
           false
         }
@@ -736,6 +836,124 @@ class Filters extends React.Component {
         </Row>
         <div className="hidden-md hidden-lg" style={{width:"100%", flexGrow:"1", display:"flex", justifyContent:"center", alignItems:"center"}}>
           <Button onClick={this.props.onSave} style={{height:"40px", width:"50%", color:"#49A3DC", borderColor:"#CCCCCC"}}>Save</Button>
+        </div>
+      </div>
+    );
+  }
+}
+class CPForm extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+    };
+  }
+
+  render() {
+    return (
+      <div style={{backgroundColor:"#FFFFFF", width:"100%", height:"100%", padding:"10px", display:"flex", flexDirection:"column", justifyContent:"space-around", alignItems:"center"}}>
+        <center><label className="control-label" style={{fontSize:"18px", marginBottom:"0px", color:"#656565"}}>What type of business are you starting?</label></center>
+        <div style={{width:"60%"}}>
+          <ButtonGroup vertical style={{width:"100%"}}>
+            <Button style={{height:"40px"}}>Fashion</Button>
+            <Button style={{height:"40px"}}>Wellness</Button>
+            <Button style={{height:"40px"}}>Restaurant</Button>
+          </ButtonGroup>
+        </div>
+        <div style={{width:"100%"}}>
+          <center><Button onClick={this.props.onSave} style={{height:"40px", width:"50%", color:"#49A3DC", borderColor:"#CCCCCC"}}>Save</Button></center>
+        </div>
+      </div>
+    );
+  }
+}
+
+class ContactForm extends React.Component {
+
+  constructor(props) {
+    super(props);
+
+    this.submitContact = this.submitContact.bind(this);
+
+    this.state = {
+      name: "",
+      email: "",
+      message: "",
+      nameError: false,
+      emailError: false
+    };
+  }
+
+  updateName(e) {
+    this.setState({name: e.target.value, nameError: false});
+  }
+
+  updateEmail(e) {
+    this.setState({email: e.target.value, emailError: false});
+  }
+
+  updateMessage(e) {
+    this.setState({message: e.target.value});
+  }
+
+  submitContact() {
+    if(this.state.name == "") {
+      this.setState({nameError: true});
+      return;
+    } else {
+      this.setState({nameError: false});
+    }
+
+    if(this.state.email == "") {
+      this.setState({emailError: true});
+      return;
+    } else {
+      this.setState({emailError: false});
+    }
+
+    this.props.onSubmit(this.state.name, this.state.email, this.state.message);
+  }
+
+  render() {
+    return (
+      <div style={{backgroundColor:"#FFFFFF", width:"100%", height:"100%", padding:"10px", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
+        <div className="panel-heading">
+          <div className="media mt0">
+            <div className="media-left">
+              <img src="https://lh3.googleusercontent.com/-znTaTDKLflU/AAAAAAAAAAI/AAAAAAAAAAA/i5PcDmAQPF8/photo.jpg" alt="Image" className="media-object img-circle thumb48" />
+            </div>
+            <div className="media-body media-middle">
+              <center>
+                <h5 className="media-heading m0 text-bold">James</h5>
+                <small className="text-muted">CBRE</small>
+              </center>
+            </div>
+          </div>
+        </div>
+        <div className="panel-body" style={{width:"90%"}}>
+          <FormGroup controlId="formControlsText" validationState={this.state.nameError ? 'error' : null}>
+            <FormControl 
+              type="text" 
+              placeholder="Your Name"
+              onChange={(e) => this.updateName(e)}/>
+          </FormGroup>
+          <FormGroup controlId="formControlsText" validationState={this.state.emailError ? 'error' : null}>
+            <FormControl 
+              type="text" 
+              placeholder="Your E-mail"
+              onChange={(e) => this.updateEmail(e)}/>
+          </FormGroup>
+          <FormGroup controlId="formControlsTextarea">
+            <FormControl 
+              componentClass="textarea" 
+              placeholder="Optional Message ..."
+              onChange={(e) => this.updateMessage(e)}/>
+          </FormGroup>
+          <center>
+            <Button onClick={this.submitContact} bsClass="btn btn-labeled btn-success mr">
+              <span className="btn-label"><i className="fa fa-comment"></i></span>Submit
+            </Button>
+          </center>
         </div>
       </div>
     );
