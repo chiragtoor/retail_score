@@ -82,6 +82,7 @@ defmodule RetailScore.PropertyController do
     |> Repo.preload(:agents)
     |> Repo.preload(:demographics)
     |> Repo.preload(:spaces)
+    |> Repo.preload(:businesses)
 
     render(conn, "pdp.json", property: property)
   end

@@ -72,6 +72,26 @@ defmodule RetailScore.PropertyView do
       min_sq_feet: PropertySpace.get_min_sq_feet(property.spaces),
       max_sq_feet: PropertySpace.get_max_sq_feet(property.spaces),
       rental_rate_min: PropertySpace.get_rental_rate_min(property.spaces),
-      rental_rate_max: PropertySpace.get_rental_rate_max(property.spaces)}}
+      rental_rate_max: PropertySpace.get_rental_rate_max(property.spaces),
+      food_businesses: filter_businesses(property.businesses, [:restaurant, :cafe, :bar]),
+      wellness_businesses: filter_businesses(property.businesses, [:spa, :hair_care, :beauty_salon]),
+      fashion_businesses: filter_businesses(property.businesses, [:jewelry_store, :shoe_store, :clothing_store])}}
   end
+
+  defp filter_businesses(businesses, values) do
+    businesses
+    |> Enum.filter(fn(business) ->
+      IO.inspect business
+      values
+      |> Enum.reduce(false, fn(value, passes) ->
+        case passes do
+          true ->
+            passes
+          false ->
+            Map.get(business, value)
+        end
+      end)
+    end)
+  end
+
 end

@@ -303,7 +303,11 @@ defmodule RetailScore.Processor do
         end)
 
       #inserting all the food businesses related to this property
-      Enum.map(food_places, fn(place) ->
+      food_places
+      |> Enum.filter(fn(place) ->
+        place != nil
+      end)
+      |> Enum.map(fn(place) ->
 
         %{"place_id" => place_id} = place
 
@@ -312,6 +316,18 @@ defmodule RetailScore.Processor do
 
         if !RetailScore.Repo.one(query) do
           IO.inspect "creating a new business entry"
+          # hack for website too long
+          case place do
+            %{"website" => website} ->
+              case String.length(website) > 200 do
+                true ->
+                  place = Map.drop(place, ["website"])
+                false ->
+                  nil
+              end
+            _ ->
+              nil
+          end
           business = RetailScore.Business.changeset(%RetailScore.Business{}, place)
           |> RetailScore.Repo.insert!
         else 
@@ -324,7 +340,11 @@ defmodule RetailScore.Processor do
       end)
 
       #inserting all the fashion places related to this property
-      Enum.map(fashion_places, fn(place) ->
+      fashion_places
+      |> Enum.filter(fn(place) ->
+        place != nil
+      end)
+      |> Enum.map(fn(place) ->
         %{"place_id" => place_id} = place
 
         query = from u in RetailScore.Business,
@@ -332,6 +352,17 @@ defmodule RetailScore.Processor do
 
         if !RetailScore.Repo.one(query) do
           IO.inspect "creating a new business entry"
+          case place do
+            %{"website" => website} ->
+              case String.length(website) > 200 do
+                true ->
+                  place = Map.drop(place, ["website"])
+                false ->
+                  nil
+              end
+            _ ->
+              nil
+          end
           business = RetailScore.Business.changeset(%RetailScore.Business{}, place)
           |> RetailScore.Repo.insert!
         else 
@@ -344,7 +375,11 @@ defmodule RetailScore.Processor do
       end)
 
       #inserting all the wellness places related to this property
-      Enum.map(wellness_places, fn(place) ->
+      wellness_places
+      |> Enum.filter(fn(place) ->
+        place != nil
+      end)
+      |> Enum.map(fn(place) ->
         %{"place_id" => place_id} = place
 
         query = from u in RetailScore.Business,
@@ -352,6 +387,17 @@ defmodule RetailScore.Processor do
 
         if !RetailScore.Repo.one(query) do
           IO.inspect "creating a new business entry"
+          case place do
+            %{"website" => website} ->
+              case String.length(website) > 200 do
+                true ->
+                  place = Map.drop(place, ["website"])
+                false ->
+                  nil
+              end
+            _ ->
+              nil
+          end
           business = RetailScore.Business.changeset(%RetailScore.Business{}, place)
           |> RetailScore.Repo.insert!
         else 
