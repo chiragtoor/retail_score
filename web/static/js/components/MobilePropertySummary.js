@@ -57,7 +57,7 @@ export default class MobilePropertySummary extends Component {
           {this.props.property ? this.props.property.street_address : null}
           <span style={{fontSize:"18px"}} >{ this.props.property? ", " + this.props.property.city + ", " + this.props.property.state : null}</span> 
         </center>
-        <div className="text-center p-lg mb-sm" style={{backgroundColor:"#FFFFFF"}}>
+        <div className="text-center" style={{backgroundColor:"white", paddingLeft:"5px", paddingRight:"5px"}}>
           <div className="row row-table">
               <div className="col-xs-6 br">
                   <h3 className="m0">{styledSqft}</h3>

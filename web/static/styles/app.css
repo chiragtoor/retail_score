@@ -613,6 +613,24 @@ IE 10+
 
 /* HERE HERE HERE */
 
+.businessDetails-enter {
+  left: 100%;
+}
+
+.businessDetails-enter-active {
+  left: 0%;
+  transition: 0.5s ease-in all;
+}
+
+.businessDetails-leave {
+  left: 0%;
+}
+
+.businessDetails-leave-active {
+  left: 100%;
+  transition: 0.5s ease-in all;
+}
+
 .contactFade-enter {
   top: 100%;
 }

@@ -22,22 +22,29 @@ class BusinessDetails extends React.Component {
 
     constructor(props){
       super(props);
+      console.log('business details');
     }
 
-
     render() {
-
         var businesses = this.props.businesses;
 
+        console.log(this.props.businesses);
         return (
-            <div style={{width:"100%", height:"100%"}}>
-              <Col sm={12} xs={12} className="hidden-sm hidden-xs" style={{height:"50px", width:"100%", backgroundColor:"#49A3DC", color:"#FFFFFF"}}>
-               Restaurants
+            <div style={{width:"100%", height:"100%", backgroundColor:"#FFFFFF"}}>
+              <Col sm={12} xs={12} style={{height:"30px",backgroundColor:"#49A3DC", color:"#FFFFFF", padding:"0", margin:"0"}}>
+                <Button onClick={this.props.hideBusinessDetails} style={{float:"left", border:"none", marginLeft:"0px", backgroundColor:"#49A3DC", color:"#FFFFFF", position:"absolute", zIndex:"1"}}>
+                  <em className="fa fa-chevron-left"></em>
+                </Button>
+                <span style={{float:"left", marginLeft:"10px", textAlign:"center", width:"100%", fontSize:"18px"}}>
+                  Restaurants
+                </span>
               </Col>
-              <Col sm={12} xs={12} className="hidden-sm hidden-xs" style={{height:"-webkit-calc(100%-50px)", width:"100%", backgroundColor:"#FFFFFF"}}>
-                {businesses.map(business, index){
-
-                });
+              <Col sm={12} xs={12} style={{height:"-webkit-calc(100%-50px)", width:"100%", backgroundColor:"#FFFFFF", padding:"0", margin:"0"}}>
+                {businesses.map((business, index) => {
+                  return <div style={{borderBottom:"solid thin #ecf0f1", height:"50px", width:"100%", fontSize:"16px", paddingLeft:"5px"}}>
+                    {business.name}
+                  </div>;
+                })
                 }
               </Col>
             </div>

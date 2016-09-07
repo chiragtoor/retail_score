@@ -15,6 +15,8 @@ import DesktopDemographicPanel from '../components/DesktopDemographicPanel';
 import PeoplePanel from '../components/PeoplePanel';
 import CompetitionPanel from '../components/CompetitionPanel';
 import DesktopCompetitionPanel from '../components/DesktopCompetitionPanel';
+import BusinessDetails from '../components/BusinessDetails';
+
 
 import { Grid, Row, Col, Panel, Button, ButtonGroup, Modal, FormGroup, ControlLabel, FormControl, InputGroup, Carousel, CarouselItem } from 'react-bootstrap';
 
@@ -34,6 +36,8 @@ class PDP extends React.Component {
       this.submitContact = this.submitContact.bind(this);
       this.desktopContactFailed = this.desktopContactFailed.bind(this);
       this.mobileContactFailed = this.mobileContactFailed.bind(this);
+      this.showBusinessDetailsModal  = this.showBusinessDetailsModal.bind(this);
+      this.hideBusinessDetails = this.hideBusinessDetails.bind(this);
 
       this.state= 
       { 
@@ -41,7 +45,8 @@ class PDP extends React.Component {
         modal: null,
         desktopContactSuccess: false,
         desktopContactFailure: false,
-        mobileContactSuccess: false
+        mobileContactSuccess: false,
+        businessDetailsModal: null
       }
     }
 
@@ -98,6 +103,19 @@ class PDP extends React.Component {
       this.setState(this.state);
     }
 
+    showBusinessDetailsModal(data) {
+
+      this.state.businessDetailsModal = <div style={{height:"100%", width:"100%", position:"fixed", zIndex:"5", bottom:"0", top:"0"}}> 
+      <BusinessDetails  businesses={data} hideBusinessDetails={this.hideBusinessDetails} />
+      </div>;
+      this.setState(this.state);
+    }
+
+    hideBusinessDetails(){
+      this.state.businessDetailsModal = null;
+      this.setState(this.state);
+    }
+
     mobileContactFailed() {
       this.state.modal = <div style={{height:"200px", width:"100%", textAlign:"center", backgroundColor:"#FFFFFF", position:"fixed", zIndex:"3", bottom:"0", right:"0"}}>
                         <p style={{fontSize:"18px", fontWeight:"400px", textAlign:"center", marginTop:"10px"}}>Please provide your Name, E-Mail and a Message for the broker.</p>
@@ -141,6 +159,12 @@ class PDP extends React.Component {
           transitionLeaveTimeout: 500
         };
 
+        var businessDetailsOptions = {
+          transitionName: "businessDetails",
+          transitionEnterTimeout: 500,
+          transitionLeaveTimeout: 500
+        };
+
         var dimDivTransitionOptions = {
           transitionName: "dimFade",
           transitionEnterTimeout: 500,
@@ -178,7 +202,7 @@ class PDP extends React.Component {
                 <div className="hidden-md hidden-lg"  style={{backgroundColor:"#FFFFFF"}} className="p-lg">
                     <Row>
                         <Col className="col-sm-offset-1 hidden-md hidden-lg" lg={ 12 } md={ 10 } sm={ 10 } xs={12}>
-                          {property ? <RetailScorePanel showModal={this.showRetailScoreExpalanation} property={property} /> : null }
+                          {property ? <RetailScorePanel showModal={this.showRetailScoreExpalanation} showBusinessDetails={this.showBusinessDetailsModal} property={property} /> : null }
                           { demographics ? <DemographicPanel data={demographics} mixpanel={this.context.mixpanel} /> : null}
                           {property.lat ? <CompetitionPanel property={property} mixpanel={this.context.mixpanel} /> : null}
                           { tapestry ? <PeoplePanel people={tapestry}/> : null}
@@ -191,6 +215,10 @@ class PDP extends React.Component {
                           <ReactCSSTransitionGroup {...filterTransitionOptions} >
                             {this.state.modal}
                           </ReactCSSTransitionGroup>
+                          <ReactCSSTransitionGroup {...businessDetailsOptions}>
+                            {this.state.businessDetailsModal}
+                          </ReactCSSTransitionGroup>
+
                         </Col>
                     </Row>
                     <div className="hidden-md hidden-lg" style={{width:"100%", height:"50px"}}/>

@@ -18,11 +18,10 @@ export default class SpacesPanels extends Component {
 
     if(spaces&& spaces.length > 1) {
 
-      spacesDiv = <div style={{height:(height)}}>
-                  <h3>Available Spaces</h3>
+      spacesDiv = <div style={{height:(height), backgroundColor:"red"}}>
                   {spaces.map((space, index) => {
                       if(index % 2 == 0) {
-                        return <div key={index} style={{height:"100px", marginTop:"10px", width:"45%", float:"right"}}>
+                        return <div key={index} style={{height:"100px", marginTop:"15px", width:"45%", float:"right"}}>
                           <div className="row-masonry row-masonry-lg-2">
                             <div className="col-masonry" style={{height:"100%"}}>
                                 <div className="panel b m0">
@@ -39,7 +38,7 @@ export default class SpacesPanels extends Component {
                           </div>       
                         </div>;
                       } else {
-                        return <div key={index} style={{height:"100px", marginTop:"10px",width:"45%", float:"left"}}>
+                        return <div key={index} style={{height:"100px", marginTop:"15px",width:"45%", float:"left"}}>
                           <div className="row-masonry row-masonry-lg-2">
                             <div className="col-masonry" style={{height:"100%"}}>
                                 <div className="panel b m0">

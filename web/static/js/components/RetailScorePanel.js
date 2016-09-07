@@ -29,8 +29,7 @@ export default class RetailScorePanel extends Component {
 
 
   showDetails(businesses) {
-    console.log("in show business details");
-    console.log(JSON.stringify(businesses));
+    this.props.showBusinessDetails(businesses)
   }
 
   render () {
@@ -76,36 +75,27 @@ export default class RetailScorePanel extends Component {
     }
 
     return (
-      <div style={{height:"100%", width:"100%", marginTop:"10px"}}>
-        <div className="row-masonry row-masonry-lg-2">
+      <div style={{height:"100%", width:"100%", marginTop:"10px", backgroundColor:"#FFFFFF"}}>
+        <div className="row-masonry">
           <div className="col-masonry">
               <div className="panel b m0">
                  <div className="panel-heading">
-                    <div className="media mt0">
-                       <div className="media-body media-middle">
-                        <center>
-                          <h2 className="media-heading m0 text-bold" style={{color:"#FFDF00"}}>{stars}</h2>
-                        </center>
-                        <br/>
-                        <center>
-                          <h5 className="media-heading m0 text-bold">Within walking distance of this property:</h5>
-                        </center>
-                       </div>
-                    </div>
+                  <center>
+                    <h3 className="media-heading m0 text-bold" style={{color:"#FFDF00"}}>{stars}</h3>
+                  </center>
                  </div>
                  <div className="panel-body">
-                    <div className="row">
-                       <div className="col-lg-6">
-                            <div onClick={e => this.showDetails(restaurants)} style={{height:"30px", backgroundColor:"#ecf0f1", fontSize:"16px"}}>
-                             {restaurants.length} Restaurants
-                            </div>
-                            <div onClick={e => this.showDetails(bars)} style={{height:"30px", fontSize:"16px"}}>
-                             {bars.length} Bars
-                            </div>
-                            <div onClick={e => this.showDetails(cafes)} style={{height:"30px", fontSize:"16px", backgroundColor:"#ecf0f1"}}>
-                             {cafes.length} Cafes
-                            </div>
-                       </div>
+                    <center>
+                      <h5 className="media-heading m0 text-bold">Within walking distance of this property:</h5>
+                    </center>
+                    <div onClick={e => this.showDetails(restaurants)} style={{height:"30px", backgroundColor:"#ecf0f1", fontSize:"16px"}}>
+                     {restaurants.length} Restaurants
+                    </div>
+                    <div onClick={e => this.showDetails(bars)} style={{height:"30px", fontSize:"16px"}}>
+                     {bars.length} Bars
+                    </div>
+                    <div onClick={e => this.showDetails(cafes)} style={{height:"30px", fontSize:"16px", backgroundColor:"#ecf0f1"}}>
+                     {cafes.length} Cafes
                     </div>
                  </div>
               </div>
