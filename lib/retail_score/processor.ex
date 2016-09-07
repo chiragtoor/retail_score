@@ -1,4 +1,6 @@
 defmodule RetailScore.Processor do
+
+  import Ecto.Query
   # def test do
   #   properties = "{\"City\": \"Elk Grove\",\"MinSquareFeet\": 1200.0, \"ZipCode\": \"95757\", \"StreetAddress\": \"5640 Whitelock Parkway\", \"BrokerCompany\": \"CBRE, Inc.\",\"RentPerMonth\": 0.0,\"State\": \"CA\",\"BrokerPhone\": \"(916) 446-8795\",\"MaxSquareFeet\": 70000.0, \"Spaces\": [{\"AvailableDate\": \"2015-04-01T00:00:00\",\"RatePerMonth\": null, \"LeaseType\": \"NNN\", \"Area\": \"70000.0\"}],\"BrokerName\": \"Heath\",\"RatePerMonthPerUnitArea\": 0.0}" 
   
@@ -265,14 +267,146 @@ defmodule RetailScore.Processor do
 
      
     # %{"property" => %{"street_address" => street_address,"lat" => lat, "lng" => lng}} = Enum.at(properties, 0)
-    
-    
     # finalData = Poison.encode!(Map.merge(Enum.at(properties, 0), RetailScore.Scorer.score_property(lat, lng)))
 
     upload = "[" <> finalData <> "]"
-    RetailScore.S3.upload("scored/#{file}", upload)
+    RetailScore.S3.upload("rescored/#{file}", upload)
 
     IO.inspect "done"
+  end
+
+  def insert_scored_properties(file) do
+    IO.puts "Inserting from: #{file}"
+
+    properties = RetailScore.S3.download("rescored/#{file}")
+    |> Poison.decode!
+
+    IO.inspect "done decoding"
+
+    Enum.map(properties, fn(thisProp) -> 
+      %{"property" => propertyParams, "demographics" => demographics, "propertySpaces" => propertySpaces, "agent" => agentParams, "wellness_count" => wellness_count, "fashion_count" => fashion_count, "food_count" => food_count, "food_places" => food_places,"wellness_places" => wellness_places, "fashion_places" => fashion_places} = thisProp
+      
+      IO.inspect "inserting a new property"
+
+      #inserting the property and storing the result in a var
+      property = RetailScore.Property.changeset(%RetailScore.Property{}, Map.merge(propertyParams, %{"wellness_count" => wellness_count, "food_count" => food_count, "fashion_count" => fashion_count}))
+          |> RetailScore.Repo.insert!
+
+      #inserting the property spaces
+      propertySpaces
+        |> Enum.map(fn(propertySpace) ->
+          propertySpaceParams = propertySpace
+          |> Map.put("property_id", property.id)
+
+          RetailScore.PropertySpace.changeset(%RetailScore.PropertySpace{}, propertySpaceParams)
+          |> RetailScore.Repo.insert!
+        end)
+
+      #inserting all the food businesses related to this property
+      Enum.map(food_places, fn(place) ->
+
+        %{"place_id" => place_id} = place
+
+        query = from u in RetailScore.Business,
+                where: u.place_id == ^place_id
+
+        if !RetailScore.Repo.one(query) do
+          IO.inspect "creating a new business entry"
+          business = RetailScore.Business.changeset(%RetailScore.Business{}, place)
+          |> RetailScore.Repo.insert!
+        else 
+          IO.inspect "finding the one thats already been created"
+          business = RetailScore.Repo.one(query)
+        end
+
+        property_business_changeset = RetailScore.PropertyBusiness.changeset(%RetailScore.PropertyBusiness{}, %{"property_id" => property.id, "business_id" => business.id})
+        RetailScore.Repo.insert!(property_business_changeset)
+      end)
+
+      #inserting all the fashion places related to this property
+      Enum.map(fashion_places, fn(place) ->
+        %{"place_id" => place_id} = place
+
+        query = from u in RetailScore.Business,
+                where: u.place_id == ^place_id
+
+        if !RetailScore.Repo.one(query) do
+          IO.inspect "creating a new business entry"
+          business = RetailScore.Business.changeset(%RetailScore.Business{}, place)
+          |> RetailScore.Repo.insert!
+        else 
+          IO.inspect "finding the one thats already been created"
+          business = RetailScore.Repo.one(query)
+        end
+
+        property_business_changeset = RetailScore.PropertyBusiness.changeset(%RetailScore.PropertyBusiness{}, %{"property_id" => property.id, "business_id" => business.id})
+        RetailScore.Repo.insert!(property_business_changeset)
+      end)
+
+      #inserting all the wellness places related to this property
+      Enum.map(wellness_places, fn(place) ->
+        %{"place_id" => place_id} = place
+
+        query = from u in RetailScore.Business,
+                where: u.place_id == ^place_id
+
+        if !RetailScore.Repo.one(query) do
+          IO.inspect "creating a new business entry"
+          business = RetailScore.Business.changeset(%RetailScore.Business{}, place)
+          |> RetailScore.Repo.insert!
+        else 
+          IO.inspect "finding the one thats already been created"
+          business = RetailScore.Repo.one(query)
+        end
+
+        property_business_changeset = RetailScore.PropertyBusiness.changeset(%RetailScore.PropertyBusiness{}, %{"property_id" => property.id, "business_id" => business.id})
+        RetailScore.Repo.insert!(property_business_changeset)
+      end)
+
+      #inserting all the demographics for this property
+      demographics
+        |> Enum.map(fn(demographic) ->
+          demographicParams = demographic
+          |> Map.put("property_id", property.id)
+
+          RetailScore.Demographic.changeset(%RetailScore.Demographic{}, demographicParams)
+          |> RetailScore.Repo.insert!
+        end)
+
+        #return this agent data to be added after
+        %{"name" => name, "phone_number" => phone_number, "company_name" => company_name} = agentParams
+
+        case company_name do
+          nil ->
+            company_name = "Company not provided"
+          _ ->
+            nil
+        end
+
+        {{name, phone_number, company_name}, property.id}
+    end)
+    |> Enum.reduce(%{}, fn({agent = {name, phone_number, company_name}, propertyId}, agentToProperties) ->
+        case Map.get(agentToProperties, agent) do
+          nil ->
+            Map.put(agentToProperties, agent, [propertyId])
+          propertyList ->
+            Map.put(agentToProperties, agent, propertyList ++ [propertyId])
+        end
+      end)
+    |> Enum.map(fn({{name, phone_number, company_name}, propertyIds}) ->
+        agentParms = %{"name" => name, "phone_number" => phone_number, "company_name" => company_name}
+        
+        agent = RetailScore.Agent.changeset(%RetailScore.Agent{}, agentParms)
+        |> RetailScore.Repo.insert!
+
+        propertyIds
+        |> Enum.map(fn(propertyId) ->
+          propertyAgentParams = %{"agent_id" => agent.id, "property_id" => propertyId}
+          
+          RetailScore.PropertyAgent.changeset(%RetailScore.PropertyAgent{}, propertyAgentParams)
+          |> RetailScore.Repo.insert!
+        end)
+      end)
   end
 
   def insert_properties(files) do

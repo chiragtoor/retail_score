@@ -8,10 +8,6 @@ defmodule RetailScore.Scorer do
     fashion = Google.radarSearch(Float.to_string(lat),Float.to_string(lng),["clothing_store", "shoe_store", "jewelry_store"], Map.new())
     food = Google.radarSearch(Float.to_string(lat),Float.to_string(lng),["restaurant", "cafe", "bar"], Map.new())
 
-    IO.inspect wellness
-    IO.inspect fashion
-    IO.inspect food
-
     IO.inspect "Wellness details"
     case Map.keys(wellness) do
       [] ->
@@ -40,7 +36,7 @@ defmodule RetailScore.Scorer do
     end
     
 
-    %{"fashion_count" => length(fashion_details), "wellness_count" => length(wellness_details), "food_count" => length(food_details), "fashion_places" => fashion_details, "wellnes_places" => wellness_details, "food_places" => food_details}
+    %{"fashion_count" => length(fashion_details), "wellness_count" => length(wellness_details), "food_count" => length(food_details), "fashion_places" => fashion_details, "wellness_places" => wellness_details, "food_places" => food_details}
   end
 
   def get_fashion_places(address) do

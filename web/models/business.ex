@@ -26,6 +26,6 @@ defmodule RetailScore.Business do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, [:name, :place_id, :street_address, :phone_number, :website, :restaurant, :cafe, :bar, :clothing_store, :shoe_store, :jewelry_store, :beauty_salon, :hair_care, :spa])
-    |> validate_required([:name, :place_id, :street_address, :phone_number, :website, :restaurant, :cafe, :bar, :clothing_store, :shoe_store, :jewelry_store, :beauty_salon, :hair_care, :spa])
+    |> validate_required([:name, :place_id, :restaurant, :cafe, :bar, :clothing_store, :shoe_store, :jewelry_store, :beauty_salon, :hair_care, :spa])
   end
 end

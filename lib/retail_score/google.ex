@@ -84,16 +84,16 @@ defmodule RetailScore.Google do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         %{"result" => result } = Poison.Parser.parse!(body)
         case result do
-          %{"name" => name, "place_id" => placeId, "price_level" => price_level, "formatted_phone_number" => phone, "website" => website, "formatted_address" => address} ->
-            newList = %{"business_name" => name, "business_id" => placeId, "price_level" => price_level, "business_phone_number" => phone, "business_address" => address, "business_website" => website}
-          %{"name" => name, "place_id" => placeId, "price_level" => price_level, "formatted_phone_number" => phone, "formatted_address" => address} ->
-            newList = %{"business_name" => name, "business_id" => placeId, "price_level" => price_level, "business_phone_number" => phone, "business_address" => address}
           %{"name" => name, "place_id" => placeId, "formatted_phone_number" => phone, "website" => website, "formatted_address" => address} ->
-            newList = %{"business_name" => name, "business_id" => placeId, "business_phone_number" => phone, "business_website" => website, "business_address" => address}
+            newList = %{"name" => name, "place_id" => placeId, "phone_number" => phone, "street_address" => address, "website" => website}
           %{"name" => name, "place_id" => placeId, "formatted_phone_number" => phone, "formatted_address" => address} ->
-            newList = %{"business_name" => name, "business_id" => placeId, "business_phone_number" => phone,"business_address" => address}
+            newList = %{"name" => name, "place_id" => placeId, "phone_number" => phone, "street_address" => address}
+          %{"name" => name, "place_id" => placeId, "formatted_phone_number" => phone, "website" => website, "formatted_address" => address} ->
+            newList = %{"name" => name, "place_id" => placeId, "phone_number" => phone, "website" => website, "street_address" => address}
+          %{"name" => name, "place_id" => placeId, "formatted_phone_number" => phone, "formatted_address" => address} ->
+            newList = %{"name" => name, "place_id" => placeId, "phone_number" => phone,"street_address" => address}
           %{"name" => name, "place_id" => placeId} ->
-            newList = %{"business_name" => name, "business_id" => placeId}
+            newList = %{"name" => name, "place_id" => placeId}
         end
         case result do
           %{"types" => types} ->
