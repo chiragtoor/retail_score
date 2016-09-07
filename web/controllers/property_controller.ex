@@ -17,6 +17,7 @@ defmodule RetailScore.PropertyController do
     |> where([p], p.state == ^state)
     |> where([p], p.active == true)
     |> Repo.all
+    |> Repo.preload(:agents)
     |> Repo.preload(:spaces)
 
     render(conn, "srp.json", properties: properties)

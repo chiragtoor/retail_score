@@ -101,7 +101,10 @@ export class Test extends React.Component {
       // propertyId to contact -> for contact from SRP page functionality
       propertyToContact: null,
       // flag for if we are in one tap contact mode
-      oneTapContact: oneTapContact
+      oneTapContact: oneTapContact,
+      // contact agent name
+      currentContactAgentName: "",
+      currentContactAgentCompany: ""
     }
   }
 
@@ -164,14 +167,14 @@ export class Test extends React.Component {
     this.props.history.push('/properties/' + property.id);
   }
 
-  contactProperty(propertyId) {
+  contactProperty(property) {
     // store the propertyId for the one we want to contact
-    this.setState({propertyToContact: propertyId});
+    this.setState({propertyToContact: property.id, currentContactAgentName: property.agents[0].name, currentContactAgentCompany: property.agents[0].company_name});
     // check cookies to see if contact form has been submitted, if so do one tap contact functionality
     if(this.state.oneTapContact) {
       this.context.mixpanel.track('srp_one_tap_contact');
       // get info from cookies and submit contact, no need for modal
-      this.submitContact(localStorage.getItem(CONTACT_NAME), localStorage.getItem(CONTACT_EMAIL), "", propertyId);
+      this.submitContact(localStorage.getItem(CONTACT_NAME), localStorage.getItem(CONTACT_EMAIL), "", property.id);
     } else {
       // bring up the contact form since we have no contact info stored
       this.showSecondaryContent(SECONDARY_CONTACT);
@@ -493,7 +496,7 @@ export class Test extends React.Component {
                                 onUpdateSqFtMin={(value) => {this.context.mixpanel.track('srp_filter_changed', {'min_sqft': value}); this.setState({filterSqFtMin: value, currentPage: 1});}}
                                 onUpdateSqFtMax={(value) => {this.context.mixpanel.track('srp_filter_changed', {'max_sqft': value}); this.setState({filterSqFtMax: value, currentPage: 1});}}
                                 selectedSort={this.state.currentSort} 
-                                onUpdateSort={(newValue) => {this.context.mixpanel.track('srp_sorty_type_changed', {'sort_by': value}); this.setState({currentSort: newValue, currentPage: 1});}}
+                                onUpdateSort={(newValue) => {this.context.mixpanel.track('srp_sorty_type_changed', {'sort_by': newValue}); this.setState({currentSort: newValue, currentPage: 1});}}
                                 onSave={() => this.setState({mobileShowSecondaryContent: false})} 
                                 padded={true} />
                             </div>;
@@ -501,6 +504,8 @@ export class Test extends React.Component {
       case SECONDARY_CONTACT:
         secondaryContent = <div onClick={(e) => e.stopPropagation()} style={{width:"95%", height:"60%"}}>
                               <ContactForm 
+                                agentName={this.state.currentContactAgentName}
+                                agentCompany={this.state.currentContactAgentCompany}
                                 onSubmit={(name, email, message) => this.submitContact(name, email, message, this.state.propertyToContact)}/>
                             </div>;
         break;
@@ -710,7 +715,7 @@ class PropertyTile extends React.Component {
 
   contactClick(e) {
     e.stopPropagation();
-    this.props.onContact(this.props.property.id);
+    this.props.onContact(this.props.property);
   }
 
   render() {
@@ -1110,8 +1115,8 @@ class ContactForm extends React.Component {
             </div>
             <div className="media-body media-middle">
               <center>
-                <h5 className="media-heading m0 text-bold">James</h5>
-                <small className="text-muted">CBRE</small>
+                <h5 className="media-heading m0 text-bold">{this.props.agentName}</h5>
+                <small className="text-muted">{this.props.agentCompany}</small>
               </center>
             </div>
           </div>
