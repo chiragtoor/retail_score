@@ -1002,7 +1002,6 @@ class UserForm extends React.Component {
   }
 
   onSubmit() {
-    console.log("onSubmit");
     if(this.state.business == "") {
       this.setState({businessError: true});
       return;
