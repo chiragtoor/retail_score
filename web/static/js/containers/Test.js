@@ -17,6 +17,8 @@ const SECONDARY_FILTERS = 0;
 const SECONDARY_CONTACT = 1;
 // flag for showing CP form in secondary content
 const SECONDARY_CP = 3;
+// flag for the inital user info form
+const SECONDARY_USER = 4;
 
 // constants for storage of contact info for one tap contact
 const CONTACT_NAME = 'name';
@@ -57,6 +59,7 @@ export class Test extends React.Component {
     this.contactProperty = this.contactProperty.bind(this);
     this.submitContact = this.submitContact.bind(this);
     this.propertyClick = this.propertyClick.bind(this);
+    this.onUserFormSubmit = this.onUserFormSubmit.bind(this);
 
     // get the properties for the current city
     const city = this.props.params.city.replace("-", " ");
@@ -105,6 +108,10 @@ export class Test extends React.Component {
   componentDidMount() {
     // used for flag on animations, on mount animations don't work if they are rendered, so we wait till mount to run animation
     this.setState({mounted: true});
+    // show the user form -> TEST
+    this.showSecondaryContent(SECONDARY_USER);
+
+    this.context.mixpanel.track('srp_mounted');
   }
 
   // search and get properties for a city
@@ -114,33 +121,46 @@ export class Test extends React.Component {
     this.props.loadProperties(cityParts[0], cityParts[1].trim());
     // update local state to keep track of where SRP is
     this.setState({currentCity: city});
+
+    this.context.mixpanel.track('srp_city_changed', {'city': cityParts[0], 'state': cityParts[1]});
   }
 
   // mobile secondary content helper function to bring up the correct modal
   showSecondaryContent(content) {
     switch (content) {
       case SECONDARY_FILTERS:
+        this.context.mixpanel.track('srp_filters_button_clicked');
         this.setState({
           mobileShowSecondaryContent: true,
           secondaryContent: SECONDARY_FILTERS
         });
         break;
       case SECONDARY_CONTACT:
+        this.context.mixpanel.track('srp_contact_button_clicked');
         this.setState({
           mobileShowSecondaryContent: true,
           secondaryContent: SECONDARY_CONTACT
         });
         break;
       case SECONDARY_CP:
+        this.context.mixpanel.track('srp_cp_button_clicked');
         this.setState({
           mobileShowSecondaryContent: true,
           secondaryContent: SECONDARY_CP
+        })
+        break;
+      case SECONDARY_USER:
+        this.context.mixpanel.track('srp_user_profile_shown');
+        this.setState({
+          mobileShowSecondaryContent: true,
+          secondaryContent: SECONDARY_USER
         })
         break;
     }
   }
 
   propertyClick(property) {
+    this.context.mixpanel.track('property_clicked', {'property_id': property.id});
     this.props.history.push('/properties/' + property.id);
   }
 
@@ -149,6 +169,7 @@ export class Test extends React.Component {
     this.setState({propertyToContact: propertyId});
     // check cookies to see if contact form has been submitted, if so do one tap contact functionality
     if(this.state.oneTapContact) {
+      this.context.mixpanel.track('srp_one_tap_contact');
       // get info from cookies and submit contact, no need for modal
       this.submitContact(localStorage.getItem(CONTACT_NAME), localStorage.getItem(CONTACT_EMAIL), "", propertyId);
     } else {
@@ -159,6 +180,8 @@ export class Test extends React.Component {
   }
 
   submitContact(name, email, message, propertyId) {
+    this.context.mixpanel.track('srp_contact', {'property_id': propertyId, 'name': name, 'email': email, 'message': message});
+
     this.props.submitContact({
       "message":{
         "contact_name": name,
@@ -208,6 +231,8 @@ export class Test extends React.Component {
           }
         // initial values are a null index and very large distance that any tile will be considered closer to
         }, {index: -1, value: 10000});
+
+        this.context.mixpanel.track('srp_listings_div_scrolled');
       // use helper method to update current main index based on pagination
       this.updateMainProperty(minTuple.index);
     }, 50);
@@ -329,6 +354,7 @@ export class Test extends React.Component {
 
   // handle when user selects another page from pagination, passed as prop to listings component
   pageSelect(page, mobileFlag) {
+    this.context.mixpanel.track('srp_page_changed', {'page': page});
     // update the current page
     this.setState({currentPage: page});
     // update the current main property, will be the first one on this page
@@ -361,15 +387,39 @@ export class Test extends React.Component {
     this.setState({mobileShowSecondaryContent: false});
     switch(scoreType) {
       case Actions.SCORE_FASHION:
+        this.context.mixpanel.track('srp_score_type_clicked', {'type': 'Fashion'});
         this.props.scoreByFashion();
         break;
       case Actions.SCORE_WELLNESS:
+        this.context.mixpanel.track('srp_score_type_clicked', {'type': 'Wellness'});
         this.props.scoreByWellness();
         break;
       case Actions.SCORE_RESTAURANT:
+        this.context.mixpanel.track('srp_score_type_clicked', {'type': 'Food'});
         this.props.scoreByRestaurant();
         break;
     }
+  }
+
+  onUserFormSubmit(business, email) {
+    // log data to mixpanel
+    this.context.mixpanel.track('srp_user_profile_submit', {'business': business, 'email': email});
+
+    localStorage.setItem(CONTACT_EMAIL, email);
+
+    // set RS score type based on user's business input
+    if(business.match(/\b(restaurant|mexican|indian|chinese|food|drinks|juice|bar|coffee|cafe)/i)) {
+      this.context.mixpanel.track('srp_initial_score_type', {'type': 'Food'});
+      this.props.scoreByRestaurant();
+    } else if(business.match(/\b(salon|spa|nails|hair|barber|massage|beauty|skin)/i)) {
+      this.context.mixpanel.track('srp_initial_score_type', {'type': 'Wellness'});
+      this.props.scoreByWellness();
+    } else {
+      this.context.mixpanel.track('srp_initial_score_type', {'type': 'Fashion'});
+      this.props.scoreByFashion();
+    }
+
+    this.setState({mobileShowSecondaryContent: false});
   }
 
   render() {
@@ -438,12 +488,12 @@ export class Test extends React.Component {
                                 filterPriceMax={this.state.filterPriceMax}
                                 filterSqFtMin={this.state.filterSqFtMin}
                                 filterSqFtMax={this.state.filterSqFtMax}
-                                onUpdatePriceMin={(value) => this.setState({filterPriceMin: value, currentPage: 1})}
-                                onUpdatePriceMax={(value) => this.setState({filterPriceMax: value, currentPage: 1})}
-                                onUpdateSqFtMin={(value) => this.setState({filterSqFtMin: value, currentPage: 1})}
-                                onUpdateSqFtMax={(value) => this.setState({filterSqFtMax: value, currentPage: 1})}
+                                onUpdatePriceMin={(value) => {this.context.mixpanel.track('srp_filter_changed', {'min_price': value}); this.setState({filterPriceMin: value, currentPage: 1});}}
+                                onUpdatePriceMax={(value) => {this.context.mixpanel.track('srp_filter_changed', {'max_price': value}); this.setState({filterPriceMax: value, currentPage: 1});}}
+                                onUpdateSqFtMin={(value) => {this.context.mixpanel.track('srp_filter_changed', {'min_sqft': value}); this.setState({filterSqFtMin: value, currentPage: 1});}}
+                                onUpdateSqFtMax={(value) => {this.context.mixpanel.track('srp_filter_changed', {'max_sqft': value}); this.setState({filterSqFtMax: value, currentPage: 1});}}
                                 selectedSort={this.state.currentSort} 
-                                onUpdateSort={(newValue) => this.setState({currentSort: newValue, currentPage: 1})} 
+                                onUpdateSort={(newValue) => {this.context.mixpanel.track('srp_sorty_type_changed', {'sort_by': value}); this.setState({currentSort: newValue, currentPage: 1});}}
                                 onSave={() => this.setState({mobileShowSecondaryContent: false})} 
                                 padded={true} />
                             </div>;
@@ -464,6 +514,11 @@ export class Test extends React.Component {
                                 selectedStyle={this.props.scoreType} />
                             </div>;
         break;
+      case SECONDARY_USER:
+        secondaryContent = <div onClick={(e) => e.stopPropagation()} style={{width:"95%", height:"55%"}}>
+                              <UserForm 
+                                onSubmit={this.onUserFormSubmit}/>
+                           </div>;
     }
 
     return(
@@ -600,7 +655,7 @@ export class Test extends React.Component {
       {/* Below transition bouncesIn Content we want to display */}
         <ReactCSSTransitionGroup transitionName="fadedBounceIn" transitionEnterTimeout={500} transitionLeaveTimeout={500}>
           {this.state.mobileShowSecondaryContent ?
-            <div onClick={() => this.setState({mobileShowSecondaryContent: false})} style={{width:"100%", height:"100%", position:"absolute", left:"0", top:"0", zIndex:"10", display:"flex", justifyContent:"center", alignItems:"center"}}> 
+            <div onClick={() => this.state.secondaryContent != SECONDARY_USER ? this.setState({mobileShowSecondaryContent: false}) : false} style={{width:"100%", height:"100%", position:"absolute", left:"0", top:"0", zIndex:"10", display:"flex", justifyContent:"center", alignItems:"center"}}> 
               {/* If user clicks outside dimDiv we want it to close the secondary content */}
               {/* Clicking inside the secondary content (buttons, dropdowns) should not close it, so use stopPropogation so that event does not go to the outer div above and close */}
               {/* on filter update set currentPage to 1 in case user was looking at other pages */}
@@ -922,6 +977,80 @@ class CPForm extends React.Component {
     );
   }
 }
+class UserForm extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.updateBusiness = this.updateBusiness.bind(this);
+    this.updateEmail = this.updateEmail.bind(this);
+    this.onSubmit = this.onSubmit.bind(this);
+
+    this.state = {
+      business: "",
+      email: "",
+      businessError: false,
+      emailError: false
+    };
+  }
+
+  updateBusiness(e) {
+    this.setState({business: e.target.value, businessError: false});
+  }
+
+  updateEmail(e) {
+    this.setState({email: e.target.value, emailError: false});
+  }
+
+  onSubmit() {
+    console.log("onSubmit");
+    if(this.state.business == "") {
+      this.setState({businessError: true});
+      return;
+    } else {
+      this.setState({businessError: false});
+    }
+
+    if(this.state.email == "") {
+      this.setState({emailError: true});
+      return;
+    } else {
+      this.setState({emailError: false});
+    }
+
+    this.props.onSubmit(this.state.business, this.state.email);
+  }
+
+  render() {
+    return (
+      <div style={{backgroundColor:"#FFFFFF", width:"100%", height:"100%", padding:"10px", display:"flex", flexDirection:"column", justifyContent:"space-around", alignItems:"center"}}>
+        <div style={{width:"100%"}}>
+          <center>
+            <label className="control-label" style={{fontSize:"18px", marginBottom:"0px", color:"#656565"}}>What type of business are you starting?</label>
+            <FormGroup controlId="formControlsText" validationState={this.state.businessError ? 'error' : null} style={{width:"80%"}}>
+              <FormControl 
+                type="text" 
+                placeholder="Salon, Coffee Shop, etc."
+                onChange={(e) => this.updateBusiness(e)}/>
+            </FormGroup>
+          </center>
+        </div>
+        <div style={{width:"100%"}}>
+          <center>
+            <label className="control-label" style={{fontSize:"18px", marginBottom:"0px", color:"#656565"}}>What is your email address?</label>
+            <FormGroup controlId="formControlsText" validationState={this.state.emailError ? 'error' : null} style={{width:"80%"}}>
+              <FormControl 
+                type="text" 
+                onChange={(e) => this.updateEmail(e)}/>
+            </FormGroup>
+          </center>
+        </div>
+        <div style={{width:"100%"}}>
+          <center><Button onClick={() => this.onSubmit()} style={{height:"40px", width:"50%", color:"#49A3DC", borderColor:"#CCCCCC"}}>Save</Button></center>
+        </div>
+      </div>
+    );
+  }
+}
 
 class ContactForm extends React.Component {
 
@@ -930,9 +1059,12 @@ class ContactForm extends React.Component {
 
     this.submitContact = this.submitContact.bind(this);
 
+    console.log("EMAIL");
+    console.log(localStorage.getItem(CONTACT_EMAIL));
+
     this.state = {
       name: "",
-      email: "",
+      email: localStorage.getItem(CONTACT_EMAIL) || "",
       message: "",
       nameError: false,
       emailError: false
@@ -990,18 +1122,21 @@ class ContactForm extends React.Component {
             <FormControl 
               type="text" 
               placeholder="Your Name"
+              value={this.state.name}
               onChange={(e) => this.updateName(e)}/>
           </FormGroup>
           <FormGroup controlId="formControlsText" validationState={this.state.emailError ? 'error' : null}>
             <FormControl 
               type="text" 
               placeholder="Your E-mail"
+              value={this.state.email}
               onChange={(e) => this.updateEmail(e)}/>
           </FormGroup>
           <FormGroup controlId="formControlsTextarea">
             <FormControl 
               componentClass="textarea" 
               placeholder="Optional Message ..."
+              value={this.state.message}
               onChange={(e) => this.updateMessage(e)}/>
           </FormGroup>
           <center>
