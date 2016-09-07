@@ -21,6 +21,8 @@ defmodule RetailScore.Property do
     field :wellness_count, :integer
     has_many :property_agents, RetailScore.PropertyAgent
     has_many :agents, through: [:property_agents, :agent]
+    has_many :property_businesses, RetailScore.PropertyBusiness
+    has_many :businesses, through: [:property_businesses, :business]
     has_many :demographics, RetailScore.Demographic
     has_many :spaces, RetailScore.PropertySpace
 

@@ -2,8 +2,8 @@ defmodule RetailScore.PropertyBusiness do
   use RetailScore.Web, :model
 
   schema "property_businesses" do
-    belongs_to :property, RetailScore.Property
     belongs_to :business, RetailScore.Business
+    belongs_to :property, RetailScore.Property
 
     timestamps()
   end
