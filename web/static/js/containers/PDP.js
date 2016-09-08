@@ -52,10 +52,15 @@ class PDP extends React.Component {
 
     showContactModal(){
 
-      var name = localStorage.getItem('name');
-      var email = localStorage.getItem('email');
-      var message = localStorage.getItem('message');
+      var name;
+      var email;
+      var message;
 
+      if (typeof(Storage) !== "undefined") {
+        name = localStorage.getItem('name');
+        email = localStorage.getItem('email');
+        message = localStorage.getItem('message');
+      }
 
       //if we already have the data we need to contact then 1-tap contact
       if(name && email){
@@ -145,6 +150,8 @@ class PDP extends React.Component {
     render() {
 
         var property = this.props.property;
+        console.log("this is the property");
+        console.log(JSON.stringify(property));
 
         var demographics = this.props.property.demographics;
         var tapestry;
@@ -202,7 +209,7 @@ class PDP extends React.Component {
                 <div className="hidden-md hidden-lg"  style={{backgroundColor:"#FFFFFF"}} className="p-lg">
                     <Row>
                         <Col className="col-sm-offset-1 hidden-md hidden-lg" lg={ 12 } md={ 10 } sm={ 10 } xs={12}>
-                          {property ? <RetailScorePanel showModal={this.showRetailScoreExpalanation} showBusinessDetails={this.showBusinessDetailsModal} property={property} /> : null }
+                          {property ? <RetailScorePanel scoreType={this.props.scoreType} showModal={this.showRetailScoreExpalanation} showBusinessDetails={this.showBusinessDetailsModal} property={property} /> : null }
                           { demographics ? <DemographicPanel data={demographics} mixpanel={this.context.mixpanel} /> : null}
                           {property.lat ? <CompetitionPanel property={property} mixpanel={this.context.mixpanel} /> : null}
                           { tapestry ? <PeoplePanel people={tapestry}/> : null}
@@ -282,7 +289,8 @@ PDP.contextTypes = {
 const mapStateToProps = (state) => {
   return {
     server_side: state.server_side,
-    property: state.property
+    property: state.property,
+    scoreType: state.score_type
   };
 };
 export default connect(mapStateToProps, Actions)(PDP);

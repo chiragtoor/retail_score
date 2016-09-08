@@ -23,6 +23,7 @@ const SECONDARY_USER = 4;
 // constants for storage of contact info for one tap contact
 const CONTACT_NAME = 'name';
 const CONTACT_EMAIL = 'email';
+const BUSINESS_TYPE = 'business_type';
 
 export class Test extends React.Component {
 
@@ -60,6 +61,7 @@ export class Test extends React.Component {
     this.submitContact = this.submitContact.bind(this);
     this.propertyClick = this.propertyClick.bind(this);
     this.onUserFormSubmit = this.onUserFormSubmit.bind(this);
+    this.setBusinessInformation = this.setBusinessInformation.bind(this);
 
     // get the properties for the current city
     const city = this.props.params.city.replace("-", " ");
@@ -112,7 +114,12 @@ export class Test extends React.Component {
     // used for flag on animations, on mount animations don't work if they are rendered, so we wait till mount to run animation
     this.setState({mounted: true});
     // show the user form -> TEST
-    this.showSecondaryContent(SECONDARY_USER);
+    if(localStorage.getItem(BUSINESS_TYPE) != null) {
+      console.log("already have the business info");
+      this.setBusinessInformation(localStorage.getItem(BUSINESS_TYPE));
+    } else {
+      // this.showSecondaryContent(SECONDARY_USER);
+    }
 
     this.context.mixpanel.track('srp_mounted');
   }
@@ -409,6 +416,7 @@ export class Test extends React.Component {
     this.context.mixpanel.track('srp_user_profile_submit', {'business': business, 'email': email});
 
     localStorage.setItem(CONTACT_EMAIL, email);
+    localStorage.setItem(BUSINESS_TYPE, business);
 
     // set RS score type based on user's business input
     if(business.match(/\b(restaurant|mexican|indian|chinese|food|drinks|juice|bar|coffee|cafe)/i)) {
@@ -425,11 +433,23 @@ export class Test extends React.Component {
     this.setState({mobileShowSecondaryContent: false});
   }
 
+  setBusinessInformation(business) {
+    if(business.match(/\b(restaurant|mexican|indian|chinese|food|drinks|juice|bar|coffee|cafe)/i)) {
+      this.props.scoreByRestaurant();
+    } else if(business.match(/\b(salon|spa|nails|hair|barber|massage|beauty|skin)/i)) {
+      this.props.scoreByWellness();
+    } else {
+      this.props.scoreByFashion();
+    }
+  }
+
   render() {
     // use slice() on the props because we want to clone and then apply sorting and filtering,
     //  if you do just var = props.properties then below when var properties is sorted and filtered
     //  it does the same on the props.properties -> need to confirm this was the issue
     var properties = this.props.properties.slice();
+
+    console.log(JSON.stringify(properties));
 
     // filter out properties according to user selection
     if(this.state.filterPriceMin != null) {
@@ -730,29 +750,67 @@ class PropertyTile extends React.Component {
 
     switch(this.props.scoreType) {
       case Actions.SCORE_FASHION:
-        retailScoreValue = this.props.property.fashion_count;
-        retailScoreText = retailScoreValue + " other fashion businesses in this area"
+        var count = this.props.property.fashion_count;
+
+        if(count <= 1) {
+          retailScoreValue = 1;
+        } else if (count <= 3) {
+          retailScoreValue = 2;
+        } else if (count <= 7) {
+          retailScoreValue = 3;
+        } else if (count <= 22) {
+          retailScoreValue = 4;
+        } else {
+          retailScoreValue = 5;
+        }
+         
+        retailScoreText = count + " other fashion businesses in this area"
         break;
       case Actions.SCORE_WELLNESS:
-        retailScoreValue = this.props.property.wellness_count;
-        retailScoreText = retailScoreValue + " other wellness businesses in this area"
+        var count = this.props.property.wellness_count;
+        if(count <= 3) {
+          retailScoreValue = 1;
+        } else if (count <= 6) {
+          retailScoreValue = 2;
+        } else if (count <= 10) {
+          retailScoreValue = 3;
+        } else if (count <= 18) {
+          retailScoreValue = 4;
+        } else {
+          retailScoreValue = 5;
+        }
+
+        retailScoreText = count + " other wellness businesses in this area"
         break;
       case Actions.SCORE_RESTAURANT:
-        retailScoreValue = this.props.property.restaurant_count;
-        retailScoreText = retailScoreValue + " other restaurant businesses in this area"
+        var count = this.props.property.food_count;
+
+        if(count <= 6) {
+          retailScoreValue = 1;
+        } else if (count <= 11) {
+          retailScoreValue = 2;
+        } else if (count <= 16) {
+          retailScoreValue = 3;
+        } else if (count <= 26) {
+          retailScoreValue = 4;
+        } else {
+          retailScoreValue = 5;
+        }
+
+        retailScoreText = count + " other restaurant businesses in this area"
         break;
     }
 
     if(retailScoreValue == 5) {
-      retailScore = <label className="control-label" style={{fontSize:"12px", marginLeft:"10px", color:"#27ae60", borderBottom:"solid thin"}}>Retail Score: <i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/></label>;
+      retailScore = <span><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/></span>;
     } else if(retailScoreValue == 4) {
-      retailScore = <label className="control-label" style={{fontSize:"12px", marginLeft:"10px", color:"#f1c40f", borderBottom:"solid thin"}}>Retail Score: <i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/></label>;
+      retailScore = <span><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/></span>;
     } else if(retailScoreValue == 3) {
-      retailScore = <label className="control-label" style={{fontSize:"12px", marginLeft:"10px", color:"#e67e22", borderBottom:"solid thin"}}>Retail Score: <i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/></label>;
+      retailScore = <span><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/></span>;
     } else if(retailScoreValue == 2) {
-      retailScore = <label className="control-label" style={{fontSize:"12px", marginLeft:"10px", color:"#c0392b", borderBottom:"solid thin"}}>Retail Score: <i className="fa fa-star"/><i className="fa fa-star"/></label>;
+      retailScore = <span><i className="fa fa-star"/><i className="fa fa-star"/></span>;
     } else {
-      retailScore = <label className="control-label" style={{fontSize:"12px", marginLeft:"10px", color:"#c0392b", borderBottom:"solid thin"}}>Retail Score: <i className="fa fa-star"/></label>;
+      retailScore = <span><i className="fa fa-star"/></span>;
     }
 
     return(
@@ -763,7 +821,7 @@ class PropertyTile extends React.Component {
         <div className="panel b text-center propertyTile" style={this.props.selected ? selectedPanelContainerStyle : {borderColor:"#CCCCCC", borderWidth:"1px", marginBottom:"0px"}}>
           <div className="panel-body" style={{padding:"0px"}}>
             {/* Image is of a specific height, this changes in CSS depending on screen width */}
-            <div className="srpTilePanelImageHeight" style={{backgroundColor:"#CCCCCC"}}>
+            <div className="srpTilePanelImageHeight" style={{backgroundColor:"#CCCCCC", position:"relative"}}>
               <img src={this.getImageUrl(this.props.property)} />
             </div>
           </div>
@@ -771,8 +829,10 @@ class PropertyTile extends React.Component {
           {true ?
             <div className="panel-body bt" style={{padding:"2px", borderColor: panelBordersColor}}>
               {/* RS and explanation, explanation uses CSS text cutoof technique on smaller devices with varying # of lines depending on screen width */}
-              {retailScore}
-              <p className="lineClamp">{retailScoreText}</p>
+              <span style={{color:"#CFB53B", fontSize:"16px"}}>{retailScore}</span>
+              <p>
+                {retailScoreText}
+              </p>
             </div>
           :
             <div className="panel-body bt tileRetailScore" style={{padding:"0px", borderColor: panelBordersColor}}>
@@ -1021,6 +1081,7 @@ class UserForm extends React.Component {
       this.setState({emailError: false});
     }
 
+    console.log("function called");
     this.props.onSubmit(this.state.business, this.state.email);
   }
 

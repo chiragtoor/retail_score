@@ -81,9 +81,9 @@ export default class DesktopContactPanel extends Component {
                            </center>
                            <div className="media-body media-middle">
                             <center>
-                              <h4 className="media-heading m0 text-bold">{agent.name}</h4>
-                              <h5>{agent.company_name}</h5>
-                              <h5>{agent.phone_number}</h5>
+                              <h4 className="media-heading m0 text-bold">{agent ? agent.name : "Unavailable"}</h4>
+                              <h5>{agent ? agent.company_name : "Unavailable"}</h5>
+                              <h5>{agent ? agent.phone_number : "Unavailable"}</h5>
                             </center>
                            </div>
                         </div>

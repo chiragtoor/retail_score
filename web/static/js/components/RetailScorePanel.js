@@ -1,5 +1,6 @@
 import {default as React, Component} from "react";
 import {Glyphicon,Modal, Button, FormGroup, ControlLabel, FormControl, InputGroup, Panel, Nav, NavItem, Badge} from "react-bootstrap";
+import * as Actions from '../actions';
 
 const isBrowser = typeof window !== 'undefined';
 
@@ -74,6 +75,32 @@ export default class RetailScorePanel extends Component {
      entertainmentSales = "$" + (this.props.property.demographics.spending.entertainment/12).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
     }
 
+    var firstLabel;
+    var secondLabel;
+    var thirdLabel;
+
+    var firstArr = [];
+    var secondArr = [];
+    var thirdArr = [];
+
+    switch(this.props.scoreType) {
+      case Actions.SCORE_FASHION:
+        firstLabel = "Clothing Store";
+        secondLabel = "Shoe Store";
+        thirdLabel = "Jewelry Store";
+        break;
+      case Actions.SCORE_WELLNESS:
+        firstLabel = "Beauty Salon";
+        secondLabel = "Spa";
+        thirdLabel = "Hair Salon/Barbershop";
+        break;
+      case Actions.SCORE_RESTAURANT:
+        firstLabel = "Restaurant";
+        secondLabel = "Cafe";
+        thirdLabel = "Bar";
+        break;
+    }
+
     return (
       <div style={{height:"100%", width:"100%", marginTop:"10px", backgroundColor:"#FFFFFF"}}>
         <div className="row-masonry">
@@ -89,13 +116,13 @@ export default class RetailScorePanel extends Component {
                       <h5 className="media-heading m0 text-bold">Within walking distance of this property:</h5>
                     </center>
                     <div onClick={e => this.showDetails(restaurants)} style={{height:"30px", backgroundColor:"#ecf0f1", fontSize:"16px"}}>
-                     {restaurants.length} Restaurants
+                     {restaurants.length} {firstLabel}
                     </div>
                     <div onClick={e => this.showDetails(bars)} style={{height:"30px", fontSize:"16px"}}>
-                     {bars.length} Bars
+                     {bars.length} {secondLabel}
                     </div>
                     <div onClick={e => this.showDetails(cafes)} style={{height:"30px", fontSize:"16px", backgroundColor:"#ecf0f1"}}>
-                     {cafes.length} Cafes
+                     {cafes.length} {thirdLabel}
                     </div>
                  </div>
               </div>
