@@ -45,7 +45,7 @@ export default class RetailScorePanel extends Component {
 
     switch(this.props.scoreType) {
       case Actions.SCORE_FASHION:
-      
+
         var allBusinesses =  this.props.property.fashion_businesses ? this.props.property.fashion_businesses : {};;
 
         for(var i = 0; i < allBusinesses.length; i++) {
@@ -170,23 +170,25 @@ export default class RetailScorePanel extends Component {
         <div className="row-masonry">
           <div className="col-masonry">
               <div className="panel b m0">
-                 <div className="panel-heading">
                   <center>
-                    <h3 className="media-heading m0 text-bold" style={{color:"#FFDF00"}}>{stars}</h3>
+                    <h3 className="media-heading m0 text-bold" style={{color:"#E6C200"}}>{stars}</h3>
                   </center>
-                 </div>
                  <div className="panel-body">
                     <center>
-                      <h5 className="media-heading m0 text-bold">Within walking distance of this property:</h5>
+                      <div style={{marginTop:"0px", fontSize:"16px"}} className="media-heading m0 text-bold">Within walking distance:</div>
                     </center>
-                    <div onClick={e => this.showDetails(firstArr, firstLabel)} style={{height:"30px", backgroundColor:"#ecf0f1", fontSize:"16px"}}>
-                     {firstArr.length} {firstLabel}
+
+                    <div onClick={e => this.showDetails(firstArr, firstLabel)} style={{height:"40px", backgroundColor:"#ecf0f1", fontSize:"16px"}}>
+                     <span style={{float:"left", marginLeft:"5px"}}>{firstArr.length} {firstLabel}</span>
+                     <Button style={{float:"right", height:"100%", backgroundColor:"#ecf0f1", border:"none"}}><em className="fa fa-chevron-right"></em></Button>
                     </div>
-                    <div onClick={e => this.showDetails(secondArr, secondLabel)} style={{height:"30px", fontSize:"16px"}}>
-                     {secondArr.length} {secondLabel}
+                    <div onClick={e => this.showDetails(secondArr, secondLabel)} style={{height:"40px", fontSize:"16px"}}>
+                     <span style={{float:"left", marginLeft:"5px"}}>{secondArr.length} {secondLabel}</span>
+                     <Button style={{float:"right", height:"100%", border:"none"}}><em className="fa fa-chevron-right"></em></Button>
                     </div>
-                    <div onClick={e => this.showDetails(thirdArr, thirdLabel)} style={{height:"30px", fontSize:"16px", backgroundColor:"#ecf0f1"}}>
-                     {thirdArr.length} {thirdLabel}
+                    <div onClick={e => this.showDetails(thirdArr, thirdLabel)} style={{height:"40px", fontSize:"16px", backgroundColor:"#ecf0f1"}}>
+                     <span style={{float:"left", marginLeft:"5px"}}>{thirdArr.length} {thirdLabel}</span>
+                     <Button style={{float:"right", height:"100%", backgroundColor:"#ecf0f1", border:"none"}}><em className="fa fa-chevron-right"></em></Button>
                     </div>
                  </div>
               </div>

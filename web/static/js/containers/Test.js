@@ -870,7 +870,7 @@ class PropertyTile extends React.Component {
           {/* Button that in 1-Tap contact mode sends a message to Broker, otherwise takes user to PDP -> this avoid more media query logic to take out the button and resize entire tile */}
           {/* Button is not visible on phones <= 320px wide (iPhone 4 and 5) because it will not fit, CSS media query catches this */}
           <div className="panel-body bt srpContactButton" style={{borderColor: panelBordersColor, margin:"0px", padding:"0px"}}>
-            <Button onClick={this.contactClick} style={{border:"none", color:"#49A3DC", width:"100%", paddingBottom:"5px"}}>{this.props.oneTapContact ? "1 Tap Contact" : "Contact"}</Button>
+            <Button onClick={this.contactClick} style={{border:"none", borderRadius:"none", backgroundColor:panelBordersColor, color:"#FFFFFF", fontWeight:"400px", width:"100%", paddingBottom:"5px"}}>{this.props.oneTapContact ? "1 Tap Contact" : "Contact"}</Button>
           </div>
         </div>
       </div>

@@ -573,16 +573,29 @@ MOVE TO SRP.CSS AFTER
   background-color: rgba(0,0,0,0.0);
   transition: 0.5s ease-in all;
 }
+
+.detailsFade-enter {
+  opacity: 0.01;
+  -webkit-animation-name: bounceIn;
+  -webkit-animation-duration: .8s;
+  -webkit-animation-iteration-count: 1;
+  -webkit-animation-timing-function: linear;
+  animation-name: bounceIn;
+  animation-duration: .8s;
+  animation-iteration-count: 1;
+  animation-timing-function: linear;
+}
+.detailsFade-enter.fadedBounceIn-enter-active {
+  opacity: 0.01;
+}
+.detailsFade-leave {
+  opacity: 0.9;
+}
+.detailsFade-leave.fadedBounceIn-leave-active {
+  opacity: 0;
+  transition: opacity 200ms ease-in;
+}
 /* UI REFACTOR CSS END */
-
-
-
-
-
-
-
-
-
 
 .productField::-webkit-input-placeholder {
     color: white;
