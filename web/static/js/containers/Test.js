@@ -242,7 +242,7 @@ export class Test extends React.Component {
         // initial values are a null index and very large distance that any tile will be considered closer to
         }, {index: -1, value: 10000});
 
-        this.context.mixpanel.track('srp_listings_div_scrolled');
+        //this.context.mixpanel.track('srp_listings_div_scrolled');
       // use helper method to update current main index based on pagination
       this.updateMainProperty(minTuple.index);
     }, 50);
@@ -529,7 +529,7 @@ export class Test extends React.Component {
                                 onUpdateSqFtMin={(value) => {this.context.mixpanel.track('srp_filter_changed', {'min_sqft': value}); this.setState({filterSqFtMin: value, currentPage: 1});}}
                                 onUpdateSqFtMax={(value) => {this.context.mixpanel.track('srp_filter_changed', {'max_sqft': value}); this.setState({filterSqFtMax: value, currentPage: 1});}}
                                 selectedSort={this.state.currentSort} 
-                                onUpdateSort={(newValue) => {this.context.mixpanel.track('srp_sorty_type_changed', {'sort_by': newValue}); this.setState({currentSort: newValue, currentPage: 1});}}
+                                onUpdateSort={(newValue) => {this.context.mixpanel.track('srp_sort_type_changed', {'sort_by': newValue}); this.setState({currentSort: newValue, currentPage: 1});}}
                                 onSave={() => this.setState({mobileShowSecondaryContent: false})} 
                                 padded={true} />
                             </div>;
