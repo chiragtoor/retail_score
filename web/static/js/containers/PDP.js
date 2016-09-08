@@ -108,10 +108,10 @@ class PDP extends React.Component {
       this.setState(this.state);
     }
 
-    showBusinessDetailsModal(data) {
+    showBusinessDetailsModal(data, label) {
 
       this.state.businessDetailsModal = <div style={{height:"100%", width:"100%", position:"fixed", zIndex:"5", bottom:"0", top:"0"}}> 
-      <BusinessDetails  businesses={data} hideBusinessDetails={this.hideBusinessDetails} />
+      <BusinessDetails  businesses={data} label={label} hideBusinessDetails={this.hideBusinessDetails} />
       </div>;
       this.setState(this.state);
     }

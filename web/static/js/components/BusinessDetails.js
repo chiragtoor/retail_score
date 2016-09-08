@@ -36,12 +36,13 @@ class BusinessDetails extends React.Component {
                   <em className="fa fa-chevron-left"></em>
                 </Button>
                 <span style={{float:"left", marginLeft:"10px", textAlign:"center", width:"100%", fontSize:"18px"}}>
-                  Restaurants
+                  {this.props.label ? this.props.label : "Restaurants"}
                 </span>
               </Col>
-              <Col sm={12} xs={12} style={{height:"-webkit-calc(100%-50px)", width:"100%", backgroundColor:"#FFFFFF", padding:"0", margin:"0"}}>
+              <Col sm={12} xs={12} style={{height:"-webkit-calc(100%-50px)", overflow:"auto", width:"100%", backgroundColor:"#FFFFFF", padding:"0", margin:"0"}}>
                 {businesses.map((business, index) => {
                   return <div style={{borderBottom:"solid thin #ecf0f1", height:"50px", width:"100%", fontSize:"16px", paddingLeft:"5px"}}>
+                    {business.name}
                   </div>;
                 })
                 }

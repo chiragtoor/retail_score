@@ -18,8 +18,6 @@ const food = [
  {name : "Cafe Surfas", street_address: "8777 Washington Blvd, Culver City, CA 90232, USA", phone_number: "(310) 558-1458", website : "http://www.surfasonline.com/", restaurant : false, bar: false, cafe: true, beauty_salon: false, spa: false, hair_care: false}
 ];
 
-const retailScore = 5;
-
 export default class RetailScorePanel extends Component {
 
   constructor(props) {
@@ -29,51 +27,11 @@ export default class RetailScorePanel extends Component {
   }
 
 
-  showDetails(businesses) {
-    this.props.showBusinessDetails(businesses)
+  showDetails(businesses, label) {
+    this.props.showBusinessDetails(businesses, label)
   }
 
   render () {
-
-
-    var restaurants = [];
-    var bars = [];
-    var cafes = [];
-
-    for(var i = 0; i < food.length; i++) {
-      if(food[i].restaurant) {
-        restaurants.push(food[i]);
-      }
-      if(food[i].cafe) {
-        cafes.push(food[i]);
-      }
-      if(food[i].bar) {
-        bars.push(food[i]);
-      }
-    }
-
-    var clothingSales;
-    var foodSales;
-    var entertainmentSales;
-    var stars;
-
-    if(retailScore == 5) {
-      stars = <span><em className="fa fa-star"></em><em className="fa fa-star"></em><em className="fa fa-star"></em><em className="fa fa-star"></em><em className="fa fa-star"></em></span>;
-    } else if (retailScore == 4) {
-      stars = <span><em className="fa fa-star"></em><em className="fa fa-star"></em><em className="fa fa-star"></em><em className="fa fa-star"></em></span>;
-    } else if (retailScore == 3) {
-      stars = <span><em className="fa fa-star"></em><em className="fa fa-star"></em><em className="fa fa-star"></em></span>;
-    } else if (retailScore == 2) {
-      stars = <span><em className="fa fa-star"></em><em className="fa fa-star"></em></span>;
-    } else if (retailScore == 1) {
-      stars = <span><em className="fa fa-star"></em></span>;
-    }
-
-    if(this.props.property.demographics && this.props.property.demographics.spending) {
-     clothingSales = "$" + (this.props.property.demographics.spending.clothing/12).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-     foodSales = "$" + (this.props.property.demographics.spending.food/12).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-     entertainmentSales = "$" + (this.props.property.demographics.spending.entertainment/12).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-    }
 
     var firstLabel;
     var secondLabel;
@@ -83,22 +41,125 @@ export default class RetailScorePanel extends Component {
     var secondArr = [];
     var thirdArr = [];
 
+    var retailScoreValue = 1;
+
     switch(this.props.scoreType) {
       case Actions.SCORE_FASHION:
         firstLabel = "Clothing Store";
         secondLabel = "Shoe Store";
         thirdLabel = "Jewelry Store";
+
+        var allBusinesses =  this.props.property.fashion_businesses ? this.props.property.fashion_businesses : {};;
+
+        for(var i = 0; i < allBusinesses.length; i++) {
+          if(allBusinesses[i].clothing_store) {
+            firstArr.push(allBusinesses[i]);
+          }
+          if(allBusinesses[i].shoe_store) {
+            secondArr.push(allBusinesses[i]);
+          }
+          if(allBusinesses[i].jewelry_store) {
+            thirdArr.push(allBusinesses[i]);
+          }
+        }
+
+        var count = this.props.property.fashion_count ;
+
+        if(count <= 1) {
+          retailScoreValue = 1;
+        } else if (count <= 3) {
+          retailScoreValue = 2;
+        } else if (count <= 7) {
+          retailScoreValue = 3;
+        } else if (count <= 22) {
+          retailScoreValue = 4;
+        } else {
+          retailScoreValue = 5;
+        }
+
         break;
       case Actions.SCORE_WELLNESS:
         firstLabel = "Beauty Salon";
         secondLabel = "Spa";
         thirdLabel = "Hair Salon/Barbershop";
+
+        var allBusinesses = this.props.property.wellness_businesses ? this.props.property.wellness_businesses : {};
+
+        for(var i = 0; i < allBusinesses.length; i++) {
+          if(allBusinesses[i].beauty_salon) {
+            firstArr.push(allBusinesses[i]);
+          }
+          if(allBusinesses[i].spa) {
+            secondArr.push(allBusinesses[i]);
+          }
+          if(allBusinesses[i].hair_care) {
+            thirdArr.push(allBusinesses[i]);
+          }
+        }
+
+        var count = this.props.property.wellness_count;
+
+        if(count <= 3) {
+          retailScoreValue = 1;
+        } else if (count <= 6) {
+          retailScoreValue = 2;
+        } else if (count <= 10) {
+          retailScoreValue = 3;
+        } else if (count <= 18) {
+          retailScoreValue = 4;
+        } else {
+          retailScoreValue = 5;
+        }
+
         break;
       case Actions.SCORE_RESTAURANT:
         firstLabel = "Restaurant";
         secondLabel = "Cafe";
         thirdLabel = "Bar";
+
+        var allBusinesses = this.props.property.food_businesses ? this.props.property.food_businesses : {};
+
+        for(var i = 0; i < allBusinesses.length; i++) {
+          if(allBusinesses[i].restaurant) {
+            firstArr.push(allBusinesses[i]);
+          }
+          if(allBusinesses[i].cafe) {
+            secondArr.push(allBusinesses[i]);
+          }
+          if(allBusinesses[i].bar) {
+            thirdArr.push(allBusinesses[i]);
+          }
+        }
+
+        var count = this.props.property.food_count;
+
+        if(count <= 6) {
+          retailScoreValue = 1;
+        } else if (count <= 11) {
+          retailScoreValue = 2;
+        } else if (count <= 16) {
+          retailScoreValue = 3;
+        } else if (count <= 26) {
+          retailScoreValue = 4;
+        } else {
+          retailScoreValue = 5;
+        }
+
         break;
+    }
+
+    var stars;
+
+    if(retailScoreValue == 5) {
+      stars = <span><em className="fa fa-star"></em><em className="fa fa-star"></em><em className="fa fa-star"></em><em className="fa fa-star"></em><em className="fa fa-star"></em></span>;
+    } else if (retailScoreValue == 4) {
+      stars = <span><em className="fa fa-star"></em><em className="fa fa-star"></em><em className="fa fa-star"></em><em className="fa fa-star"></em></span>;
+    } else if (retailScoreValue == 3) {
+      stars = <span><em className="fa fa-star"></em><em className="fa fa-star"></em><em className="fa fa-star"></em></span>;
+    } else if (retailScoreValue == 2) {
+      stars = <span><em className="fa fa-star"></em><em className="fa fa-star"></em></span>;
+    } else if (retailScoreValue == 1) {
+      stars = <span><em className="fa fa-star"></em></span>;
     }
 
     return (
@@ -115,14 +176,14 @@ export default class RetailScorePanel extends Component {
                     <center>
                       <h5 className="media-heading m0 text-bold">Within walking distance of this property:</h5>
                     </center>
-                    <div onClick={e => this.showDetails(restaurants)} style={{height:"30px", backgroundColor:"#ecf0f1", fontSize:"16px"}}>
-                     {restaurants.length} {firstLabel}
+                    <div onClick={e => this.showDetails(firstArr, firstLabel)} style={{height:"30px", backgroundColor:"#ecf0f1", fontSize:"16px"}}>
+                     {firstArr.length} {firstLabel}
                     </div>
-                    <div onClick={e => this.showDetails(bars)} style={{height:"30px", fontSize:"16px"}}>
-                     {bars.length} {secondLabel}
+                    <div onClick={e => this.showDetails(secondArr, secondLabel)} style={{height:"30px", fontSize:"16px"}}>
+                     {secondArr.length} {secondLabel}
                     </div>
-                    <div onClick={e => this.showDetails(cafes)} style={{height:"30px", fontSize:"16px", backgroundColor:"#ecf0f1"}}>
-                     {cafes.length} {thirdLabel}
+                    <div onClick={e => this.showDetails(thirdArr, thirdLabel)} style={{height:"30px", fontSize:"16px", backgroundColor:"#ecf0f1"}}>
+                     {thirdArr.length} {thirdLabel}
                     </div>
                  </div>
               </div>
