@@ -45,10 +45,7 @@ export default class RetailScorePanel extends Component {
 
     switch(this.props.scoreType) {
       case Actions.SCORE_FASHION:
-        firstLabel = "Clothing Store";
-        secondLabel = "Shoe Store";
-        thirdLabel = "Jewelry Store";
-
+      
         var allBusinesses =  this.props.property.fashion_businesses ? this.props.property.fashion_businesses : {};;
 
         for(var i = 0; i < allBusinesses.length; i++) {
@@ -62,6 +59,10 @@ export default class RetailScorePanel extends Component {
             thirdArr.push(allBusinesses[i]);
           }
         }
+
+        firstLabel = firstArr.length == 1 ? "Clothing Store" : "Clothing Stores";
+        secondLabel = secondArr.length == 1 ? "Shoe Store": "Shoe Stores";
+        thirdLabel = thirdArr.length == 1 ? "Jewelry Store" : "Jewelry Stores";
 
         var count = this.props.property.fashion_count ;
 
@@ -79,9 +80,6 @@ export default class RetailScorePanel extends Component {
 
         break;
       case Actions.SCORE_WELLNESS:
-        firstLabel = "Beauty Salon";
-        secondLabel = "Spa";
-        thirdLabel = "Hair Salon/Barbershop";
 
         var allBusinesses = this.props.property.wellness_businesses ? this.props.property.wellness_businesses : {};
 
@@ -96,6 +94,10 @@ export default class RetailScorePanel extends Component {
             thirdArr.push(allBusinesses[i]);
           }
         }
+
+        firstLabel = firstArr.length == 1 ? "Beauty Salon" : "Beauty Salons";
+        secondLabel = secondArr.length == 1 ? "Spa" : "Spas";
+        thirdLabel = thirdArr.length == 1 ? "Hair Salon" : "Hair Salons";
 
         var count = this.props.property.wellness_count;
 
@@ -113,9 +115,6 @@ export default class RetailScorePanel extends Component {
 
         break;
       case Actions.SCORE_RESTAURANT:
-        firstLabel = "Restaurant";
-        secondLabel = "Cafe";
-        thirdLabel = "Bar";
 
         var allBusinesses = this.props.property.food_businesses ? this.props.property.food_businesses : {};
 
@@ -130,6 +129,10 @@ export default class RetailScorePanel extends Component {
             thirdArr.push(allBusinesses[i]);
           }
         }
+
+        firstLabel = firstArr.length == 1 ? "Restaurant" : "Restaurants";
+        secondLabel = secondArr.length == 1 ? "Cafe" : "Cafes";
+        thirdLabel = thirdArr.length == 1 ? "Bar" : "Bars";
 
         var count = this.props.property.food_count;
 

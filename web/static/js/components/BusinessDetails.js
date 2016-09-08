@@ -22,13 +22,11 @@ class BusinessDetails extends React.Component {
 
     constructor(props){
       super(props);
-      console.log('business details');
     }
 
     render() {
         var businesses = this.props.businesses;
 
-        console.log(this.props.businesses);
         return (
             <div style={{width:"100%", height:"100%", backgroundColor:"#FFFFFF"}}>
               <Col sm={12} xs={12} style={{height:"30px",backgroundColor:"#49A3DC", color:"#FFFFFF", padding:"0", margin:"0"}}>

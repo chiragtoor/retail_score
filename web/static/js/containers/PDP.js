@@ -150,8 +150,7 @@ class PDP extends React.Component {
     render() {
 
         var property = this.props.property;
-        console.log("this is the property");
-        console.log(JSON.stringify(property));
+
 
         var demographics = this.props.property.demographics;
         var tapestry;

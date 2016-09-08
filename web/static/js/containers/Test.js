@@ -115,10 +115,9 @@ export class Test extends React.Component {
     this.setState({mounted: true});
     // show the user form -> TEST
     if(localStorage.getItem(BUSINESS_TYPE) != null) {
-      console.log("already have the business info");
       this.setBusinessInformation(localStorage.getItem(BUSINESS_TYPE));
     } else {
-      // this.showSecondaryContent(SECONDARY_USER);
+      this.showSecondaryContent(SECONDARY_USER);
     }
 
     this.context.mixpanel.track('srp_mounted');
@@ -448,8 +447,6 @@ export class Test extends React.Component {
     //  if you do just var = props.properties then below when var properties is sorted and filtered
     //  it does the same on the props.properties -> need to confirm this was the issue
     var properties = this.props.properties.slice();
-
-    console.log(JSON.stringify(properties));
 
     // filter out properties according to user selection
     if(this.state.filterPriceMin != null) {
@@ -1081,7 +1078,6 @@ class UserForm extends React.Component {
       this.setState({emailError: false});
     }
 
-    console.log("function called");
     this.props.onSubmit(this.state.business, this.state.email);
   }
 
@@ -1123,9 +1119,6 @@ class ContactForm extends React.Component {
     super(props);
 
     this.submitContact = this.submitContact.bind(this);
-
-    console.log("EMAIL");
-    console.log(localStorage.getItem(CONTACT_EMAIL));
 
     this.state = {
       name: "",
