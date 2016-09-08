@@ -177,7 +177,6 @@ export default class RetailScorePanel extends Component {
                     <center>
                       <div style={{marginTop:"0px", fontSize:"16px"}} className="media-heading m0 text-bold">Within walking distance:</div>
                     </center>
-
                     <div onClick={e => this.showDetails(firstArr, firstLabel)} style={{height:"40px", backgroundColor:"#ecf0f1", fontSize:"16px"}}>
                      <span style={{float:"left", marginLeft:"5px"}}>{firstArr.length} {firstLabel}</span>
                      <Button style={{float:"right", height:"100%", backgroundColor:"#ecf0f1", border:"none"}}><em className="fa fa-chevron-right"></em></Button>

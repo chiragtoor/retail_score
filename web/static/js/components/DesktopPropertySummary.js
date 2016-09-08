@@ -83,7 +83,7 @@ export default class DesktopPropertySummary extends Component {
               </Col>
 
               <Col xs={6} className="text-center" style={{backgroundColor:"#FFFFFF", marginTop:"5px"}}>
-               {this.props.property ? <DesktopRetailScorePanel showModal={this.showRetailScoreExpalanation} property={this.props.property} /> : null}
+               {this.props.property ? <DesktopRetailScorePanel scoreType={this.props.scoreType} showModal={this.showRetailScoreExpalanation} property={this.props.property} /> : null}
               </Col>
 
             </Row>

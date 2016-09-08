@@ -236,7 +236,7 @@ class PDP extends React.Component {
                 <div className="hidden-xs hidden-sm hidden-md" style={{width:"100%", backgroundColor:"#FFFFFF"}}>
                   <Row>
                     <Col className="col-lg-offset-1 " lg={ 10 } >
-                      { property ? <DesktopPropertySummary submitContact={this.submitContact} contactFailed={this.desktopContactFailed} property={property} mixpanel={this.context.mixpanel} /> : null}
+                      { property ? <DesktopPropertySummary scoreType={this.props.scoreType} submitContact={this.submitContact} contactFailed={this.desktopContactFailed} property={property} mixpanel={this.context.mixpanel} /> : null}
                     </Col>
                     <Col className="col-lg-offset-1 " lg={ 10 } >
                       { demographics ? <DesktopDemographicPanel data={demographics} mixpanel={this.context.mixpanel} tag={"largeDemographics"} /> : null}
