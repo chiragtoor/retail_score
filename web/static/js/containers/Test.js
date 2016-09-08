@@ -62,6 +62,7 @@ export class Test extends React.Component {
     this.propertyClick = this.propertyClick.bind(this);
     this.onUserFormSubmit = this.onUserFormSubmit.bind(this);
     this.setBusinessInformation = this.setBusinessInformation.bind(this);
+    this.sortByRetailScore = this.sortByRetailScore.bind(this);
 
     // get the properties for the current city
     const city = this.props.params.city.replace("-", " ");
@@ -251,7 +252,22 @@ export class Test extends React.Component {
     // no property will have a null retail score, so sort by just comparing the two values
     // < because we want to go from high to low
     return properties.sort((propertyA, propertyB) => {
-      if(propertyA.retail_score <= propertyB.retail_score) {
+
+      var compareA = propertyA.food_count;
+      var compareB = propertyB.food_count;
+
+      switch(this.props.scoreType) {
+        case Actions.SCORE_WELLNESS:
+          compareA = propertyA.wellness_count;
+          compareB = propertyB.wellness_count;
+          break;
+        case Actions.SCORE_FASHION:
+          compareA = propertyA.fashion_count;
+          compareB = propertyB.fashion_count;
+          break;
+      }
+
+      if(compareA <= compareB) {
         return 1;
       } else {
         return -1;
@@ -644,7 +660,9 @@ export class Test extends React.Component {
                 </div>
                 <div ref="mobileListingsDiv" className="listingsDiv hidden-md hidden-lg" onScroll={this.listingsDivScrolled}>
                   {(numPages >= 2 && this.state.currentPage > 1) ?
-                    <Button onClick={() => this.pageSelect(this.state.currentPage - 1, true)} style={{width:"150px", height:"100%", flexShrink: "1", backgroundColor:"rgba(255,0,0,0.4)"}}>Back</Button>
+                    <div style={{display:"flex", flexDirection:"column", justifyContent:"center"}}>
+                      <Button onClick={() => this.pageSelect(this.state.currentPage - 1, true)} style={{height:"40px", width:"50px", marginLeft:"10px", marginRight:"10px", color:"#49A3DC", borderColor:"#CCCCCC", flexShrink: "1"}}>Back</Button>
+                    </div>
                   :
                     false
                   }
@@ -653,7 +671,9 @@ export class Test extends React.Component {
                     return <PropertyTile scoreType={this.props.scoreType} onClick={this.propertyClick} oneTapContact={this.state.oneTapContact} onContact={this.contactProperty} property={property} mobile={true} key={index} index={index} selected={this.isMainProperty(index)} style={{flexShrink: "1"}} ref={c => this._propertyTiles.set(index, c)}/>
                   })}
                   {(numPages >= 2 && this.state.currentPage != numPages) ?
-                    <Button onClick={() => this.pageSelect(this.state.currentPage + 1, true)} style={{width:"150px", height:"100%", flexShrink: "1", backgroundColor:"rgba(255,0,0,0.4)"}}>Next</Button>
+                    <div style={{display:"flex", flexDirection:"column", justifyContent:"center"}}>
+                      <Button onClick={() => this.pageSelect(this.state.currentPage + 1, true)} style={{height:"40px", width:"50px", marginLeft:"10px", marginRight:"10px", color:"#49A3DC", borderColor:"#CCCCCC", flexShrink: "1"}}>Next</Button>
+                    </div>
                   :
                     false
                   }
