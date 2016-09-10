@@ -47,7 +47,7 @@ export class CustomerProfile extends React.Component {
             <div style={{textAlign:"center", width:"100%", marginTop:"5px"}}>
               <img className="homepageTopBarImage" src={"https://s3-us-west-2.amazonaws.com/homepage-image-assets/retail_score_logo_white.png"} />
             </div>
-            <div style={{width:"90%", marginLeft:"5%", textAlign:"center", marginTop:"50px", fontSize:"8vw"}}>
+            <div className="customerSlogan" style={{width:"90%", marginLeft:"5%", textAlign:"center", marginTop:"50px"}}>
               Expect to see a list of perfect properties in your Inbox within 24 hours! 
             </div>
           </div>
@@ -57,7 +57,7 @@ export class CustomerProfile extends React.Component {
             <div style={{textAlign:"center", width:"100%", marginTop:"5px"}}>
               <img className="homepageTopBarImage" src={"https://s3-us-west-2.amazonaws.com/homepage-image-assets/retail_score_logo_white.png"} />
             </div>
-            <div style={{width:"90%", marginLeft:"5%", textAlign:"center", fontSize:"8vw"}}>
+            <div className="customerSlogan" style={{width:"90%", marginLeft:"5%", textAlign:"center"}}>
               Find a property in an area where your <b>customers</b> are already <b>shopping!</b>
             </div>
 

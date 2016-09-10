@@ -368,6 +368,10 @@ MOVE TO SRP.CSS AFTER
   .srpContactButton {
     display: none;
   }
+
+  .customerSlogan {
+    font-size: 8vw;
+  }
 }
 /* larger mobile devices, tablets */
 @media(min-width: 768px) {
@@ -378,6 +382,11 @@ MOVE TO SRP.CSS AFTER
   .srpListingsSection {
     height: 50%;
   }
+
+  .customerSlogan {
+    font-size: 8vw;
+  }
+
   /* bigger width propertyTile supported, enough space */
   .propertyTileContainer {
     width: 500px;
@@ -407,6 +416,11 @@ MOVE TO SRP.CSS AFTER
     border: 1px solid #CCC;
     border-radius: 4px;
   }
+
+  .customerSlogan {
+    font-size: 25px;
+  }
+
   /* desktop top bar is larger than mobile search action bar */
   .contentSRP {
     height: -webkit-calc(100% - 55px);
