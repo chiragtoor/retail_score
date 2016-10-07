@@ -60,7 +60,6 @@ export class Test extends React.Component {
     this.contactProperty = this.contactProperty.bind(this);
     this.submitContact = this.submitContact.bind(this);
     this.propertyClick = this.propertyClick.bind(this);
-    this.onUserFormSubmit = this.onUserFormSubmit.bind(this);
     this.setBusinessInformation = this.setBusinessInformation.bind(this);
     this.sortByRetailScore = this.sortByRetailScore.bind(this);
 
@@ -80,7 +79,22 @@ export class Test extends React.Component {
       if(localStorage.getItem(CONTACT_NAME) && localStorage.getItem(CONTACT_EMAIL)){
         oneTapContact = true;
       }
-    } 
+
+      var business = localStorage.getItem(BUSINESS_TYPE);
+
+      if(business != null) {
+        if(business.match(/\b(restaurant|mexican|indian|chinese|food|drinks|juice|bar|coffee|cafe)/i)) {
+          this.context.mixpanel.track('srp_initial_score_type', {'type': 'Food'});
+          this.props.scoreByRestaurant();
+        } else if(business.match(/\b(salon|spa|nails|hair|barber|massage|beauty|skin)/i)) {
+          this.context.mixpanel.track('srp_initial_score_type', {'type': 'Wellness'});
+          this.props.scoreByWellness();
+        } else {
+          this.context.mixpanel.track('srp_initial_score_type', {'type': 'Fashion'});
+          this.props.scoreByFashion();
+        }
+      }
+    }
 
     this.state = {
       mounted: false,
@@ -114,12 +128,6 @@ export class Test extends React.Component {
   componentDidMount() {
     // used for flag on animations, on mount animations don't work if they are rendered, so we wait till mount to run animation
     this.setState({mounted: true});
-    // show the user form -> TEST
-    // if(localStorage.getItem(BUSINESS_TYPE) != null) {
-    //   this.setBusinessInformation(localStorage.getItem(BUSINESS_TYPE));
-    // } else {
-    //   this.showSecondaryContent(SECONDARY_USER);
-    // }
 
     this.context.mixpanel.track('srp_mounted');
   }
@@ -426,28 +434,6 @@ export class Test extends React.Component {
     }
   }
 
-  onUserFormSubmit(business, email) {
-    // log data to mixpanel
-    this.context.mixpanel.track('srp_user_profile_submit', {'business': business, 'email': email});
-
-    localStorage.setItem(CONTACT_EMAIL, email);
-    localStorage.setItem(BUSINESS_TYPE, business);
-
-    // set RS score type based on user's business input
-    if(business.match(/\b(restaurant|mexican|indian|chinese|food|drinks|juice|bar|coffee|cafe)/i)) {
-      this.context.mixpanel.track('srp_initial_score_type', {'type': 'Food'});
-      this.props.scoreByRestaurant();
-    } else if(business.match(/\b(salon|spa|nails|hair|barber|massage|beauty|skin)/i)) {
-      this.context.mixpanel.track('srp_initial_score_type', {'type': 'Wellness'});
-      this.props.scoreByWellness();
-    } else {
-      this.context.mixpanel.track('srp_initial_score_type', {'type': 'Fashion'});
-      this.props.scoreByFashion();
-    }
-
-    this.setState({mobileShowSecondaryContent: false});
-  }
-
   setBusinessInformation(business) {
     if(business.match(/\b(restaurant|mexican|indian|chinese|food|drinks|juice|bar|coffee|cafe)/i)) {
       this.props.scoreByRestaurant();
@@ -552,11 +538,6 @@ export class Test extends React.Component {
                                 selectedStyle={this.props.scoreType} />
                             </div>;
         break;
-      case SECONDARY_USER:
-        secondaryContent = <div onClick={(e) => e.stopPropagation()} style={{width:"95%", height:"55%"}}>
-                              <UserForm 
-                                onSubmit={this.onUserFormSubmit}/>
-                           </div>;
     }
 
     return(
