@@ -115,11 +115,11 @@ export class Test extends React.Component {
     // used for flag on animations, on mount animations don't work if they are rendered, so we wait till mount to run animation
     this.setState({mounted: true});
     // show the user form -> TEST
-    if(localStorage.getItem(BUSINESS_TYPE) != null) {
-      this.setBusinessInformation(localStorage.getItem(BUSINESS_TYPE));
-    } else {
-      this.showSecondaryContent(SECONDARY_USER);
-    }
+    // if(localStorage.getItem(BUSINESS_TYPE) != null) {
+    //   this.setBusinessInformation(localStorage.getItem(BUSINESS_TYPE));
+    // } else {
+    //   this.showSecondaryContent(SECONDARY_USER);
+    // }
 
     this.context.mixpanel.track('srp_mounted');
   }
@@ -697,7 +697,7 @@ export class Test extends React.Component {
       {/* Below transition bouncesIn Content we want to display */}
         <ReactCSSTransitionGroup transitionName="fadedBounceIn" transitionEnterTimeout={500} transitionLeaveTimeout={500}>
           {this.state.mobileShowSecondaryContent ?
-            <div onClick={() => this.state.secondaryContent != SECONDARY_USER ? this.setState({mobileShowSecondaryContent: false}) : false} style={{width:"100%", height:"100%", position:"absolute", left:"0", top:"0", zIndex:"10", display:"flex", justifyContent:"center", alignItems:"center"}}> 
+            <div onClick={() => this.setState({mobileShowSecondaryContent: false})} style={{width:"100%", height:"100%", position:"absolute", left:"0", top:"0", zIndex:"10", display:"flex", justifyContent:"center", alignItems:"center"}}> 
               {/* If user clicks outside dimDiv we want it to close the secondary content */}
               {/* Clicking inside the secondary content (buttons, dropdowns) should not close it, so use stopPropogation so that event does not go to the outer div above and close */}
               {/* on filter update set currentPage to 1 in case user was looking at other pages */}
