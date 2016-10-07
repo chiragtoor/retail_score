@@ -20,6 +20,8 @@ const imageMap = {
   "Fresno" : "https://s3-us-west-2.amazonaws.com/homepage-image-assets/sacramento.jpg"
 }
 
+const BUSINESS_TYPE = 'business_type';
+
 export class Homepage extends React.Component {
 
   constructor(props) {
@@ -28,6 +30,7 @@ export class Homepage extends React.Component {
     this.searchClick = this.searchClick.bind(this);
     this.tileClick = this.tileClick.bind(this);
     this.scrollToAboutUs = this.scrollToAboutUs.bind(this);
+    this.searchButtonClicked = this.searchButtonClicked.bind(this);
 
     this.state = {
       value : "",
@@ -62,6 +65,12 @@ export class Homepage extends React.Component {
 
     cityString.replace(' ','-');
     this.props.history.push('/retail-space-for-lease/' + cityString);
+  }
+
+  searchButtonClicked(business) {
+  	localStorage.setItem(BUSINESS_TYPE, business);
+
+  	this.props.history.push('/retail-space-for-lease/Los%20Angeles,%20CA');
   }
 
   scrollToAboutUs() {
@@ -131,7 +140,7 @@ export class Homepage extends React.Component {
 	                  <div className="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 col-sm-12 col-xs-12" style={{marginTop:"15"}}>
 
 	                        <div className="hidden-xs" style={{width:"100%", float:"left", position:"relative"}}>
-	                        	<HomepageSearchBar searchClick={this.searchClick} />
+	                        	<SearchBar onClick={this.searchButtonClicked}/>
 	                        </div>
 
 	                      <div style={{width:"100%"}} className="hidden-lg hidden-md hidden-sm">
@@ -360,6 +369,34 @@ export class Homepage extends React.Component {
 	          </div>
 	        </div>
 	      </div>
+    );
+  }
+}
+
+class SearchBar extends React.Component {
+	constructor(props) {
+    super(props);
+
+    this.state = {
+      value : ""
+    };
+  }
+
+  render() {
+    return(
+      <div>
+        <InputGroup className="searchBar">
+          {/* <InputGroup.Button className="hidden-md hidden-lg"><Button style={this.props.noPadding ? mobileMenuButtonStyle : {height:"50px", borderColor:"#CCCCCC"}}>&nbsp;&nbsp;<i className="fa fa-list" style={{color:"#49A3DC"}}/>&nbsp;&nbsp;</Button></InputGroup.Button> */}
+          {/* <FormControl type="text" style={this.props.noPadding ? mobileSearchBarStyle : {height:"50px"}}/> */}
+          <FormControl 
+          	style={{height:"50px"}}
+            type="text" 
+            placeholder="What business are you opening?"
+            onChange={(e) => this.setState({value: e.target.value})}
+            value={this.state.value}/>
+          <InputGroup.Button><Button style={{height:"50px", borderColor:"#CCCCCC"}} onClick={() => this.props.onClick(this.state.value)}>&nbsp;&nbsp;<i className="fa fa-search" style={{color:"#49A3DC"}}/>&nbsp;&nbsp;</Button></InputGroup.Button>
+        </InputGroup>
+      </div>
     );
   }
 }

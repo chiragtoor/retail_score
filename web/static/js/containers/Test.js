@@ -84,13 +84,13 @@ export class Test extends React.Component {
 
       if(business != null) {
         if(business.match(/\b(restaurant|mexican|indian|chinese|food|drinks|juice|bar|coffee|cafe)/i)) {
-          this.context.mixpanel.track('srp_initial_score_type', {'type': 'Food'});
+          // this.context.mixpanel.track('srp_initial_score_type', {'type': 'Food'});
           this.props.scoreByRestaurant();
         } else if(business.match(/\b(salon|spa|nails|hair|barber|massage|beauty|skin)/i)) {
-          this.context.mixpanel.track('srp_initial_score_type', {'type': 'Wellness'});
+          // this.context.mixpanel.track('srp_initial_score_type', {'type': 'Wellness'});
           this.props.scoreByWellness();
         } else {
-          this.context.mixpanel.track('srp_initial_score_type', {'type': 'Fashion'});
+          // this.context.mixpanel.track('srp_initial_score_type', {'type': 'Fashion'});
           this.props.scoreByFashion();
         }
       }
