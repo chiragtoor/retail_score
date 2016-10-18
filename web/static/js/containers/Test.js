@@ -863,7 +863,7 @@ class SearchBar extends React.Component {
     {/* styles to use when on mobile to give sharp edges on top bar, round edges stick out */}
     const mobileMenuButtonStyle = {height:"50px", borderColor:"#CCCCCC", borderRadius: "0", borderTop:"none", borderLeft:"none", borderBottom:"none"};
     const mobileSearchBarStyle = {height:"50px", borderColor:"#CCCCCC", borderRadius: "0", borderTop:"none", borderLeft:"none", borderBottom:"none"};
-    const mobileSearchButtonStyle = {height:"50px", borderColor:"#CCCCCC", borderRadius: "0", borderTop:"none", borderRight:"none", borderBottom:"none"};
+    const mobileSearchButtonStyle = {height:"50px", borderColor:"#49A3DC", backgroundColor:"#49A3DC", borderRadius: "0", borderTop:"none", borderRight:"none", borderBottom:"none"};
     return(
       <div>
         <InputGroup className="searchBar" style={{borderRadius: "0", padding: this.props.noPadding ? "0px" : "20px", height:"50px", width:"100%", backgroundColor:"#FFFFFF"}}>
@@ -873,7 +873,7 @@ class SearchBar extends React.Component {
             onChange={(e) => e[0] != null ? this.props.onSearch(e[0].display) : false}
             placeHolder={"Enter a City"} 
             value={this.props.value} />
-          <InputGroup.Button><Button style={this.props.noPadding ? mobileSearchButtonStyle : {height:"50px", borderColor:"#CCCCCC"}}>&nbsp;&nbsp;<i className="fa fa-search" style={{color:"#49A3DC"}}/>&nbsp;&nbsp;</Button></InputGroup.Button>
+          <InputGroup.Button><Button style={this.props.noPadding ? mobileSearchButtonStyle : {height:"50px", borderColor:"#49A3DC", backgroundColor:"#49A3DC"}}>&nbsp;&nbsp;<i className="fa fa-search" style={{color:"#FFFFFF"}}/>&nbsp;&nbsp;</Button></InputGroup.Button>
         </InputGroup>
         {this.props.noPadding ?
           <div style={{width:"100%", height:"1px", borderTop:"solid thin #CCCCCC"}} />
@@ -888,7 +888,7 @@ class Filters extends React.Component {
   // price and sq foot options are stored in the Util.js file
   render() {
     const sortButtonStyle = {height:"40px", color:"#49A3DC", borderColor:"#CCCCCC"};
-    const selectedSortButtonStyle = {borderColor: "#49A3DC", height:"40px", color:"#49A3DC", marginLeft:"0px", marginRight:"1px"};
+    const selectedSortButtonStyle = {backgroundColor: "#49A3DC", borderColor: "#49A3DC", height:"40px", color:"#FFFFFF", marginLeft:"0px", marginRight:"1px"};
 
     // for min price options, filter out anything greater than the max (if not null)
     var minPriceOptions = Util.prices;
@@ -914,27 +914,23 @@ class Filters extends React.Component {
     return(
       <div style={{backgroundColor:"#FFFFFF", width:"100%", height:"100%", padding: this.props.padded ? "10px" : "0", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
         {/* Filters label */}
-        <center><label className="control-label" style={{fontSize:"18px", marginBottom:"0px", color:"#656565"}}>Filters</label></center>
         {/* Use bootstrap responsive columns to arrange filters section differently for mobile and desktop */}
         <Row>
           {/* On mobile we want this label on the left side, on desktop we want it on top of the corresponding dropdowns */}
           {/* Use flexbox to center the label vertically, <center> tag to center it horizontally in the column */}
-          <Col xs={2} sm={1} md={6} className="filtersLabelSize" style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
-            <label className="control-label" style={{fontSize:"16px", marginLeft:"10px", color:"#656565"}}>Rent:</label>
-          </Col>
+
+
           {/* Bootstrap column pushing/pulling doesn't work when wrapping columns, so using hidden-[size], for this one label only */}
           {/* Use flexbox to center the label vertically, <center> tag to center it horizontally in the column */}
-          <Col xs={2} sm={1} md={6} className="hidden-sm hidden-xs filtersLabelSize" style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
-            <label className="control-label" style={{fontSize:"16px", marginLeft:"10px", color:"#656565"}}>Size:</label>
-          </Col>
+
           {/* On desktop this will be under a label and sharing space with the Sq Ft dropdowns, so half space there and majority space on mobile where it will be in its own row with just a label */}
-          <Col xs={10} sm={11} md={6}>
+          <Col xs={12} sm={12} md={6}>
             <InputGroup style={{padding:"10px", height:"40px", width:"100%"}}>
               <DropdownButton
                 onSelect={((newValue) => this.props.onUpdatePriceMin(newValue))}
                 componentClass={InputGroup.Button}
                 id="input-dropdown-addon"
-                title={this.props.filterPriceMin == null ? "Minimum" : ("$" + Actions.numberToString(this.props.filterPriceMin) + "/mo")}
+                title={this.props.filterPriceMin == null ? "Min Rent" : ("$" + Actions.numberToString(this.props.filterPriceMin) + "/mo")}
                 style={{height:"40px", width:"100%", color:"#49A3DC", borderColor:"#CCCCCC"}}>
                 {this.props.filterPriceMin != null ? <MenuItem key={index} eventKey={null}>None</MenuItem> : false}
                 {minPriceOptions.map((price, index) => {
@@ -945,7 +941,7 @@ class Filters extends React.Component {
                 onSelect={((newValue) => this.props.onUpdatePriceMax(newValue))}
                 componentClass={InputGroup.Button}
                 id="input-dropdown-addon"
-                title={this.props.filterPriceMax == null ? "Maximum" : ("$" + Actions.numberToString(this.props.filterPriceMax) + "/mo")}
+                title={this.props.filterPriceMax == null ? "Max Rent" : ("$" + Actions.numberToString(this.props.filterPriceMax) + "/mo")}
                 style={{height:"40px", width:"100%", color:"#49A3DC", borderColor:"#CCCCCC"}}>
                 {this.props.filterPriceMax != null ? <MenuItem key={index} eventKey={null}>None</MenuItem> : false}
                 {maxPriceOptions.map((price, index) => {
@@ -957,11 +953,9 @@ class Filters extends React.Component {
           {/* On mobile we want this label on the left side, on desktop we want it on top of the corresponding dropdowns */}
           {/* Hide this on desktop screens because of the wrap issue, this way we reuse the whole layout except this label */}
           {/* Use flexbox to center the label vertically, <center> tag to center it horizontally in the column */}
-          <Col xs={2} sm={1} md={6} className="hidden-md hidden-lg filtersLabelSize" style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
-            <label className="control-label" style={{fontSize:"16px", marginLeft:"10px"}}>Size:</label>
-          </Col>
+
           {/* On desktop this will be under a label and sharing space with teh Sq Ft dropdowns, so half space there and majority space on mobile where it will be in its own row with just a label */}
-          <Col xs={10} sm={11} md={6}>
+          <Col xs={12} sm={12} md={6}>
             <InputGroup style={{padding:"10px", height:"40px", width:"100%"}}>
               <DropdownButton
                 onSelect={((newValue) => this.props.onUpdateSqFtMin(newValue))}
@@ -991,10 +985,10 @@ class Filters extends React.Component {
         {/* Sort filters are always side by side with the label, only adjust sizing for white-space on tablets */}
         <Row style={{marginLeft:"0px", marginRight:"0px", marginTop:"5px", marginBottom:"20px", width:"100%"}}>
           {/* Use flexbox to center the label vertically, <center> tag to center it horizontally in the column */}
-          <Col xs={2} sm={1} md={2} style={{display:"flex", flexDirection:"column", justifyContent:"center", height:"40px"}}>
-            <label className="control-label" style={{fontSize:"16px", color:"#656565"}}>Sort:</label>
+          <Col xs={12} sm={12} md={12} style={{display:"flex", flexDirection:"column", justifyContent:"center", height:"40px"}}>
+            <label className="control-label" style={{fontSize:"16px", textAlign:"center", color:"#656565"}}>Sort By</label>
           </Col>
-          <Col xs={10} sm={11} md={10} style={{paddingRight:"10px"}}>
+          <Col xs={12} sm={12} md={12} style={{paddingRight:"10px"}}>
             <ButtonGroup style={{width:"100%", height:"40px"}}>
               <Button onClick={() => this.props.onUpdateSort(Actions.SORT_RS)} className="filterSortButtonWidthRS" style={this.props.selectedSort == Actions.SORT_RS ? selectedSortButtonStyle : sortButtonStyle}>Retail Score</Button>
               <Button onClick={() => this.props.onUpdateSort(Actions.SORT_PRICE)} className="filterSortButtonWidthPrice" style={this.props.selectedSort == Actions.SORT_PRICE ? selectedSortButtonStyle : sortButtonStyle}>Price</Button>

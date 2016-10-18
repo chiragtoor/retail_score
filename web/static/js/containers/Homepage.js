@@ -394,7 +394,7 @@ class SearchBar extends React.Component {
             placeholder="What business are you opening?"
             onChange={(e) => this.setState({value: e.target.value})}
             value={this.state.value}/>
-          <InputGroup.Button><Button style={{height:"50px", borderColor:"#CCCCCC"}} onClick={() => this.props.onClick(this.state.value)}>&nbsp;&nbsp;<i className="fa fa-search" style={{color:"#49A3DC"}}/>&nbsp;&nbsp;</Button></InputGroup.Button>
+          <InputGroup.Button><Button style={{height:"50px", borderColor:"#49A3DC", backgroundColor:"#49A3DC"}} onClick={() => this.props.onClick(this.state.value)}>&nbsp;&nbsp;<i className="fa fa-search" style={{color:"#FFFFFF"}}/>&nbsp;&nbsp;</Button></InputGroup.Button>
         </InputGroup>
       </div>
     );
