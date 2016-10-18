@@ -454,7 +454,7 @@ MOVE TO SRP.CSS AFTER
     padding-bottom: 10px;
     /* had issues doing this height correctly without the important flag, not sure why */
     /* height accounts for all the items above listingsDiv on desktop (app bar, filters, etc.) */
-    height: -webkit-calc(100% - 300px) !important;
+    height: -webkit-calc(100% - 180px) !important;
   }
   .propertyTileContainer {
     /* larger height supported on desktop */
@@ -468,14 +468,13 @@ MOVE TO SRP.CSS AFTER
     padding-bottom: 10px;
     margin-left: 10px;
     margin-right: 10px;
-    margin-bottom: 10px;
     /* without this positioning of tiles gets incorrect, on mobile containers are of fixed height and use flex to position in center vertically */
     /* need to make it so container does not use flex, so set display:block; */
     display: block;
   }
   /* desktop propertyTiles support larger height */
   .propertyTile {
-    height: 300px;
+    height: 220px;
     width: 100%;
     margin-left: 0;
   }
@@ -1259,6 +1258,11 @@ html, body {
   height: 100%;
   width: 100%;
   float: left;
+}
+
+.typeahead_css {
+  background-color: blue;
+  border: none; 
 }
 /*END OF HOMEPAGE*/
 

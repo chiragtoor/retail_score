@@ -62,6 +62,7 @@ export class Test extends React.Component {
     this.propertyClick = this.propertyClick.bind(this);
     this.setBusinessInformation = this.setBusinessInformation.bind(this);
     this.sortByRetailScore = this.sortByRetailScore.bind(this);
+    this.goHome = this.goHome.bind(this);
 
     // get the properties for the current city
     const city = this.props.params.city.replace("-", " ");
@@ -444,6 +445,10 @@ export class Test extends React.Component {
     }
   }
 
+  goHome() {
+    this.props.history.push('/');
+  }
+
   render() {
     // use slice() on the props because we want to clone and then apply sorting and filtering,
     //  if you do just var = props.properties then below when var properties is sorted and filtered
@@ -547,8 +552,13 @@ export class Test extends React.Component {
         <ReactCSSTransitionGroup transitionName="fadeIn" transitionEnterTimeout={500} transitionLeaveTimeout={500}>
         {this.state.mounted ?
           <div>
-            <div className="hidden-sm hidden-xs" style={{color:"#FFFFFF", backgroundColor:"#49A3DC", paddingTop:"5px", paddingBottom:"5px", boxShadow:"0px 1px 3px 1px #7f8c8d", position:"relative", zIndex:"10"}}>
-              <img style={{height:"45px", marginLeft:"15px"}} src="https://s3-us-west-2.amazonaws.com/homepage-image-assets/retail_score_logo_white.png" />
+            <div className="hidden-sm hidden-xs" style={{color:"#FFFFFF", backgroundColor:"#FFFFFF", borderBottom:"solid thin #CCCCCC", position:"relative", zIndex:"10"}}>
+              <div style={{width:"100%", backgroundColor:"#FFFFFF", display:"flex", flexDirection:"row", justifyContent:"left"}}>
+                <img onClick={this.goHome} style={{height:"45px", marginLeft:"15px", marginTop:"5px"}} src="https://s3-us-west-2.amazonaws.com/homepage-image-assets/retail_score_logo_blue.png" />
+                <div style={{height:"100%", width:"-webkit-calc(100% - 200px)"}}>
+                  <DesktopSearchBar value={this.state.currentCity} onSearch={this.searchCity} />
+                </div>
+              </div>
             </div>
             <div className="hidden-md hidden-lg" style={{backgroundColor:"#49A3DC"}}>
               <SearchBar noPadding={true} value={this.state.currentCity} onSearch={this.searchCity} />
@@ -588,7 +598,7 @@ export class Test extends React.Component {
             {this.state.mounted ?
               <div style={{width:"100%", height:"100%", maxHeight:"100%"}}>
                 {/* Search Bar is above at top on mobile, so hide in that case */}
-                <div className="hidden-sm hidden-xs">
+                <div className="hidden-sm hidden-xs hidden-md hidden-lg">
                   <SearchBar value={this.state.currentCity} onSearch={this.searchCity} />
                 </div>
                 {/* Filters are opened by a button on mobile, so hide in that case */}
@@ -728,7 +738,17 @@ class PropertyTile extends React.Component {
   }
 
   getImageUrl(property) {
-    return `https://maps.googleapis.com/maps/api/streetview?size=200x150&location=${property.image_lat},${property.image_lng}&heading=${property.image_heading}&key=AIzaSyASv9f24GcF78YIKRsX3uCRkj58JzZ8NaA`;
+    var imgWidth = 350
+
+    if (window.innerWidth < 700) {
+      imgWidth = 250
+    }
+
+    if (window.innerWidth < 550) {
+      imgWidth = 200
+    }
+
+    return `https://maps.googleapis.com/maps/api/streetview?size=350x150&location=${property.image_lat},${property.image_lng}&heading=${property.image_heading}&key=AIzaSyASv9f24GcF78YIKRsX3uCRkj58JzZ8NaA`;
   }
 
   contactClick(e) {
@@ -828,7 +848,7 @@ class PropertyTile extends React.Component {
             <div className="panel-body bt" style={{padding:"2px", borderColor: panelBordersColor}}>
               {/* RS and explanation, explanation uses CSS text cutoof technique on smaller devices with varying # of lines depending on screen width */}
               <span style={{color:"#CFB53B", fontSize:"16px"}}>{retailScore}</span>
-              <p>
+              <p className="hidden-sm hidden-xs hidden-md hidden-lg">
                 {retailScoreText}
               </p>
             </div>
@@ -850,7 +870,7 @@ class PropertyTile extends React.Component {
           </div>
           {/* Button that in 1-Tap contact mode sends a message to Broker, otherwise takes user to PDP -> this avoid more media query logic to take out the button and resize entire tile */}
           {/* Button is not visible on phones <= 320px wide (iPhone 4 and 5) because it will not fit, CSS media query catches this */}
-          <div className="panel-body bt srpContactButton" style={{borderColor: panelBordersColor, margin:"0px", padding:"0px"}}>
+          <div className="hidden-md hidden-lg hidden-xs hidden-sm panel-body bt srpContactButton" style={{borderColor: panelBordersColor, margin:"0px", padding:"0px"}}>
             <Button onClick={this.contactClick} style={{border:"none", borderRadius:"none", backgroundColor:panelBordersColor, color:"#FFFFFF", fontWeight:"400px", width:"100%", paddingBottom:"5px"}}>{this.props.oneTapContact ? "1 Tap Contact" : "Contact"}</Button>
           </div>
         </div>
@@ -884,6 +904,20 @@ class SearchBar extends React.Component {
     );
   }
 }
+
+class DesktopSearchBar extends React.Component {
+
+  render() {
+    return(
+    <div style={{height:"100%", width:"100%", marginLeft:"5px", border:"none"}}>
+      <GooglePlacesTypeahead
+        onChange={(e) => e[0] != null ? this.props.onSearch(e[0].display) : false}
+        placeHolder={"Enter a City"} 
+        value={this.props.value} />
+    </div>);
+  }
+}
+
 class Filters extends React.Component {
   // price and sq foot options are stored in the Util.js file
   render() {
@@ -915,10 +949,27 @@ class Filters extends React.Component {
       <div style={{backgroundColor:"#FFFFFF", width:"100%", height:"100%", padding: this.props.padded ? "10px" : "0", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
         {/* Filters label */}
         {/* Use bootstrap responsive columns to arrange filters section differently for mobile and desktop */}
+        
         <Row>
           {/* On mobile we want this label on the left side, on desktop we want it on top of the corresponding dropdowns */}
           {/* Use flexbox to center the label vertically, <center> tag to center it horizontally in the column */}
 
+          <Col xs={12} sm={12} md={12}>
+            <Row style={{marginLeft:"0px", marginRight:"0px", marginTop:"5px", marginBottom:"20px", width:"100%"}}>
+              {/* Use flexbox to center the label vertically, <center> tag to center it horizontally in the column */}
+              <Col xs={12} sm={12} md={12} style={{display:"flex", flexDirection:"column", justifyContent:"center", height:"40px"}}>
+                <label className="control-label" style={{fontSize:"16px", textAlign:"center", color:"#656565"}}>Sort By</label>
+              </Col>
+              <Col xs={12} sm={12} md={12} style={{paddingRight:"10px"}}>
+                <ButtonGroup style={{width:"100%", height:"40px"}}>
+                  <Button onClick={() => this.props.onUpdateSort(Actions.SORT_RS)} className="filterSortButtonWidthRS" style={this.props.selectedSort == Actions.SORT_RS ? selectedSortButtonStyle : sortButtonStyle}>Retail Score</Button>
+                  <Button onClick={() => this.props.onUpdateSort(Actions.SORT_PRICE)} className="filterSortButtonWidthPrice" style={this.props.selectedSort == Actions.SORT_PRICE ? selectedSortButtonStyle : sortButtonStyle}>Price</Button>
+                  <Button onClick={() => this.props.onUpdateSort(Actions.SORT_SQ_FT)} className="filterSortButtonWidthSq" style={this.props.selectedSort == Actions.SORT_SQ_FT ? selectedSortButtonStyle : sortButtonStyle}>Sq. Feet</Button>
+                </ButtonGroup>
+              </Col>
+              {/* If on Mobile add a Save/Done button since cannot see the changes reflected easily, user needs way to dismiss the slide out */}
+            </Row>
+          </Col>
 
           {/* Bootstrap column pushing/pulling doesn't work when wrapping columns, so using hidden-[size], for this one label only */}
           {/* Use flexbox to center the label vertically, <center> tag to center it horizontally in the column */}
@@ -981,22 +1032,10 @@ class Filters extends React.Component {
               </DropdownButton>
             </InputGroup>
           </Col>
+
+
         </Row>
         {/* Sort filters are always side by side with the label, only adjust sizing for white-space on tablets */}
-        <Row style={{marginLeft:"0px", marginRight:"0px", marginTop:"5px", marginBottom:"20px", width:"100%"}}>
-          {/* Use flexbox to center the label vertically, <center> tag to center it horizontally in the column */}
-          <Col xs={12} sm={12} md={12} style={{display:"flex", flexDirection:"column", justifyContent:"center", height:"40px"}}>
-            <label className="control-label" style={{fontSize:"16px", textAlign:"center", color:"#656565"}}>Sort By</label>
-          </Col>
-          <Col xs={12} sm={12} md={12} style={{paddingRight:"10px"}}>
-            <ButtonGroup style={{width:"100%", height:"40px"}}>
-              <Button onClick={() => this.props.onUpdateSort(Actions.SORT_RS)} className="filterSortButtonWidthRS" style={this.props.selectedSort == Actions.SORT_RS ? selectedSortButtonStyle : sortButtonStyle}>Retail Score</Button>
-              <Button onClick={() => this.props.onUpdateSort(Actions.SORT_PRICE)} className="filterSortButtonWidthPrice" style={this.props.selectedSort == Actions.SORT_PRICE ? selectedSortButtonStyle : sortButtonStyle}>Price</Button>
-              <Button onClick={() => this.props.onUpdateSort(Actions.SORT_SQ_FT)} className="filterSortButtonWidthSq" style={this.props.selectedSort == Actions.SORT_SQ_FT ? selectedSortButtonStyle : sortButtonStyle}>Sq. Feet</Button>
-            </ButtonGroup>
-          </Col>
-          {/* If on Mobile add a Save/Done button since cannot see the changes reflected easily, user needs way to dismiss the slide out */}
-        </Row>
         <div className="hidden-md hidden-lg" style={{width:"100%", flexGrow:"1", display:"flex", justifyContent:"center", alignItems:"center"}}>
           <Button onClick={this.props.onSave} style={{height:"40px", width:"50%", color:"#49A3DC", borderColor:"#CCCCCC"}}>Save</Button>
         </div>
@@ -1298,6 +1337,7 @@ class GooglePlacesTypeahead extends React.Component {
     });
     return (
       <TypeAhead
+        className="typeahead_css"
         labelKey="display"
         selected={this.props.value ? [{display: this.props.value}] : []}
         emptyLabel="Select one option"
