@@ -64,7 +64,7 @@ export class Homepage extends React.Component {
 	  this.context.mixpanel.track('Location Tile Click', {'city':cityString});
 
     cityString.replace(' ','-');
-    this.props.history.push('/retail-space-for-lease/' + cityString);
+    this.props.history.push('/retail-space-for-lease/' + cityString + ',%20CA');
   }
 
   searchButtonClicked(business) {
