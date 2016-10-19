@@ -4,10 +4,13 @@ import { connect } from "react-redux";
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import { Row, Col, InputGroup, FormGroup, ButtonGroup, Button, FormControl, DropdownButton, MenuItem, Pagination } from 'react-bootstrap';
 
+
 import * as Actions from '../actions';
 import * as Util from '../Util';
 
 import GoogleMap from '../components/GoogleMap';
+import HomepageSearchBar from '../components/HomepageSearchBar';
+import SRPSearchBar from '../components/SRPSearchBar'; 
 
 // size of pages when splitting property tiles for pagination
 const PAGE_SIZE = 20;
@@ -554,9 +557,9 @@ export class Test extends React.Component {
           <div>
             <div className="hidden-sm hidden-xs" style={{color:"#FFFFFF", backgroundColor:"#FFFFFF", borderBottom:"solid thin #CCCCCC", position:"relative", zIndex:"10"}}>
               <div style={{width:"100%", backgroundColor:"#FFFFFF", display:"flex", flexDirection:"row", justifyContent:"left"}}>
-                <img onClick={this.goHome} style={{height:"45px", marginLeft:"15px", marginTop:"5px"}} src="https://s3-us-west-2.amazonaws.com/homepage-image-assets/retail_score_logo_blue.png" />
-                <div style={{height:"100%", width:"-webkit-calc(100% - 200px)"}}>
-                  <DesktopSearchBar value={this.state.currentCity} onSearch={this.searchCity} />
+                <img onClick={this.goHome} style={{height:"50px", paddingTop:"2px", paddingBottom:"2px", marginLeft:"15px", marginRight:"5px"}} src="https://s3-us-west-2.amazonaws.com/homepage-image-assets/retail_score_logo_blue.png" />
+                <div style={{height:"100%", width:"-webkit-calc(100% - 65px)", color:"#B9B9B9"}}>
+                  <SRPSearchBar searchClick={this.searchCity} city={this.state.currentCity}  />
                 </div>
               </div>
             </div>
@@ -618,7 +621,7 @@ export class Test extends React.Component {
                 </div>
                 {/* Button for CP edit, # of Listings, and if on mobile button for Filters */}
                 <div style={{borderTop:"solid thin #CCCCCC", borderBottom:"solid thin #CCCCCC", height:"40px", display:"flex", alignItems:"center", boxShadow:"0px 1px 3px -1px #7f8c8d", position:"relative", zIndex:"10"}}>
-                  <Button onClick={() => this.showSecondaryContent(SECONDARY_CP)} style={{marginLeft:"15px", border:"none",fontSize:"16px", fontWeight:"100"}}><i className="fa fa-user" style={{color:"#49A3DC"}}/></Button>
+                  <Button className="hidden-md hidden-lg" onClick={() => this.showSecondaryContent(SECONDARY_CP)} style={{marginLeft:"15px", border:"none",fontSize:"16px", fontWeight:"100"}}><i className="fa fa-user" style={{color:"#49A3DC"}}/></Button>
                   <label className="control-label" style={{fontSize:"16px", flexGrow:"1", textAlign:"center", color:"#656565", padding:"0"}}>{properties.length} Properties</label>
                   {/* Add a empty div for desktop the same size as Filter button, this way the # properties text stays centered with flexbox */}
                   <div className="hidden-sm hidden-xs" style={{width:"36px", height:"10px", marginRight: "15px"}} />
@@ -713,7 +716,7 @@ class PropertyTile extends React.Component {
     // properties will either have null for both, only a min, or a min and max value
     //  will never have a max and no min
     if(property.rental_rate_min == null) {
-      return "Unknown Rate"
+      return "Contact Broker"
     } else if(property.rental_rate_min != null && property.rental_rate_max == null) {
       return "$" + Actions.numberToString(property.rental_rate_min) + "/mo"; 
     } else if(property.rental_rate_min == property.rental_rate_max){
@@ -727,7 +730,7 @@ class PropertyTile extends React.Component {
     // properties will either have null for both, only a min, or a min and max value
     //  will never have a max and no min
     if(property.min_sq_feet == null) {
-      return "Unknown Size"
+      return "Contact Broker"
     } else if(property.min_sq_feet != null && property.max_sq_feet == null) {
       return Actions.numberToString(property.rental_rate_min) + " Sq.Ft."; 
     } else if(property.min_sq_feet == property.max_sq_feet) {
@@ -765,6 +768,8 @@ class PropertyTile extends React.Component {
     var retailScore = false;
     var retailScoreValue = 0;
     var retailScoreText = "";
+
+    var address = this.props.property.street_address;
 
     switch(this.props.scoreType) {
       case Actions.SCORE_FASHION:
@@ -848,6 +853,9 @@ class PropertyTile extends React.Component {
             <div className="panel-body bt" style={{padding:"2px", borderColor: panelBordersColor}}>
               {/* RS and explanation, explanation uses CSS text cutoof technique on smaller devices with varying # of lines depending on screen width */}
               <span style={{color:"#CFB53B", fontSize:"16px"}}>{retailScore}</span>
+              <p>
+                {address}
+              </p>
               <p className="hidden-sm hidden-xs hidden-md hidden-lg">
                 {retailScoreText}
               </p>
@@ -954,7 +962,7 @@ class Filters extends React.Component {
           {/* On mobile we want this label on the left side, on desktop we want it on top of the corresponding dropdowns */}
           {/* Use flexbox to center the label vertically, <center> tag to center it horizontally in the column */}
 
-          <Col xs={12} sm={12} md={12}>
+          <Col className="hidden-xs hidden-sm hidden-md hidden-lg" xs={12} sm={12} md={12}>
             <Row style={{marginLeft:"0px", marginRight:"0px", marginTop:"5px", marginBottom:"20px", width:"100%"}}>
               {/* Use flexbox to center the label vertically, <center> tag to center it horizontally in the column */}
               <Col xs={12} sm={12} md={12} style={{display:"flex", flexDirection:"column", justifyContent:"center", height:"40px"}}>
@@ -976,7 +984,7 @@ class Filters extends React.Component {
 
           {/* On desktop this will be under a label and sharing space with the Sq Ft dropdowns, so half space there and majority space on mobile where it will be in its own row with just a label */}
           <Col xs={12} sm={12} md={6}>
-            <InputGroup style={{padding:"10px", height:"40px", width:"100%"}}>
+            <InputGroup style={{padding:"10px", height:"40px", width:"100%", marginTop:"10px"}}>
               <DropdownButton
                 onSelect={((newValue) => this.props.onUpdatePriceMin(newValue))}
                 componentClass={InputGroup.Button}
@@ -1007,7 +1015,7 @@ class Filters extends React.Component {
 
           {/* On desktop this will be under a label and sharing space with teh Sq Ft dropdowns, so half space there and majority space on mobile where it will be in its own row with just a label */}
           <Col xs={12} sm={12} md={6}>
-            <InputGroup style={{padding:"10px", height:"40px", width:"100%"}}>
+            <InputGroup style={{padding:"10px", height:"40px", width:"100%", marginTop:"10px"}}>
               <DropdownButton
                 onSelect={((newValue) => this.props.onUpdateSqFtMin(newValue))}
                 componentClass={InputGroup.Button}

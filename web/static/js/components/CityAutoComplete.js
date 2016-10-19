@@ -12,7 +12,7 @@ const styles = {
     cursor: 'default'
   },
   highlightedItem: {
-    color: 'white',
+    color: 'black',
     background: 'hsl(203, 68%, 57%)',
     padding: '10px 6px',
     cursor: 'default'
@@ -27,7 +27,9 @@ const styles = {
     width:"100%",
     height:"100%",
     fontSize:"14px",
-    borderWidth:"2px",
+    borderTop:"none",
+    borderBottom:"none",
+    borderLeft:"solid thin #CCCCCC",
     float:"right",
     paddingLeft:"10px"
   },

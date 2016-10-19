@@ -139,11 +139,11 @@ export class Homepage extends React.Component {
 	                  <div className="col-lg-3 col-md-3 col-sm-1 col-xs-1"></div>
 	                  <div className="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 col-sm-12 col-xs-12" style={{marginTop:"15"}}>
 
-	                        <div className="hidden-xs" style={{width:"100%", float:"left", position:"relative"}}>
+	                        <div className="hidden-xs hidden-lg hidden-md hidden-sm" style={{width:"100%", float:"left", position:"relative"}}>
 	                        	<SearchBar onClick={this.searchButtonClicked}/>
 	                        </div>
 
-	                      <div style={{width:"100%"}} className="hidden-lg hidden-md hidden-sm">
+	                      <div style={{width:"100%"}}>
 	                        	<HomepageSearchBar searchClick={this.searchClick}  />
 	                      </div>
 
