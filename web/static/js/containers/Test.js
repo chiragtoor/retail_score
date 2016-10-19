@@ -716,7 +716,7 @@ class PropertyTile extends React.Component {
     // properties will either have null for both, only a min, or a min and max value
     //  will never have a max and no min
     if(property.rental_rate_min == null) {
-      return "Contact Broker"
+      return "Rent Unavailable"
     } else if(property.rental_rate_min != null && property.rental_rate_max == null) {
       return "$" + Actions.numberToString(property.rental_rate_min) + "/mo"; 
     } else if(property.rental_rate_min == property.rental_rate_max){
@@ -730,7 +730,7 @@ class PropertyTile extends React.Component {
     // properties will either have null for both, only a min, or a min and max value
     //  will never have a max and no min
     if(property.min_sq_feet == null) {
-      return "Contact Broker"
+      return "Sqft Unavailable"
     } else if(property.min_sq_feet != null && property.max_sq_feet == null) {
       return Actions.numberToString(property.rental_rate_min) + " Sq.Ft."; 
     } else if(property.min_sq_feet == property.max_sq_feet) {
