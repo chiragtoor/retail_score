@@ -15,6 +15,7 @@ import DesktopDemographicPanel from '../components/DesktopDemographicPanel';
 import PeoplePanel from '../components/PeoplePanel';
 import CompetitionPanel from '../components/CompetitionPanel';
 import DesktopCompetitionPanel from '../components/DesktopCompetitionPanel';
+import DesktopRetailCompetitionPanel from '../components/DesktopRetailCompetitionPanel';
 import BusinessDetails from '../components/BusinessDetails';
 
 
@@ -238,11 +239,11 @@ class PDP extends React.Component {
                     <Col className="col-lg-offset-1 " lg={ 10 } >
                       { property ? <DesktopPropertySummary scoreType={this.props.scoreType} submitContact={this.submitContact} contactFailed={this.desktopContactFailed} property={property} mixpanel={this.context.mixpanel} /> : null}
                     </Col>
+                    <Col className="col-lg-offset-1" lg={10}>
+                      {property.lat ? <DesktopRetailCompetitionPanel property={property} mixpanel={this.context.mixpanel} tag={"largeRetailCompetition"}/> : null }
+                    </Col>                  
                     <Col className="col-lg-offset-1 " lg={ 10 } >
                       { demographics ? <DesktopDemographicPanel data={demographics} mixpanel={this.context.mixpanel} tag={"largeDemographics"} /> : null}
-                    </Col>
-                    <Col className="col-lg-offset-1 " lg={ 10 } >
-                      {property.lat ? <DesktopCompetitionPanel property={property} mixpanel={this.context.mixpanel} tag={"largeCompetition"} /> : null}
                     </Col>
                   </Row>
                 </div>

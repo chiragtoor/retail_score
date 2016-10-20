@@ -132,17 +132,23 @@ export default class DesktopRetailScorePanel extends Component {
     }
 
     var stars;
+    var text;
 
     if(retailScoreValue == 5) {
       stars = <span><em className="fa fa-star"></em><em className="fa fa-star"></em><em className="fa fa-star"></em><em className="fa fa-star"></em><em className="fa fa-star"></em></span>;
+      text = "This is a great area for starting a retail business!"
     } else if (retailScoreValue == 4) {
       stars = <span><em className="fa fa-star"></em><em className="fa fa-star"></em><em className="fa fa-star"></em><em className="fa fa-star"></em></span>;
+      text = "This is a very good area for starting a retail business!"
     } else if (retailScoreValue == 3) {
       stars = <span><em className="fa fa-star"></em><em className="fa fa-star"></em><em className="fa fa-star"></em></span>;
+      text = "This is a good area for starting a retail business!"
     } else if (retailScoreValue == 2) {
       stars = <span><em className="fa fa-star"></em><em className="fa fa-star"></em></span>;
+      text = "You may have to work to drive traffic to this location"
     } else if (retailScoreValue == 1) {
       stars = <span><em className="fa fa-star"></em></span>;
+      text = "You will have to work to drive traffic to this location"
     }
 
     return (
@@ -152,17 +158,19 @@ export default class DesktopRetailScorePanel extends Component {
               <div className="panel b m0">
                  <div className="panel-heading">
                     <div className="media mt0">
-                       <div className="media-body media-middle">
+                      <center>
+                        <h2 style={{color:"#E6C200"}} className="media-heading m0 text-bold">{stars}</h2>
+                        <h3>{text}</h3>
+                      </center>
+                       <div className="media-body media-middle hidden">
                         <center>
-                          <h2 style={{color:"#E6C200"}} className="media-heading m0 text-bold">{stars}</h2>
-                        </center>
-                        <center>
-                          <h6 className="media-heading m0 text-bold">Within walking distance of this property:</h6>
+                          <h5 className="media-heading m0 text-bold">{text}</h5>
+                          <h5>Within walking distance there are:</h5>
                         </center>
                        </div>
                     </div>
                  </div>
-                 <div className="panel-body">
+                 <div className="panel-body hidden">
                     <div className="row">
                       <div className="col-lg-12">
                         <div style={{height:"40px", backgroundColor:"#ecf0f1", fontSize:"16px"}}>

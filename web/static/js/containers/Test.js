@@ -581,7 +581,6 @@ export class Test extends React.Component {
               srpContnetHeight uses media queries to make the height of the two 50% on mobile and full 100% otherwise
           */}
           <div className="col-xs-12 col-md-6 col-md-push-6 srpMapSection">
-            <ReactCSSTransitionGroup transitionName="fadeInLeft" transitionEnterTimeout={500} transitionLeaveTimeout={500}>
             {this.state.mounted ?
               <div style={{width:"100%", height:"100%"}}>
                 <GoogleMap 
@@ -593,7 +592,6 @@ export class Test extends React.Component {
             :
               false
             }
-            </ReactCSSTransitionGroup>
           </div>
           {/* Listings section */}
           <div className="col-xs-12 col-md-6 col-md-pull-6 srpListingsSection" style={{boxShadow:"2px 0px 3px -1px #7f8c8d", position:"relative", zIndex:"5"}}>
