@@ -177,17 +177,14 @@ export default class RetailScorePanel extends Component {
                     <center>
                       <div style={{marginTop:"0px", fontSize:"16px"}} className="media-heading m0 text-bold">Within walking distance:</div>
                     </center>
-                    <div onClick={e => this.showDetails(firstArr, firstLabel)} style={{height:"40px", backgroundColor:"#ecf0f1", fontSize:"16px"}}>
+                    <div style={{height:"40px", backgroundColor:"#ecf0f1", fontSize:"16px"}}>
                      <span style={{float:"left", marginLeft:"5px"}}>{firstArr.length} {firstLabel}</span>
-                     <Button style={{float:"right", height:"100%", backgroundColor:"#ecf0f1", border:"none"}}><em className="fa fa-chevron-right"></em></Button>
                     </div>
-                    <div onClick={e => this.showDetails(secondArr, secondLabel)} style={{height:"40px", fontSize:"16px"}}>
+                    <div style={{height:"40px", fontSize:"16px"}}>
                      <span style={{float:"left", marginLeft:"5px"}}>{secondArr.length} {secondLabel}</span>
-                     <Button style={{float:"right", height:"100%", border:"none"}}><em className="fa fa-chevron-right"></em></Button>
                     </div>
-                    <div onClick={e => this.showDetails(thirdArr, thirdLabel)} style={{height:"40px", fontSize:"16px", backgroundColor:"#ecf0f1"}}>
+                    <div style={{height:"40px", fontSize:"16px", backgroundColor:"#ecf0f1"}}>
                      <span style={{float:"left", marginLeft:"5px"}}>{thirdArr.length} {thirdLabel}</span>
-                     <Button style={{float:"right", height:"100%", backgroundColor:"#ecf0f1", border:"none"}}><em className="fa fa-chevron-right"></em></Button>
                     </div>
                  </div>
               </div>
