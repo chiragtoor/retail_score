@@ -254,10 +254,10 @@ class PDP extends React.Component {
                       { property ? <DesktopPropertySummary submitContact={this.submitContact} contactFailed={this.desktopContactFailed} property={property} mixpanel={this.context.mixpanel} /> : null}
                     </Col>
                     <Col md={ 12 } >
-                      { demographics != null ? <DesktopDemographicPanel data={demographics} mixpanel={this.context.mixpanel} tag={"mediumDemographics"}/> : null}
+                      {property.lat ? <DesktopRetailCompetitionPanel property={property} mixpanel={this.context.mixpanel} tag={"mediumRetailCompetition"}/> : null }
                     </Col>
                     <Col md={ 12 } >
-                      {property.lat ? <DesktopCompetitionPanel property={property} mixpanel={this.context.mixpanel} tag={"mediumCompetition"}/> : null}
+                      { demographics != null ? <DesktopDemographicPanel data={demographics} mixpanel={this.context.mixpanel} tag={"mediumDemographics"}/> : null}
                     </Col>
 
                     <Modal className="hidden-sm hidden-xs" show={this.state.desktopContactSuccess}>

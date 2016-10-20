@@ -189,7 +189,7 @@ export default class DesktopRetailCompetitionPanel extends Component {
       <div style={{height:"500px", width:"100%", marginTop:"20px"}}>
         <h3 style={{width:"100%", height:"50px", textAlign:"center", color:"#FC5C63"}}>{retailScoreText}</h3>
         <div className="row-masonry" style={{height:"400px", border:"solid thin #FFFFFF"}}>
-          <Col lg={2} style={{margin:"0px", padding:"0px", height:"100%"}}>
+          <Col lg={2} md={2} style={{margin:"0px", padding:"0px", height:"100%"}}>
             <ButtonGroup style={{width:"100%", height:"100%"}}>
               <Button onClick={this.foodTap} style={{backgroundColor:(foodBackground), color:(foodText), fontSize:"20px", width:"100%", height:"11.1%", textAlign:"left"}}><em className="fa fa-cutlery"></em> Restaurants</Button>
               <Button onClick={this.coffeeTap} style={{backgroundColor:(coffeeBackground), color:(coffeeText),fontSize:"20px", width:"100%", height:"11.1%", textAlign:"left"}}><em className="fa fa-coffee"></em> Coffee</Button>
@@ -202,7 +202,7 @@ export default class DesktopRetailCompetitionPanel extends Component {
               <Button onClick={this.shoeTap} style={{backgroundColor:(shoeBackground), color:(shoeText),width:"100%",fontSize:"20px", height:"11.1%", textAlign:"left"}}><em className="fa fa-shopping-bag"></em> Shoe Store</Button>
             </ButtonGroup>
           </Col>
-          <Col lg={10} style={{margin:"0px", padding:"0px", height:"100%"}}>
+          <Col lg={10} md={10} style={{margin:"0px", padding:"0px", height:"100%"}}>
             <div style={{height:"400px", width:"100%", margin:"0px", padding:"0px"}}>
                 <RetailCompetitionGoogleMap
                   id={this.props.tag}
