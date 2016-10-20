@@ -195,8 +195,8 @@ class PDP extends React.Component {
             <ContentWrapper unwrap>
                 {/*MOBILE AND TABLET HTML*/}
 
-                <Col md={12} lg={12} className="hidden-sm hidden-xs" style={{height:"50px", color:"#FFFFFF", width:"100%", backgroundColor:"#49A3DC"}}>
-                  <img style={{height:"46px", paddingTop:"2px"}} src="https://s3-us-west-2.amazonaws.com/homepage-image-assets/retail_score_logo_white.png" />
+                <Col md={12} lg={12} className="hidden-sm hidden-xs" style={{height:"50px", borderBottom:"solid thin #CCCCCC", width:"100%", backgroundColor:"#FFFFFF"}}>
+                  <img style={{height:"46px", paddingTop:"2px"}} src="https://s3-us-west-2.amazonaws.com/homepage-image-assets/retail_score_logo_blue.png" />
                 </Col>
 
                 <div className="hidden-md hidden-lg" style={{width:"100%", backgroundColor:"#FFFFFF"}}>

@@ -563,7 +563,7 @@ export class Test extends React.Component {
                 </div>
               </div>
             </div>
-            <div className="hidden-md hidden-lg" style={{backgroundColor:"#49A3DC"}}>
+            <div className="hidden-md hidden-lg" style={{backgroundColor:"#FFFFFF"}}>
               <SearchBar noPadding={true} value={this.state.currentCity} onSearch={this.searchCity} />
             </div>
           </div>
