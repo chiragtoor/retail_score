@@ -68,22 +68,26 @@ export default class DesktopPropertySummary extends Component {
             {this.props.property.agents ? <DesktopContactPanel contactFailed={this.props.contactFailed} submitContact={this.props.submitContact} agent={this.props.property.agents[0]} propertyId={this.props.property.id} mixpanel={this.props.mixpanel} /> : null}
           </Col>
           <Col lg={9} md={9} style={{backgroundColor:"#FFFFFF",textAlign:"center", padding:"0", margin:"0"}}>
-            <img style={{width:"100%", height:"400px"}} src={this.getImageUrl(this.props.property.image_lat, this.props.property.image_lng, this.props.property.image_heading)} />
+            {this.props.property.image_lat ?
+              <img style={{width:"100%", height:"400px"}} src={this.getImageUrl(this.props.property.image_lat, this.props.property.image_lng, this.props.property.image_heading)} /> 
+              :
+              <div style={{width:"100%", height:"400px"}}/>
+            }
             
             <Row style={{ padding:"0", margin:"0"}}>
               
               <Col xs={6} className="text-center" style={{backgroundColor:"#FFFFFF"}}>
                 <div style={{fontSize:"24px", textAlign:"left", marginTop:"5px", marginLeft:"5px"}}>
-                  {this.props.property ? this.props.property.street_address : null}
-                  <span style={{fontSize:"18px"}} >{ this.props.property? ", " + this.props.property.city + ", " + this.props.property.state : null}</span> 
+                  {this.props.property ? this.props.property.street_address : "Loading..."}
+                  <span style={{fontSize:"18px"}} >{ this.props.property.city ? ", " + this.props.property.city + ", " + this.props.property.state : "Loading..."}</span> 
                   <h4 className="m0">{styledSqft}</h4>
                   <h4 className="m0">{styledPrice}</h4>
                 </div>
-                { showSpaces ? <DesktopSpacesPanels spaces={this.props.property.spaces} /> : null}
+                {showSpaces && this.props.property.spaces ? <DesktopSpacesPanels spaces={this.props.property.spaces} /> : false}
               </Col>
 
               <Col xs={6} className="text-center" style={{backgroundColor:"#FFFFFF", marginTop:"5px"}}>
-               {this.props.property ? <DesktopRetailScorePanel scoreType={this.props.scoreType} showModal={this.showRetailScoreExpalanation} property={this.props.property} /> : null}
+               {this.props.property ? <DesktopRetailScorePanel scoreType={this.props.scoreType} showModal={this.showRetailScoreExpalanation} property={this.props.property} /> : "Loading..."}
               </Col>
 
             </Row>
