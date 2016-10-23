@@ -18,9 +18,9 @@ defmodule RetailScore.PageController do
       props: props,
     })
 
-    render(conn, "index.html", html: result["html"], props: initial_state)
+    # render(conn, "index.html", html: result["html"], props: initial_state)
 
-    # render(conn, "index.html", html: [], props: %{})
+    render(conn, "index.html", html: [], props: %{})
   end
 
   def pdp_page(conn, %{"propertyId" => id}) do
@@ -93,18 +93,20 @@ defmodule RetailScore.PageController do
         rental_rate_max: PropertySpace.get_rental_rate_max(property.spaces)}
      end)
 
-    initial_state = %{"properties" => properties, "server_side" => true}
+    # initial_state = %{"properties" => properties, "server_side" => true}
 
-    props = %{
-      "location" => conn.request_path,
-      "initial_state" => initial_state
-    }
+    # props = %{
+    #   "location" => conn.request_path,
+    #   "initial_state" => initial_state
+    # }
 
-    result = RetailScore.ReactIO.json_call!(%{
-      component: "./priv/static/js/server.js",
-      props: props,
-    })
+    # result = RetailScore.ReactIO.json_call!(%{
+    #   component: "./priv/static/js/server.js",
+    #   props: props,
+    # })
 
-    render(conn, "index.html", html: result["html"], props: initial_state)
+    # render(conn, "index.html", html: result["html"], props: initial_state)
+
+    render(conn, "index.html", html: [], props: %{})
   end
 end

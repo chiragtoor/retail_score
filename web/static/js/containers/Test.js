@@ -9,19 +9,11 @@ import * as Actions from '../actions';
 import * as Util from '../Util';
 
 import GoogleMap from '../components/GoogleMap';
-import HomepageSearchBar from '../components/HomepageSearchBar';
-import SRPSearchBar from '../components/SRPSearchBar'; 
 
 // size of pages when splitting property tiles for pagination
 const PAGE_SIZE = 20;
 // flag for showing filters in secondary content
 const SECONDARY_FILTERS = 0;
-// flag for showing contact in secondary content
-const SECONDARY_CONTACT = 1;
-// flag for showing CP form in secondary content
-const SECONDARY_CP = 3;
-// flag for the inital user info form
-const SECONDARY_USER = 4;
 
 // constants for storage of contact info for one tap contact
 const CONTACT_NAME = 'name';
@@ -60,10 +52,8 @@ export class Test extends React.Component {
     this.updateMainProperty = this.updateMainProperty.bind(this);
     this.isMainProperty = this.isMainProperty.bind(this);
     this.searchCity = this.searchCity.bind(this);
-    this.contactProperty = this.contactProperty.bind(this);
     this.submitContact = this.submitContact.bind(this);
     this.propertyClick = this.propertyClick.bind(this);
-    this.setBusinessInformation = this.setBusinessInformation.bind(this);
     this.sortByRetailScore = this.sortByRetailScore.bind(this);
     this.goHome = this.goHome.bind(this);
 
@@ -157,48 +147,12 @@ export class Test extends React.Component {
           secondaryContent: SECONDARY_FILTERS
         });
         break;
-      case SECONDARY_CONTACT:
-        this.context.mixpanel.track('srp_contact_button_clicked');
-        this.setState({
-          mobileShowSecondaryContent: true,
-          secondaryContent: SECONDARY_CONTACT
-        });
-        break;
-      case SECONDARY_CP:
-        this.context.mixpanel.track('srp_cp_button_clicked');
-        this.setState({
-          mobileShowSecondaryContent: true,
-          secondaryContent: SECONDARY_CP
-        })
-        break;
-      case SECONDARY_USER:
-        this.context.mixpanel.track('srp_user_profile_shown');
-        this.setState({
-          mobileShowSecondaryContent: true,
-          secondaryContent: SECONDARY_USER
-        })
-        break;
     }
   }
 
   propertyClick(property) {
     this.context.mixpanel.track('property_clicked', {'property_id': property.id});
     this.props.history.push('/properties/' + property.id);
-  }
-
-  contactProperty(property) {
-    // store the propertyId for the one we want to contact
-    this.setState({propertyToContact: property.id, currentContactAgentName: property.agents[0].name, currentContactAgentCompany: property.agents[0].company_name});
-    // check cookies to see if contact form has been submitted, if so do one tap contact functionality
-    if(this.state.oneTapContact) {
-      this.context.mixpanel.track('srp_one_tap_contact');
-      // get info from cookies and submit contact, no need for modal
-      this.submitContact(localStorage.getItem(CONTACT_NAME), localStorage.getItem(CONTACT_EMAIL), "", property.id);
-    } else {
-      // bring up the contact form since we have no contact info stored
-      this.showSecondaryContent(SECONDARY_CONTACT);
-    }
-    
   }
 
   submitContact(name, email, message, propertyId) {
@@ -420,34 +374,6 @@ export class Test extends React.Component {
     return this.state.selectedPropertyIndex == (index + (this.state.currentPage - 1) * PAGE_SIZE);
   }
 
-  updateScoreType(scoreType) {
-    this.setState({mobileShowSecondaryContent: false});
-    switch(scoreType) {
-      case Actions.SCORE_FASHION:
-        this.context.mixpanel.track('srp_score_type_clicked', {'type': 'Fashion'});
-        this.props.scoreByFashion();
-        break;
-      case Actions.SCORE_WELLNESS:
-        this.context.mixpanel.track('srp_score_type_clicked', {'type': 'Wellness'});
-        this.props.scoreByWellness();
-        break;
-      case Actions.SCORE_RESTAURANT:
-        this.context.mixpanel.track('srp_score_type_clicked', {'type': 'Food'});
-        this.props.scoreByRestaurant();
-        break;
-    }
-  }
-
-  setBusinessInformation(business) {
-    if(business.match(/\b(restaurant|mexican|indian|chinese|food|drinks|juice|bar|coffee|cafe)/i)) {
-      this.props.scoreByRestaurant();
-    } else if(business.match(/\b(salon|spa|nails|hair|barber|massage|beauty|skin)/i)) {
-      this.props.scoreByWellness();
-    } else {
-      this.props.scoreByFashion();
-    }
-  }
-
   goHome() {
     this.props.history.push('/');
   }
@@ -528,49 +454,20 @@ export class Test extends React.Component {
                                 padded={true} />
                             </div>;
         break;
-      case SECONDARY_CONTACT:
-        secondaryContent = <div onClick={(e) => e.stopPropagation()} style={{width:"95%", height:"60%"}}>
-                              <ContactForm 
-                                agentName={this.state.currentContactAgentName}
-                                agentCompany={this.state.currentContactAgentCompany}
-                                onSubmit={(name, email, message) => this.submitContact(name, email, message, this.state.propertyToContact)}/>
-                            </div>;
-        break;
-      case SECONDARY_CP:
-        secondaryContent = <div onClick={(e) => e.stopPropagation()} style={{width:"95%", height:"55%"}}>
-                              <CPForm 
-                                onFashionClick={() => this.updateScoreType(Actions.SCORE_FASHION)}
-                                onWellnessClick={() => this.updateScoreType(Actions.SCORE_WELLNESS)}
-                                onRestaurantClick={() => this.updateScoreType(Actions.SCORE_RESTAURANT)}
-                                onSave={() => this.setState({mobileShowSecondaryContent: false})}
-                                selectedStyle={this.props.scoreType} />
-                            </div>;
-        break;
     }
 
     return(
       <div style={{width:"100%", height:"100%", margin:"0px", padding:"0px"}}>
         {/* Use flex-box so that we can automatically resize the content below the desktop only header bar when it dissapears on mobile */}
         {/* header bar that has the logo and app color, only visible on desktop and larger sizes */}
-        <ReactCSSTransitionGroup transitionName="fadeIn" transitionEnterTimeout={500} transitionLeaveTimeout={500}>
-        {this.state.mounted ?
-          <div>
-            <div className="hidden-sm hidden-xs" style={{color:"#FFFFFF", backgroundColor:"#FFFFFF", borderBottom:"solid thin #CCCCCC", position:"relative", zIndex:"10"}}>
-              <div style={{width:"100%", backgroundColor:"#FFFFFF", display:"flex", flexDirection:"row", justifyContent:"left"}}>
-                <img onClick={this.goHome} style={{height:"50px", paddingTop:"2px", paddingBottom:"2px", marginLeft:"15px", marginRight:"5px"}} src="https://s3-us-west-2.amazonaws.com/homepage-image-assets/retail_score_logo_blue.png" />
-                <div style={{height:"100%", width:"-webkit-calc(100% - 65px)", color:"#B9B9B9"}}>
-                  <SRPSearchBar searchClick={this.searchCity} city={this.state.currentCity}  />
-                </div>
-              </div>
-            </div>
-            <div className="hidden-md hidden-lg" style={{backgroundColor:"#FFFFFF"}}>
-              <SearchBar noPadding={true} value={this.state.currentCity} onSearch={this.searchCity} />
-            </div>
+        <div>
+          <div className="hidden-sm hidden-xs" style={{color:"#FFFFFF", backgroundColor:"#49A3DC", paddingTop:"5px", paddingBottom:"5px", boxShadow:"0px 1px 3px 1px #7f8c8d", position:"relative", zIndex:"10"}}>
+            <img style={{height:"45px", marginLeft:"15px"}} src="https://s3-us-west-2.amazonaws.com/homepage-image-assets/retail_score_logo_white.png" />
           </div>
-        :
-          false
-        }
-        </ReactCSSTransitionGroup>
+          <div className="hidden-md hidden-lg" style={{backgroundColor:"#49A3DC"}}>
+            <SearchBar noPadding={true} value={this.state.currentCity} onSearch={this.searchCity} />
+          </div>
+        </div>
         {/* main content of the SRP page, this has flex = 1 so that it takes up all remaining space when the bar is there and 100% of screen when bar is not there */}
         <Row className="contentSRP" style={{flex:"1"}}>
           {/* 
@@ -581,25 +478,19 @@ export class Test extends React.Component {
               srpContnetHeight uses media queries to make the height of the two 50% on mobile and full 100% otherwise
           */}
           <div className="col-xs-12 col-md-6 col-md-push-6 srpMapSection">
-            {this.state.mounted ?
-              <div style={{width:"100%", height:"100%"}}>
-                <GoogleMap 
-                  id={"desktop"} 
-                  properties={properties}
-                  pinClick={this.propertyClick}
-                  currentPropertyMarker={mainProperty} />
-              </div>
-            :
-              false
-            }
+            <div style={{width:"100%", height:"100%"}}>
+              <GoogleMap 
+                id={"desktop"} 
+                properties={properties}
+                pinClick={this.propertyClick}
+                currentPropertyMarker={mainProperty} />
+            </div>
           </div>
           {/* Listings section */}
           <div className="col-xs-12 col-md-6 col-md-pull-6 srpListingsSection" style={{boxShadow:"2px 0px 3px -1px #7f8c8d", position:"relative", zIndex:"5"}}>
-            <ReactCSSTransitionGroup transitionName="fadeInUp" transitionEnterTimeout={500} transitionLeaveTimeout={500}>
-            {this.state.mounted ?
-              <div style={{width:"100%", height:"100%", maxHeight:"100%"}}>
+            <div style={{width:"100%", height:"100%", maxHeight:"100%"}}>
                 {/* Search Bar is above at top on mobile, so hide in that case */}
-                <div className="hidden-sm hidden-xs hidden-md hidden-lg">
+                <div className="hidden-sm hidden-xs">
                   <SearchBar value={this.state.currentCity} onSearch={this.searchCity} />
                 </div>
                 {/* Filters are opened by a button on mobile, so hide in that case */}
@@ -619,7 +510,6 @@ export class Test extends React.Component {
                 </div>
                 {/* Button for CP edit, # of Listings, and if on mobile button for Filters */}
                 <div style={{borderTop:"solid thin #CCCCCC", borderBottom:"solid thin #CCCCCC", height:"40px", display:"flex", alignItems:"center", boxShadow:"0px 1px 3px -1px #7f8c8d", position:"relative", zIndex:"10"}}>
-                  <Button className="hidden-md hidden-lg" onClick={() => this.showSecondaryContent(SECONDARY_CP)} style={{marginLeft:"15px", border:"none",fontSize:"16px", fontWeight:"100"}}><i className="fa fa-user" style={{color:"#49A3DC"}}/></Button>
                   <label className="control-label" style={{fontSize:"16px", flexGrow:"1", textAlign:"center", color:"#656565", padding:"0"}}>{properties.length} Properties</label>
                   {/* Add a empty div for desktop the same size as Filter button, this way the # properties text stays centered with flexbox */}
                   <div className="hidden-sm hidden-xs" style={{width:"36px", height:"10px", marginRight: "15px"}} />
@@ -635,7 +525,7 @@ export class Test extends React.Component {
                 {/* Bootstrap hidden is using display:none, so performance of doing this should not be a issue. But even so with pagination we should be avoiding any perfomance problem with many tiles */}
                 <div ref="desktopListingsDiv" className="listingsDiv hidden-sm hidden-xs">
                   {propertyTiles.map((property, index) => {
-                    return <PropertyTile scoreType={this.props.scoreType} onClick={this.propertyClick} oneTapContact={this.state.oneTapContact} onContact={this.contactProperty} property={property} mobile={false} key={index} index={index} onHover={(index) => this.updateMainProperty(index)} selected={this.isMainProperty(index)} style={{flexShrink: "1"}}/>
+                    return <PropertyTile scoreType={this.props.scoreType} onClick={this.propertyClick} oneTapContact={this.state.oneTapContact} property={property} mobile={false} key={index} index={index} onHover={(index) => this.updateMainProperty(index)} selected={this.isMainProperty(index)} style={{flexShrink: "1"}}/>
                   })}
                   {numPages >= 2 ?
                     <div style={{width:"100%", height:"80px", display:"flex", justifyContent:"center", alignItems:"center"}}>
@@ -660,7 +550,7 @@ export class Test extends React.Component {
                   }
                   {propertyTiles.map((property, index) => {
                     {/* Add the ref of this to the mobile tiles ref storage, this is used for calculating which element is in the main scroll position */}
-                    return <PropertyTile scoreType={this.props.scoreType} onClick={this.propertyClick} oneTapContact={this.state.oneTapContact} onContact={this.contactProperty} property={property} mobile={true} key={index} index={index} selected={this.isMainProperty(index)} style={{flexShrink: "1"}} ref={c => this._propertyTiles.set(index, c)}/>
+                    return <PropertyTile scoreType={this.props.scoreType} onClick={this.propertyClick} oneTapContact={this.state.oneTapContact} property={property} mobile={true} key={index} index={index} selected={this.isMainProperty(index)} style={{flexShrink: "1"}} ref={c => this._propertyTiles.set(index, c)}/>
                   })}
                   {(numPages >= 2 && this.state.currentPage != numPages) ?
                     <div style={{display:"flex", flexDirection:"column", justifyContent:"center"}}>
@@ -671,10 +561,6 @@ export class Test extends React.Component {
                   }
                 </div>
               </div>
-            :
-              false
-            }
-            </ReactCSSTransitionGroup>
           </div>
         </Row>
         {/* For content that animates in from buttons, we want to dim out the SRP and display content on top so it is easy to read */}
@@ -707,8 +593,6 @@ class PropertyTile extends React.Component {
   constructor(props) {
     super(props);
 
-    this.contactClick = this.contactClick.bind(this);
-
   }
   formatPrice(property) {
     // properties will either have null for both, only a min, or a min and max value
@@ -739,22 +623,7 @@ class PropertyTile extends React.Component {
   }
 
   getImageUrl(property) {
-    var imgWidth = 350
-
-    if (window.innerWidth < 700) {
-      imgWidth = 250
-    }
-
-    if (window.innerWidth < 550) {
-      imgWidth = 200
-    }
-
     return `https://maps.googleapis.com/maps/api/streetview?size=350x150&location=${property.image_lat},${property.image_lng}&heading=${property.image_heading}&key=AIzaSyASv9f24GcF78YIKRsX3uCRkj58JzZ8NaA`;
-  }
-
-  contactClick(e) {
-    e.stopPropagation();
-    this.props.onContact(this.props.property);
   }
 
   render() {
@@ -762,77 +631,7 @@ class PropertyTile extends React.Component {
     const selectedPanelContainerStyle = {display:"flex", flexDirection:"column", borderColor:"#49A3DC", borderWidth:"2px", boxShadow:"0 0 2px #49A3DC", marginBottom:"0px"};
     const panelBordersColor = this.props.selected ? "#49A3DC" : "#CCCCCC";
 
-    {/* Below code gets the correct RS color and stars depending on score value */}
-    var retailScore = false;
-    var retailScoreValue = 0;
-    var retailScoreText = "";
-
     var address = this.props.property.street_address;
-
-    switch(this.props.scoreType) {
-      case Actions.SCORE_FASHION:
-        var count = this.props.property.fashion_count;
-
-        if(count <= 1) {
-          retailScoreValue = 1;
-        } else if (count <= 3) {
-          retailScoreValue = 2;
-        } else if (count <= 7) {
-          retailScoreValue = 3;
-        } else if (count <= 22) {
-          retailScoreValue = 4;
-        } else {
-          retailScoreValue = 5;
-        }
-         
-        retailScoreText = count + " other fashion businesses in this area"
-        break;
-      case Actions.SCORE_WELLNESS:
-        var count = this.props.property.wellness_count;
-        if(count <= 3) {
-          retailScoreValue = 1;
-        } else if (count <= 6) {
-          retailScoreValue = 2;
-        } else if (count <= 10) {
-          retailScoreValue = 3;
-        } else if (count <= 18) {
-          retailScoreValue = 4;
-        } else {
-          retailScoreValue = 5;
-        }
-
-        retailScoreText = count + " other wellness businesses in this area"
-        break;
-      case Actions.SCORE_RESTAURANT:
-        var count = this.props.property.food_count;
-
-        if(count <= 6) {
-          retailScoreValue = 1;
-        } else if (count <= 11) {
-          retailScoreValue = 2;
-        } else if (count <= 16) {
-          retailScoreValue = 3;
-        } else if (count <= 26) {
-          retailScoreValue = 4;
-        } else {
-          retailScoreValue = 5;
-        }
-
-        retailScoreText = count + " other restaurant businesses in this area"
-        break;
-    }
-
-    if(retailScoreValue == 5) {
-      retailScore = <span><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/></span>;
-    } else if(retailScoreValue == 4) {
-      retailScore = <span><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/></span>;
-    } else if(retailScoreValue == 3) {
-      retailScore = <span><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/></span>;
-    } else if(retailScoreValue == 2) {
-      retailScore = <span><i className="fa fa-star"/><i className="fa fa-star"/></span>;
-    } else {
-      retailScore = <span><i className="fa fa-star"/></span>;
-    }
 
     return(
       <div className="propertyTileContainer" onMouseOver={() => this.props.mobile ? false : this.props.onHover(this.props.index)} onClick={() => this.props.onClick(this.props.property)}>
@@ -850,12 +649,8 @@ class PropertyTile extends React.Component {
           {true ?
             <div className="panel-body bt" style={{padding:"2px", borderColor: panelBordersColor}}>
               {/* RS and explanation, explanation uses CSS text cutoof technique on smaller devices with varying # of lines depending on screen width */}
-              <span style={{color:"#CFB53B", fontSize:"16px"}}>{retailScore}</span>
               <p>
                 {address}
-              </p>
-              <p className="hidden-sm hidden-xs hidden-md hidden-lg">
-                {retailScoreText}
               </p>
             </div>
           :
@@ -874,11 +669,6 @@ class PropertyTile extends React.Component {
               </Col>
             </Row>
           </div>
-          {/* Button that in 1-Tap contact mode sends a message to Broker, otherwise takes user to PDP -> this avoid more media query logic to take out the button and resize entire tile */}
-          {/* Button is not visible on phones <= 320px wide (iPhone 4 and 5) because it will not fit, CSS media query catches this */}
-          <div className="hidden-md hidden-lg hidden-xs hidden-sm panel-body bt srpContactButton" style={{borderColor: panelBordersColor, margin:"0px", padding:"0px"}}>
-            <Button onClick={this.contactClick} style={{border:"none", borderRadius:"none", backgroundColor:panelBordersColor, color:"#FFFFFF", fontWeight:"400px", width:"100%", paddingBottom:"5px"}}>{this.props.oneTapContact ? "1 Tap Contact" : "Contact"}</Button>
-          </div>
         </div>
       </div>
     );
@@ -889,17 +679,17 @@ class SearchBar extends React.Component {
     {/* styles to use when on mobile to give sharp edges on top bar, round edges stick out */}
     const mobileMenuButtonStyle = {height:"50px", borderColor:"#CCCCCC", borderRadius: "0", borderTop:"none", borderLeft:"none", borderBottom:"none"};
     const mobileSearchBarStyle = {height:"50px", borderColor:"#CCCCCC", borderRadius: "0", borderTop:"none", borderLeft:"none", borderBottom:"none"};
-    const mobileSearchButtonStyle = {height:"50px", borderColor:"#49A3DC", backgroundColor:"#49A3DC", borderRadius: "0", borderTop:"none", borderRight:"none", borderBottom:"none"};
+    const mobileSearchButtonStyle = {height:"50px", borderColor:"#CCCCCC", borderRadius: "0", borderTop:"none", borderRight:"none", borderBottom:"none"};
     return(
       <div>
-        <InputGroup className="searchBar" style={{borderRadius: "0", padding: this.props.noPadding ? "0px" : "20px", height:"50px", width:"100%", backgroundColor:"#FFFFFF"}}>
+        <InputGroup className="searchBar" style={{borderRadius: "0", padding: this.props.noPadding ? "0px" : "20px 10px 0px 10px", height:"50px", width:"100%", backgroundColor:"#FFFFFF"}}>
           {/* <InputGroup.Button className="hidden-md hidden-lg"><Button style={this.props.noPadding ? mobileMenuButtonStyle : {height:"50px", borderColor:"#CCCCCC"}}>&nbsp;&nbsp;<i className="fa fa-list" style={{color:"#49A3DC"}}/>&nbsp;&nbsp;</Button></InputGroup.Button> */}
           {/* <FormControl type="text" style={this.props.noPadding ? mobileSearchBarStyle : {height:"50px"}}/> */}
           <GooglePlacesTypeahead
             onChange={(e) => e[0] != null ? this.props.onSearch(e[0].display) : false}
             placeHolder={"Enter a City"} 
             value={this.props.value} />
-          <InputGroup.Button><Button style={this.props.noPadding ? mobileSearchButtonStyle : {height:"50px", borderColor:"#49A3DC", backgroundColor:"#49A3DC"}}>&nbsp;&nbsp;<i className="fa fa-search" style={{color:"#FFFFFF"}}/>&nbsp;&nbsp;</Button></InputGroup.Button>
+          <InputGroup.Button><Button style={this.props.noPadding ? mobileSearchButtonStyle : {height:"50px", borderColor:"#CCCCCC", backgroundColor:"#FFFFFF"}}>&nbsp;&nbsp;<i className="fa fa-search" style={{color:"#49A3DC"}}/>&nbsp;&nbsp;</Button></InputGroup.Button>
         </InputGroup>
         {this.props.noPadding ?
           <div style={{width:"100%", height:"1px", borderTop:"solid thin #CCCCCC"}} />
@@ -908,19 +698,6 @@ class SearchBar extends React.Component {
         }
       </div>
     );
-  }
-}
-
-class DesktopSearchBar extends React.Component {
-
-  render() {
-    return(
-    <div style={{height:"100%", width:"100%", marginLeft:"5px", border:"none"}}>
-      <GooglePlacesTypeahead
-        onChange={(e) => e[0] != null ? this.props.onSearch(e[0].display) : false}
-        placeHolder={"Enter a City"} 
-        value={this.props.value} />
-    </div>);
   }
 }
 
@@ -1038,210 +815,10 @@ class Filters extends React.Component {
               </DropdownButton>
             </InputGroup>
           </Col>
-
-
         </Row>
         {/* Sort filters are always side by side with the label, only adjust sizing for white-space on tablets */}
         <div className="hidden-md hidden-lg" style={{width:"100%", flexGrow:"1", display:"flex", justifyContent:"center", alignItems:"center"}}>
           <Button onClick={this.props.onSave} style={{height:"40px", width:"50%", color:"#49A3DC", borderColor:"#CCCCCC"}}>Save</Button>
-        </div>
-      </div>
-    );
-  }
-}
-class CPForm extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.state = {
-    };
-  }
-
-  render() {
-
-    const selectedStyle = {height:"40px", color:"#49A3DC", borderColor:"#49A3DC", marginBottom:"1px"};
-    const unselectedStyle = {height:"40px"};
-
-    return (
-      <div style={{backgroundColor:"#FFFFFF", width:"100%", height:"100%", padding:"10px", display:"flex", flexDirection:"column", justifyContent:"space-around", alignItems:"center"}}>
-        <center><label className="control-label" style={{fontSize:"18px", marginBottom:"0px", color:"#656565"}}>What type of business are you starting?</label></center>
-        <div style={{width:"60%"}}>
-          <ButtonGroup vertical style={{width:"100%"}}>
-            <Button onClick={() => this.props.onFashionClick()} style={this.props.selectedStyle == Actions.SCORE_FASHION ? selectedStyle : unselectedStyle}>Fashion</Button>
-            <Button onClick={() => this.props.onWellnessClick()} style={this.props.selectedStyle == Actions.SCORE_WELLNESS ? selectedStyle : unselectedStyle}>Wellness</Button>
-            <Button onClick={() => this.props.onRestaurantClick()} style={this.props.selectedStyle == Actions.SCORE_RESTAURANT ? selectedStyle : unselectedStyle}>Restaurant</Button>
-          </ButtonGroup>
-        </div>
-        <div style={{width:"100%"}}>
-          <center><Button onClick={this.props.onSave} style={{height:"40px", width:"50%", color:"#49A3DC", borderColor:"#CCCCCC"}}>Save</Button></center>
-        </div>
-      </div>
-    );
-  }
-}
-class UserForm extends React.Component {
-  constructor(props) {
-    super(props);
-
-    this.updateBusiness = this.updateBusiness.bind(this);
-    this.updateEmail = this.updateEmail.bind(this);
-    this.onSubmit = this.onSubmit.bind(this);
-
-    this.state = {
-      business: "",
-      email: "",
-      businessError: false,
-      emailError: false
-    };
-  }
-
-  updateBusiness(e) {
-    this.setState({business: e.target.value, businessError: false});
-  }
-
-  updateEmail(e) {
-    this.setState({email: e.target.value, emailError: false});
-  }
-
-  onSubmit() {
-    if(this.state.business == "") {
-      this.setState({businessError: true});
-      return;
-    } else {
-      this.setState({businessError: false});
-    }
-
-    if(this.state.email == "") {
-      this.setState({emailError: true});
-      return;
-    } else {
-      this.setState({emailError: false});
-    }
-
-    this.props.onSubmit(this.state.business, this.state.email);
-  }
-
-  render() {
-    return (
-      <div style={{backgroundColor:"#FFFFFF", width:"100%", height:"100%", padding:"10px", display:"flex", flexDirection:"column", justifyContent:"space-around", alignItems:"center"}}>
-        <div style={{width:"100%"}}>
-          <center>
-            <label className="control-label" style={{fontSize:"18px", marginBottom:"0px", color:"#656565"}}>What type of business are you starting?</label>
-            <FormGroup controlId="formControlsText" validationState={this.state.businessError ? 'error' : null} style={{width:"80%"}}>
-              <FormControl 
-                type="text" 
-                placeholder="Salon, Coffee Shop, etc."
-                onChange={(e) => this.updateBusiness(e)}/>
-            </FormGroup>
-          </center>
-        </div>
-        <div style={{width:"100%"}}>
-          <center>
-            <label className="control-label" style={{fontSize:"18px", marginBottom:"0px", color:"#656565"}}>What is your email address?</label>
-            <FormGroup controlId="formControlsText" validationState={this.state.emailError ? 'error' : null} style={{width:"80%"}}>
-              <FormControl 
-                type="text" 
-                onChange={(e) => this.updateEmail(e)}/>
-            </FormGroup>
-          </center>
-        </div>
-        <div style={{width:"100%"}}>
-          <center><Button onClick={() => this.onSubmit()} style={{height:"40px", width:"50%", color:"#49A3DC", borderColor:"#CCCCCC"}}>Save</Button></center>
-        </div>
-      </div>
-    );
-  }
-}
-
-class ContactForm extends React.Component {
-
-  constructor(props) {
-    super(props);
-
-    this.submitContact = this.submitContact.bind(this);
-
-    this.state = {
-      name: "",
-      email: localStorage.getItem(CONTACT_EMAIL) || "",
-      message: "",
-      nameError: false,
-      emailError: false
-    };
-  }
-
-  updateName(e) {
-    this.setState({name: e.target.value, nameError: false});
-  }
-
-  updateEmail(e) {
-    this.setState({email: e.target.value, emailError: false});
-  }
-
-  updateMessage(e) {
-    this.setState({message: e.target.value});
-  }
-
-  submitContact() {
-    if(this.state.name == "") {
-      this.setState({nameError: true});
-      return;
-    } else {
-      this.setState({nameError: false});
-    }
-
-    if(this.state.email == "") {
-      this.setState({emailError: true});
-      return;
-    } else {
-      this.setState({emailError: false});
-    }
-
-    this.props.onSubmit(this.state.name, this.state.email, this.state.message);
-  }
-
-  render() {
-    return (
-      <div style={{backgroundColor:"#FFFFFF", width:"100%", height:"100%", padding:"10px", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
-        <div className="panel-heading">
-          <div className="media mt0">
-            <div className="media-left">
-              <img src="https://lh3.googleusercontent.com/-znTaTDKLflU/AAAAAAAAAAI/AAAAAAAAAAA/i5PcDmAQPF8/photo.jpg" alt="Image" className="media-object img-circle thumb48" />
-            </div>
-            <div className="media-body media-middle">
-              <center>
-                <h5 className="media-heading m0 text-bold">{this.props.agentName}</h5>
-                <small className="text-muted">{this.props.agentCompany}</small>
-              </center>
-            </div>
-          </div>
-        </div>
-        <div className="panel-body" style={{width:"90%"}}>
-          <FormGroup controlId="formControlsText" validationState={this.state.nameError ? 'error' : null}>
-            <FormControl 
-              type="text" 
-              placeholder="Your Name"
-              value={this.state.name}
-              onChange={(e) => this.updateName(e)}/>
-          </FormGroup>
-          <FormGroup controlId="formControlsText" validationState={this.state.emailError ? 'error' : null}>
-            <FormControl 
-              type="text" 
-              placeholder="Your E-mail"
-              value={this.state.email}
-              onChange={(e) => this.updateEmail(e)}/>
-          </FormGroup>
-          <FormGroup controlId="formControlsTextarea">
-            <FormControl 
-              componentClass="textarea" 
-              placeholder="Optional Message ..."
-              value={this.state.message}
-              onChange={(e) => this.updateMessage(e)}/>
-          </FormGroup>
-          <center>
-            <Button onClick={this.submitContact} bsClass="btn btn-labeled btn-success mr">
-              <span className="btn-label"><i className="fa fa-comment"></i></span>Submit
-            </Button>
-          </center>
         </div>
       </div>
     );
@@ -1354,7 +931,6 @@ class GooglePlacesTypeahead extends React.Component {
     );
   }
 }
-
 
 Test.contextTypes = {
   mixpanel: React.PropTypes.object.isRequired
