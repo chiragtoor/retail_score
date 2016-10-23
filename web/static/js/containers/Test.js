@@ -682,7 +682,7 @@ class SearchBar extends React.Component {
             onChange={(e) => e[0] != null ? this.props.onSearch(e[0].display) : false}
             placeHolder={"Enter a City"} 
             value={this.props.value} />
-          <InputGroup.Button><Button style={this.props.noPadding ? mobileSearchButtonStyle : {height:"50px", borderColor:"#CCCCCC", backgroundColor:"#FFFFFF"}}>&nbsp;&nbsp;<i className="fa fa-search" style={{color:"#49A3DC"}}/>&nbsp;&nbsp;</Button></InputGroup.Button>
+          <InputGroup.Button><Button style={this.props.noPadding ? mobileSearchButtonStyle : {height:"50px", borderColor:"#49A3DC", backgroundColor:"#49A3DC"}}>&nbsp;&nbsp;<i className="fa fa-search" style={{color:"#FFFFFF"}}/>&nbsp;&nbsp;</Button></InputGroup.Button>
         </InputGroup>
         {this.props.noPadding ?
           <div style={{width:"100%", height:"1px", borderTop:"solid thin #CCCCCC"}} />
