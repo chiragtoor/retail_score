@@ -645,19 +645,12 @@ class PropertyTile extends React.Component {
               <img src={this.getImageUrl(this.props.property)} />
             </div>
           </div>
-          {/* If CP given we have a RS for each property, otherwise we add a button  */}
-          {true ?
-            <div className="panel-body bt" style={{padding:"2px", borderColor: panelBordersColor}}>
-              {/* RS and explanation, explanation uses CSS text cutoof technique on smaller devices with varying # of lines depending on screen width */}
-              <p>
-                {address}
-              </p>
-            </div>
-          :
-            <div className="panel-body bt tileRetailScore" style={{padding:"0px", borderColor: panelBordersColor}}>
-              <Button className="tileRetailScore" style={{border:"none", color:"#49A3DC", width:"100%"}}><i className="fa fa-user" style={{color:"#49A3DC"}}/>&nbsp;&nbsp;Add Customer Profile for Score</Button>
-            </div>
-          }
+          <div className="panel-body bt" style={{padding:"2px", borderColor: panelBordersColor}}>
+            {/* RS and explanation, explanation uses CSS text cutoof technique on smaller devices with varying # of lines depending on screen width */}
+            <p style={{marginTop:"5px", marginBottom:"5px"}}>
+              {address}
+            </p>
+          </div>
           {/* Price and SQ FT info shown side by side, margins are different to account for padding of other elements */}
           <div className="panel-body bt" style={{padding:"2px", borderColor: panelBordersColor, marginTop:"2px"}}>
             <Row>

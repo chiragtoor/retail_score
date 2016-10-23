@@ -462,11 +462,11 @@ MOVE TO SRP.CSS AFTER
     padding-bottom: 10px;
     /* had issues doing this height correctly without the important flag, not sure why */
     /* height accounts for all the items above listingsDiv on desktop (app bar, filters, etc.) */
-    height: -webkit-calc(100% - 50px) !important;
+    height: -webkit-calc(100% - 190px) !important;
   }
   .propertyTileContainer {
     /* larger height supported on desktop */
-    height: 220px;
+    height: 235px;
     /* tiles on desktop are placed side-by-side in pairs, so width is 50% - amount needed for margins around tiles side edges */
     /* subtracted amount is not exactly margins of both sides, little extra to make sure there is room for 2 tiles in a row */
     width: -webkit-calc(50% - 25px);
@@ -482,7 +482,7 @@ MOVE TO SRP.CSS AFTER
   }
   /* desktop propertyTiles support larger height */
   .propertyTile {
-    height: 250px;
+    height: 227px;
     width: 100%;
     margin-left: 0;
   }
