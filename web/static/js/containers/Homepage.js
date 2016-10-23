@@ -17,7 +17,11 @@ const imageMap = {
   "San Diego": "https://s3-us-west-2.amazonaws.com/homepage-image-assets/san-diego-skyline.jpg",
   "San Jose" : "https://s3-us-west-2.amazonaws.com/homepage-image-assets/san-jose.jpg",
   "Sacramento" : "https://s3-us-west-2.amazonaws.com/homepage-image-assets/sacramento.jpg",
-  "Fresno" : "https://s3-us-west-2.amazonaws.com/homepage-image-assets/sacramento.jpg"
+  "Fresno" : "https://s3-us-west-2.amazonaws.com/homepage-image-assets/sacramento.jpg",
+  "Santa Monica" : "https://media.xogrp.com/images/c3d8109c-69fb-4589-a30b-ada0a395ec8e",
+  "Long Beach" : "http://i1.trekearth.com/photos/8086/imgp1131.jpg",
+  "Hollywood" : "http://redlinegrouptravel.com/wp-content/uploads/2013/08/Hollywood-Highland.jpg",
+  "Beverly Hills": "http://rodeodrive-shop.com/images/SlideShow_Front/Rodeo-Drive-0799.jpg"
 }
 
 const BUSINESS_TYPE = 'business_type';
@@ -113,43 +117,53 @@ export class Homepage extends React.Component {
 	                	<img className="homepageTopBarImage" src={"https://s3-us-west-2.amazonaws.com/homepage-image-assets/retail_score_logo_white.png"} />
 	                </center>
 	              </div>
-	              <div className="hidden-sm hidden-xs" style={{color:"#FFFFFF", fontWeight:"300px", float:"right"}}>
-	                <Button onClick={this.scrollToAboutUs} style={{backgroundColor:"rgba(46, 204, 113,0.0)", marginRight:"10px", border:"solid thin white", color:"#FFFFFF"}} >About Us</Button>
-	              </div>
 	            </div>
 	            {/* Below div contains two empty divs at start and end, needed for proper flex spacing */}
 	            <div className="homepageFormContainer">
+
 	              <div className="descriptionDivLg hidden-sm hidden-xs">
 	                <center>
-	                  <span className="homepageMottoText hidden-sm hidden-xs">Find a property in an area where your <b>customers</b> are already <b>shopping!</b></span>
-	                </center>
-	                <center>
-	                  <span className="productDescriptionSpan hidden-xs hidden-sm" style={{color:"#FFFFFF", marginTop:"10px", fontSize:"18px", fontWeight:"550"}} >{"With foot traffic, competition and demographic data for 1000+ properties, we'll help you find the perfect location for your business"}</span>
+	                  <span className="homepageMottoText hidden-sm hidden-xs">Search Retail Listings for Free</span>
 	                </center>
 	              </div>
+
 	              <div className="descriptionDivSm hidden-lg hidden-md">
 	                <center>
-	                  <span className="homepageMottoTextSm hidden-lg hidden-md">{"Find real estate nearby where your target customer is already shopping!"}</span>
+	                  <span className="homepageMottoTextSm hidden-lg hidden-md">{"Search Retail Listings for Free"}</span>
 	                </center>
-	                <center>
-	                  <span className="productDescriptionSpanSm hidden-md hidden-lg" style={{color:"#FFFFFF", fontSize:"18px", fontWeight:"550"}} >{"With foot traffic, competition and demographic data for 1000+ properties, we'll help you find the perfect location for your business"}</span>
-	                </center>
+
 	              </div>
-	              <div style={{backgroundColor:"rgba(0, 0, 0, 0.5)", width:"100%", height:"80px", position:"absolute", bottom:"0"}}>
+
+	              <div style={{backgroundColor:"rgba(0, 0, 0, 0.0)", width:"100%", height:"200px", position:"absolute", bottom:"0"}}>
 	                  <div className="col-lg-3 col-md-3 col-sm-1 col-xs-1"></div>
+
 	                  <div className="col-lg-8 col-lg-offset-2 col-md-10 col-md-offset-1 col-sm-12 col-xs-12" style={{marginTop:"15"}}>
-
-	                        <div className="hidden-xs hidden-lg hidden-md hidden-sm" style={{width:"100%", float:"left", position:"relative"}}>
-	                        	<SearchBar onClick={this.searchButtonClicked}/>
-	                        </div>
-
-	                      <div style={{width:"100%"}}>
+	                      <div style={{width:"100%", position:"relative"}}>
 	                        	<HomepageSearchBar searchClick={this.searchClick}  />
 	                      </div>
-
 	                  </div>
+
 	                  <div className="col-lg-3 col-md-3 col-sm-1 col-xs-1"></div>
+	                  
+	                  <div className="row hidden-md hidden-sm hidden-xs" style={{color:"white",backgroundColor:"rgba(0, 0, 0, 0.6)", textAlign:"center", margin:"0", padding:"0", paddingTop:"5px", width:"100%", height:"100px", position:"absolute", bottom:"0"}}>
+	                  	<div className="col-lg-4 col-md-4" style={{color:"#FFFFFF",fontSize:"25px" ,fontWeight:"400px"}}>
+	                  		<i className="fa fa-usd" style={{fontSize:"50px"}}/>
+	                  		<br />
+	                  		Customer Traffic
+	                  	</div>
+	                  	<div className="col-lg-4 col-md-4" style={{color:"#FFFFFF", fontSize:"25px", fontWeight:"400px"}}>
+	                  		<i className="fa fa-pie-chart" style={{fontSize:"50px"}}/>
+	                  		<br />
+	                  		Demographic Data
+	                  	</div>
+	                  	<div className="col-lg-4 col-md-4" style={{color:"#FFFFFF", fontSize:"25px", fontWeight:"400px"}}>
+	                  		<i className="fa fa-shopping-cart" style={{fontSize:"50px"}}/>
+	                  		<br />
+	                  		Surrounding Businesses 
+	                  	</div>
+	                  </div>
 	              </div>
+
 	              <div/>
 	            </div>
 	          </div>
@@ -160,210 +174,64 @@ export class Homepage extends React.Component {
 	            </center>
 	            <div className="homepageMidSectionSpacer"/>
 	            <div className="row">
-	              {/* Large and Medium */}
-	              <div className="col-lg-12 col-md-12 hidden-sm hidden-xs homepageMidSectionPadding">
-	                <div className="row">
-	                  <div className="col-lg-4 hidden-md">
-	                    <center>
-	                      <div className="homepageLocationTileLg">
-	                        {this.renderLocationTile("Los Angeles")}
-	                      </div>
-	                    </center>
-	                  </div>
-	                  <div className="col-md-4 hidden-lg">
-	                    <center>
-	                      <div className="homepageLocationTileMd">
-	                        {this.renderLocationTile("Los Angeles")}
-	                      </div>
-	                    </center>
-	                  </div>
-	                  <div className="col-lg-4 hidden-md">
-	                    <center>
-	                      <div className="homepageLocationTileLg">
-	                        {this.renderLocationTile("San Francisco")}
-	                      </div>
-	                    </center>
-	                  </div>
-	                  <div className="col-md-4 hidden-lg">
-	                    <center>
-	                      <div className="homepageLocationTileMd">
-	                        {this.renderLocationTile("San Francisco")}
-	                      </div>
-	                    </center>
-	                  </div>
-	                  <div className="col-lg-4 hidden-md">
-	                    <center>
-	                      <div className="homepageLocationTileLg">
-	                        {this.renderLocationTile("San Diego")}
-	                      </div>
-	                    </center>
-	                  </div>
-	                  <div className="col-md-4 hidden-lg">
-	                    <center>
-	                      <div className="homepageLocationTileMd">
-	                        {this.renderLocationTile("San Diego")}
-	                      </div>
-	                    </center>
-	                  </div>
-	                </div>
-	                <div className="homepageMidSectionSpacer"/>
-	                <div className="row">
-	                  <div className="col-lg-4 hidden-md">
-	                    <center>
-	                      <div className="homepageLocationTileLg">
-	                        {this.renderLocationTile("San Jose")}
-	                      </div>
-	                    </center>
-	                  </div>
-	                  <div className="col-md-4 hidden-lg">
-	                    <center>
-	                      <div className="homepageLocationTileMd">
-	                        {this.renderLocationTile("San Jose")}
-	                      </div>
-	                    </center>
-	                  </div>
-	                  <div className="col-lg-4 hidden-md">
-	                    <center>
-	                      <div className="homepageLocationTileLg">
-	                        {this.renderLocationTile("Sacramento")}
-	                      </div>
-	                    </center>
-	                  </div>
-	                  <div className="col-md-4 hidden-lg">
-	                    <center>
-	                      <div className="homepageLocationTileMd">
-	                        {this.renderLocationTile("Sacramento")}
-	                      </div>
-	                    </center>
-	                  </div>
-	                  <div className="col-lg-4 hidden-md">
-	                    <center>
-	                      <div className="homepageLocationTileLg">
-	                        {this.renderLocationTile("Fresno")}
-	                      </div>
-	                    </center>
-	                  </div>
-	                  <div className="col-md-4 hidden-lg">
-	                    <center>
-	                      <div className="homepageLocationTileMd">
-	                        {this.renderLocationTile("Fresno")}
-	                      </div>
-	                    </center>
-	                  </div>
-	                </div>
-	              </div>
-	              {/* Small */}
-	              <div className="col-sm-12 hidden-md hidden-lg hidden-xs homepageMidSectionPadding">
-	                <div className="row">
-	                  <div className="col-sm-6">
-	                    <center>
-	                      <div className="homepageLocationTile">
-	                        {this.renderLocationTile("Los Angeles")}
-	                      </div>
-	                    </center>
-	                  </div>
-	                  <div className="col-sm-6">
-	                    <center>
-	                      <div className="homepageLocationTile">
-	                        {this.renderLocationTile("San Francisco")}
-	                      </div>
-	                    </center>
-	                  </div>
-	                </div>
-	                <div className="homepageMidSectionSpacer"/>
-	                <div className="row">
-	                  <div className="col-sm-6">
-	                    <center>
-	                      <div className="homepageLocationTile">
-	                        {this.renderLocationTile("San Diego")}
-	                      </div>
-	                    </center>
-	                  </div>
-	                  <div className="col-sm-6">
-	                    <center>
-	                      <div className="homepageLocationTile">
-	                        {this.renderLocationTile("San Jose")}
-	                      </div>
-	                    </center>
-	                  </div>
-	                </div>
-	                <div className="homepageMidSectionSpacer"/>
-	                <div className="row">
-	                  <div className="col-sm-6">
-	                    <center>
-	                      <div className="homepageLocationTile">
-	                        {this.renderLocationTile("Sacramento")}
-	                      </div>
-	                    </center>
-	                  </div>
-	                  <div className="col-sm-6">
-	                    <center>
-	                      <div className="homepageLocationTile">
-	                        {this.renderLocationTile("Fresno")}
-	                      </div>
-	                    </center>
-	                  </div>
-	                </div>
-	              </div>
-	              {/* XSmall */}
-	              <div className="col-xs-12 hidden-md hidden-lg hidden-sm">
-	                <div className="homepageLocationTileSm">
-	                  {this.renderLocationTile("Los Angeles")}
-	                </div>
-	                <div className="homepageLocationSpacerSm"/>
-	                <div className="homepageLocationTileSm">
-	                  {this.renderLocationTile("San Francisco")}
-	                </div>
-	                <div className="homepageLocationSpacerSm"/>
-	                <div className="homepageLocationTileSm">
-	                  {this.renderLocationTile("San Diego")}
-	                </div>
-	                <div className="homepageLocationSpacerSm"/>
-	                <div className="homepageLocationTileSm">
-	                  {this.renderLocationTile("San Jose")}
-	                </div>
-	                <div className="homepageLocationSpacerSm"/>
-	                <div className="homepageLocationTileSm">
-	                  {this.renderLocationTile("Sacramento")}
-	                </div>
-	                <div className="homepageLocationSpacerSm"/>
-	                <div className="homepageLocationTileSm">
-	                  {this.renderLocationTile("Fresno")}
-	                </div>
-	              </div>
+	              <div className="col-lg-12 col-md-12 col-sm-12 col-xs-12 homepageMidSectionPadding">
+                  <div className="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <center>
+                      <div className="homepageLocationTileImage">
+                        {this.renderLocationTile("Los Angeles")}
+                      </div>
+                    </center>
+                  </div>
+
+                  <div className="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <center>
+                      <div className="homepageLocationTileImage">
+                        {this.renderLocationTile("San Francisco")}
+                      </div>
+                    </center>
+                  </div>
+
+                  <div className="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <center>
+                      <div className="homepageLocationTileImage">
+                        {this.renderLocationTile("Santa Monica")}
+                      </div>
+                    </center>
+                  </div>
+
+                  <div className="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <center>
+                      <div className="homepageLocationTileImage">
+                        {this.renderLocationTile("Hollywood")}
+                      </div>
+                    </center>
+                  </div>
+
+                  <div className="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <center>
+                      <div className="homepageLocationTileImage">
+                        {this.renderLocationTile("Long Beach")}
+                      </div>
+                    </center>
+                  </div>
+
+                  <div className="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+                    <center>
+                      <div className="homepageLocationTileImage">
+                        {this.renderLocationTile("Beverly Hills")}
+                      </div>
+                    </center>
+                  </div>
+                </div>
+
 	            </div>
-	            <div id="about_us" className="homepageMidSectionSpacer"/>
-	            {/* Zamatics Info Section */}
-	            <center>
-	              <h1>What is Retail Score?</h1>
-	            </center>
-	            <div className="row">
-	              <div className="homepageMidSectionSpacer"/>
-	              <div className="col-md-1" />
-	              <div className="col-md-10">
-	                <center>
-	                  <div className="homepageInfoBoxes">
-	                    <div className="row" >
-	                      <div className="col-md-4 col-sm-6">
-	                        <img className="fullWidth" src={"https://s3-us-west-2.amazonaws.com/homepage-image-assets/Stocksy_txp88dd7451zi3100_Small_440112.jpg"} />
-	                      </div>
-	                      <div className="col-md-8 col-sm-6">
-	                        <center>
-	                          <h4 className="homepageInfoBoxText">{"While a good location can help your business flourish, a bad location can almost guarantee its failure. So what makes a good location? On our website we score all available retail properties on traffic and the sales of surrounding retail businesses, both of which are indicators of good locations. By analyzing business density and aggregate sales records (from Census and Bureau of Labor Statistics data) we also chart out a map of the highest traffic points in a given city to help you find the perfect location to start your business."}</h4>
-	                        </center>
-	                      </div>
-	                    </div>
-	                  </div>
-	                </center>
-	              </div>
-	              <div className="col-md-1" />
-	            </div>
+
 	            <div className="homepageMidSectionSpacer"/>
 	            {/* Footer Section */}
 	            <div className="row homepageFooter">
 	              <center>
 	              	<img className="FooterLogo" src="https://s3-us-west-2.amazonaws.com/homepage-image-assets/retail_score_logo_white.png" />
-	                <p><a className="homepageFooterEmailLink" href="mailto:support@company.com">sudjeev@zamatics.com</a></p>
+	                <p><a className="homepageFooterEmailLink" href="mailto:support@company.com">sudjeev@retailscore.com</a></p>
 	              </center>
 	            </div>
 	          </div>
