@@ -672,7 +672,7 @@ class SearchBar extends React.Component {
     {/* styles to use when on mobile to give sharp edges on top bar, round edges stick out */}
     const mobileMenuButtonStyle = {height:"50px", borderColor:"#CCCCCC", borderRadius: "0", borderTop:"none", borderLeft:"none", borderBottom:"none"};
     const mobileSearchBarStyle = {height:"50px", borderColor:"#CCCCCC", borderRadius: "0", borderTop:"none", borderLeft:"none", borderBottom:"none"};
-    const mobileSearchButtonStyle = {height:"50px", borderColor:"#CCCCCC", borderRadius: "0", borderTop:"none", borderRight:"none", borderBottom:"none"};
+    const mobileSearchButtonStyle = {height:"50px", borderColor:"#49A3DC", backgroundColor:"#49A3DC", borderRadius: "0", borderTop:"none", borderRight:"none", borderBottom:"none"};
     return(
       <div>
         <InputGroup className="searchBar" style={{borderRadius: "0", padding: this.props.noPadding ? "0px" : "20px 10px 0px 10px", height:"50px", width:"100%", backgroundColor:"#FFFFFF"}}>
