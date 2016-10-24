@@ -1,125 +1,125 @@
 defmodule RetailScore.Test do
 
 
-  @events "lib/retail_score/events.json"
-  @ourDistinctIds ["156c8fdfac12a9-0c12c50b3-684b327c-3d10d-156c8fdfac27c6", 
-                   "156c2b14a61182-0989f9034785ad-37627900-13c680-156c2b14a63206", 
-                   "156c8a258f344d-0463d45fb-6a03173d-3d10d-156c8a258f4249", 
-                   "156c2a5752496c-0ef3cdd8ce73f9-37647901-13c680-156c2a5752550b",
-                   "1569b8a48073a0-0ba14871aef384-37647901-13c680-1569b8a480840a", 
-                   "1569e420edc28c-0577cca92a485d-37627900-13c680-1569e420ede248",
-                   "156d97fe825872-0210c043f-2f10403b-13c680-156d97fe8265d2",
-                   "15705a0e599246-01e1bd203c97a3-37667901-1aeaa0-15705a0e59a70"]
+  # @events "lib/retail_score/events.json"
+  # @ourDistinctIds ["156c8fdfac12a9-0c12c50b3-684b327c-3d10d-156c8fdfac27c6", 
+  #                  "156c2b14a61182-0989f9034785ad-37627900-13c680-156c2b14a63206", 
+  #                  "156c8a258f344d-0463d45fb-6a03173d-3d10d-156c8a258f4249", 
+  #                  "156c2a5752496c-0ef3cdd8ce73f9-37647901-13c680-156c2a5752550b",
+  #                  "1569b8a48073a0-0ba14871aef384-37647901-13c680-1569b8a480840a", 
+  #                  "1569e420edc28c-0577cca92a485d-37627900-13c680-1569e420ede248",
+  #                  "156d97fe825872-0210c043f-2f10403b-13c680-156d97fe8265d2",
+  #                  "15705a0e599246-01e1bd203c97a3-37667901-1aeaa0-15705a0e59a70"]
 
-  @fullEvents "lib/retail_score/full_events.json"
+  # @fullEvents "lib/retail_score/full_events.json"
 
-  def full_events(distinct_id) do
-    Poison.decode!(File.read!(@fullEvents))
-    |> Enum.filter(fn(%{"distinct_id" => id}) ->
-      id == distinct_id
-    end)
-    |> Enum.map(fn(event) ->
-      IO.inspect event
-    end)
-  end
+  # def full_events(distinct_id) do
+  #   Poison.decode!(File.read!(@fullEvents))
+  #   |> Enum.filter(fn(%{"distinct_id" => id}) ->
+  #     id == distinct_id
+  #   end)
+  #   |> Enum.map(fn(event) ->
+  #     IO.inspect event
+  #   end)
+  # end
 
-  def query_events do
-    events = Poison.decode!(File.read!(@events))
+  # def query_events do
+  #   events = Poison.decode!(File.read!(@events))
 
-    totalCount = events
-    |> Enum.count
+  #   totalCount = events
+  #   |> Enum.count
 
-    IO.puts "Total Count of Events: #{totalCount}"
+  #   IO.puts "Total Count of Events: #{totalCount}"
 
-    filteredCount = events
-    |> Enum.filter(fn(%{"id" => id}) ->
-      retVal = @ourDistinctIds
-      |> Enum.member?(id)
+  #   filteredCount = events
+  #   |> Enum.filter(fn(%{"id" => id}) ->
+  #     retVal = @ourDistinctIds
+  #     |> Enum.member?(id)
 
-      not retVal
-    end)
-    |> Enum.filter(fn(%{"day" => date}) ->
-      [year, month, day] = String.split(date, "-")
+  #     not retVal
+  #   end)
+  #   |> Enum.filter(fn(%{"day" => date}) ->
+  #     [year, month, day] = String.split(date, "-")
 
-      {month, _} = Integer.parse(month)
-      {day, _} = Integer.parse(day)
+  #     {month, _} = Integer.parse(month)
+  #     {day, _} = Integer.parse(day)
 
-      case {month, day} do
-        {x, y} when x < 9  ->
-          true
-        {x, y} when x == 9 and y <= 6 ->
-          true
-        _ ->
-          false
-      end
-    end)
-    |> Enum.count
+  #     case {month, day} do
+  #       {x, y} when x < 9  ->
+  #         true
+  #       {x, y} when x == 9 and y <= 6 ->
+  #         true
+  #       _ ->
+  #         false
+  #     end
+  #   end)
+  #   |> Enum.count
 
-    IO.puts "Filtered Count of Events: #{filteredCount}"
+  #   IO.puts "Filtered Count of Events: #{filteredCount}"
 
-    distinctUserIds = events
-    |> Enum.filter(fn(%{"id" => id}) ->
-      retVal = @ourDistinctIds
-      |> Enum.member?(id)
+  #   distinctUserIds = events
+  #   |> Enum.filter(fn(%{"id" => id}) ->
+  #     retVal = @ourDistinctIds
+  #     |> Enum.member?(id)
 
-      not retVal
-    end)
-    |> Enum.map(fn(%{"id" => user_id}) ->
-      user_id
-    end)
-    |> Enum.uniq
+  #     not retVal
+  #   end)
+  #   |> Enum.map(fn(%{"id" => user_id}) ->
+  #     user_id
+  #   end)
+  #   |> Enum.uniq
 
-    IO.puts "Distinct User Count: #{Enum.count(distinctUserIds)}"
+  #   IO.puts "Distinct User Count: #{Enum.count(distinctUserIds)}"
 
-    events
-    |> Enum.filter(fn(%{"id" => id}) ->
-      retVal = @ourDistinctIds
-      |> Enum.member?(id)
+  #   events
+  #   |> Enum.filter(fn(%{"id" => id}) ->
+  #     retVal = @ourDistinctIds
+  #     |> Enum.member?(id)
 
-      not retVal
-    end)
-    |> Enum.filter(fn(%{"day" => date}) ->
-      [year, month, day] = String.split(date, "-")
+  #     not retVal
+  #   end)
+  #   |> Enum.filter(fn(%{"day" => date}) ->
+  #     [year, month, day] = String.split(date, "-")
 
-      {month, _} = Integer.parse(month)
-      {day, _} = Integer.parse(day)
+  #     {month, _} = Integer.parse(month)
+  #     {day, _} = Integer.parse(day)
 
-      case {month, day} do
-        {x, y} when x < 9  ->
-          true
-        {x, y} when x == 9 and y <= 6 ->
-          true
-        _ ->
-          false
-      end
-    end)
-    |> Enum.reduce(%{}, fn(%{"id" => user_id, "day" => day}, acc) ->
-      case Map.get(acc, user_id) do
-        nil ->
-          Map.put(acc, user_id, [day])
-        dateList ->
-          case Enum.member?(dateList, day) do
-            true ->
-              acc
-            false ->
-              Map.put(acc, user_id, [day | dateList])
-          end
-      end
-    end)
-    |> Map.to_list
-    |> Enum.map(fn({user, dates}) ->
-      {user, dates, Enum.count(dates)}
-    end)
-    |> Enum.sort(fn({_, _, countOne}, {_, _, countTwo}) ->
-      countTwo > countOne
-    end)
-    |> Enum.with_index
-    |> Enum.map(fn({{user, dates, count}, index}) ->
-      datesList = Enum.join(dates, ", ")
+  #     case {month, day} do
+  #       {x, y} when x < 9  ->
+  #         true
+  #       {x, y} when x == 9 and y <= 6 ->
+  #         true
+  #       _ ->
+  #         false
+  #     end
+  #   end)
+  #   |> Enum.reduce(%{}, fn(%{"id" => user_id, "day" => day}, acc) ->
+  #     case Map.get(acc, user_id) do
+  #       nil ->
+  #         Map.put(acc, user_id, [day])
+  #       dateList ->
+  #         case Enum.member?(dateList, day) do
+  #           true ->
+  #             acc
+  #           false ->
+  #             Map.put(acc, user_id, [day | dateList])
+  #         end
+  #     end
+  #   end)
+  #   |> Map.to_list
+  #   |> Enum.map(fn({user, dates}) ->
+  #     {user, dates, Enum.count(dates)}
+  #   end)
+  #   |> Enum.sort(fn({_, _, countOne}, {_, _, countTwo}) ->
+  #     countTwo > countOne
+  #   end)
+  #   |> Enum.with_index
+  #   |> Enum.map(fn({{user, dates, count}, index}) ->
+  #     datesList = Enum.join(dates, ", ")
 
-      IO.puts "\n#{index}: user visited the site: #{count} times\n\tdistinct-id: #{user}\n\t#{datesList}\n"
-    end)
-  end
+  #     IO.puts "\n#{index}: user visited the site: #{count} times\n\tdistinct-id: #{user}\n\t#{datesList}\n"
+  #   end)
+  # end
 
 
 
