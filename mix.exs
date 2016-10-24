@@ -19,7 +19,7 @@ defmodule RetailScore.Mixfile do
   def application do
     [mod: {RetailScore, []},
      applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :postgrex, :std_json_io, :httpoison, :scrape, :calendar]]
+                    :phoenix_ecto, :postgrex, :std_json_io, :httpoison, :scrape]]
   end
 
   # Specifies which paths to compile per environment.
@@ -43,7 +43,6 @@ defmodule RetailScore.Mixfile do
      {:httpoison, "~> 0.9.0"},
      {:mailgun, "~> 0.1.2"},
      {:ex_aws, "~> 0.5.0"},
-     {:calendar, "~> 0.16.1"},
      {:scrape, "~> 1.2"}]
   end
 
