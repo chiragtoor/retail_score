@@ -222,17 +222,6 @@ export class Test extends React.Component {
       var compareA = propertyA.food_count;
       var compareB = propertyB.food_count;
 
-      switch(this.props.scoreType) {
-        case Actions.SCORE_WELLNESS:
-          compareA = propertyA.wellness_count;
-          compareB = propertyB.wellness_count;
-          break;
-        case Actions.SCORE_FASHION:
-          compareA = propertyA.fashion_count;
-          compareB = propertyB.fashion_count;
-          break;
-      }
-
       if(compareA <= compareB) {
         return 1;
       } else {
@@ -631,7 +620,39 @@ class PropertyTile extends React.Component {
     const selectedPanelContainerStyle = {display:"flex", flexDirection:"column", borderColor:"#49A3DC", borderWidth:"2px", boxShadow:"0 0 2px #49A3DC", marginBottom:"0px"};
     const panelBordersColor = this.props.selected ? "#49A3DC" : "#CCCCCC";
 
-    var address = this.props.property.street_address;
+    {/* Below code gets the correct RS color and stars depending on score value */}
+    var retailScore = false;
+    var retailScoreValue = 0;
+    var retailScoreText = "";
+
+    var count = this.props.property.food_count;
+
+    if(count <= 6) {
+      retailScoreValue = 1;
+    } else if (count <= 11) {
+      retailScoreValue = 2;
+    } else if (count <= 16) {
+      retailScoreValue = 3;
+    } else if (count <= 26) {
+      retailScoreValue = 4;
+    } else {
+      retailScoreValue = 5;
+    }
+
+    retailScoreText = count + " restaurant businesses in this area"
+        
+
+    if(retailScoreValue == 5) {
+      retailScore = <span><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/></span>;
+    } else if(retailScoreValue == 4) {
+      retailScore = <span><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/></span>;
+    } else if(retailScoreValue == 3) {
+      retailScore = <span><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/></span>;
+    } else if(retailScoreValue == 2) {
+      retailScore = <span><i className="fa fa-star"/><i className="fa fa-star"/></span>;
+    } else {
+      retailScore = <span><i className="fa fa-star"/></span>;
+    }
 
     return(
       <div className="propertyTileContainer" onMouseOver={() => this.props.mobile ? false : this.props.onHover(this.props.index)} onClick={() => this.props.onClick(this.props.property)}>
@@ -645,12 +666,20 @@ class PropertyTile extends React.Component {
               <img src={this.getImageUrl(this.props.property)} />
             </div>
           </div>
-          <div className="panel-body bt" style={{padding:"2px", borderColor: panelBordersColor}}>
-            {/* RS and explanation, explanation uses CSS text cutoof technique on smaller devices with varying # of lines depending on screen width */}
-            <p style={{marginTop:"5px", marginBottom:"5px"}}>
-              {address}
-            </p>
-          </div>
+          {/* If CP given we have a RS for each property, otherwise we add a button  */}
+          {true ?
+            <div className="panel-body bt" style={{padding:"2px", borderColor: panelBordersColor}}>
+              {/* RS and explanation, explanation uses CSS text cutoof technique on smaller devices with varying # of lines depending on screen width */}
+              <span style={{color:"#CFB53B", fontSize:"16px"}}>{retailScore}</span>
+              <p>
+                {retailScoreText}
+              </p>
+            </div>
+          :
+            <div className="panel-body bt tileRetailScore" style={{padding:"0px", borderColor: panelBordersColor}}>
+              <Button className="tileRetailScore" style={{border:"none", color:"#49A3DC", width:"100%"}}><i className="fa fa-user" style={{color:"#49A3DC"}}/>&nbsp;&nbsp;Add Customer Profile for Score</Button>
+            </div>
+          }
           {/* Price and SQ FT info shown side by side, margins are different to account for padding of other elements */}
           <div className="panel-body bt" style={{padding:"2px", borderColor: panelBordersColor, marginTop:"2px"}}>
             <Row>
