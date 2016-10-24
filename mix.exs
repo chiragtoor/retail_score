@@ -4,7 +4,7 @@ defmodule RetailScore.Mixfile do
   def project do
     [app: :retail_score,
      version: "0.0.1",
-     elixir: "~> 1.2",
+     elixir: "~> 1.3",
      elixirc_paths: elixirc_paths(Mix.env),
      compilers: [:phoenix, :gettext] ++ Mix.compilers,
      build_embedded: Mix.env == :prod,
@@ -19,7 +19,7 @@ defmodule RetailScore.Mixfile do
   def application do
     [mod: {RetailScore, []},
      applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :postgrex, :std_json_io, :httpoison, :scrape]]
+                    :phoenix_ecto, :postgrex, :std_json_io, :httpoison, :scrape, :calendar]]
   end
 
   # Specifies which paths to compile per environment.
@@ -43,6 +43,7 @@ defmodule RetailScore.Mixfile do
      {:httpoison, "~> 0.9.0"},
      {:mailgun, "~> 0.1.2"},
      {:ex_aws, "~> 0.5.0"},
+     {:calendar, "~> 0.16.1"},
      {:scrape, "~> 1.2"}]
   end
 
