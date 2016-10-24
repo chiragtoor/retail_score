@@ -627,20 +627,17 @@ class PropertyTile extends React.Component {
 
     var count = this.props.property.food_count;
 
-    if(count <= 6) {
+    if(count <= 57) {
       retailScoreValue = 1;
-    } else if (count <= 11) {
+    } else if (count <= 98) {
       retailScoreValue = 2;
-    } else if (count <= 16) {
+    } else if (count <= 125) {
       retailScoreValue = 3;
-    } else if (count <= 26) {
+    } else if (count <= 175) {
       retailScoreValue = 4;
     } else {
       retailScoreValue = 5;
     }
-
-    retailScoreText = count + " restaurant businesses in this area"
-        
 
     if(retailScoreValue == 5) {
       retailScore = <span><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/></span>;
@@ -671,9 +668,6 @@ class PropertyTile extends React.Component {
             <div className="panel-body bt" style={{padding:"2px", borderColor: panelBordersColor}}>
               {/* RS and explanation, explanation uses CSS text cutoof technique on smaller devices with varying # of lines depending on screen width */}
               <span style={{color:"#CFB53B", fontSize:"16px"}}>{retailScore}</span>
-              <p>
-                {retailScoreText}
-              </p>
             </div>
           :
             <div className="panel-body bt tileRetailScore" style={{padding:"0px", borderColor: panelBordersColor}}>

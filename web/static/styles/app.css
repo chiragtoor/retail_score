@@ -466,7 +466,7 @@ MOVE TO SRP.CSS AFTER
   }
   .propertyTileContainer {
     /* larger height supported on desktop */
-    height: 270px;
+    height: 240px;
     /* tiles on desktop are placed side-by-side in pairs, so width is 50% - amount needed for margins around tiles side edges */
     /* subtracted amount is not exactly margins of both sides, little extra to make sure there is room for 2 tiles in a row */
     width: -webkit-calc(50% - 25px);
@@ -482,7 +482,7 @@ MOVE TO SRP.CSS AFTER
   }
   /* desktop propertyTiles support larger height */
   .propertyTile {
-    height: 250px;
+    height: 220px;
     width: 100%;
     margin-left: 0;
   }
