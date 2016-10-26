@@ -1,54 +1,35 @@
-import {default as React, Component} from "react";
-import CityAutoComplete from './CityAutoComplete';
-import {Glyphicon,Modal, Button, FormGroup, ControlLabel, FormControl, InputGroup, Panel, Nav, NavItem} from "react-bootstrap";
+import React from 'react';
+import { InputGroup, Button } from 'react-bootstrap';
 
-export default class SearchBar extends Component {
+import GooglePlacesTypeahead from './GooglePlacesTypeahead';
+
+export default class SearchBar extends React.Component {
 
   constructor(props) {
     super(props);
 
-    this.cityChanged = this.cityChanged.bind(this);
-    this.citySelected = this.citySelected.bind(this);
-
-    this.search = this.search.bind(this);
-
-    this.state = {
-      city: "" 
-    };
   }
 
-  componentDidMount() {
-
-    if(this.props.city) {
-      this.state.city = this.props.city;
-    }
-
-    this.setState(this.state);
-  }  
-
-  cityChanged(event, value) {
-    this.state.city = value;
-    this.setState(this.state);
-  }
-
-  citySelected (value) {
-    this.state.city = value;
-    this.setState(this.state);
-    this.props.searchClick(value);
-  }
-
-  search() {
-    this.props.searchClick(this.state.city);
-  }
-
-  render () {
-
-    return (
-      <div style={{height:"100%", width:"100%"}}>
-         <div className="searchBar" >
-            <CityAutoComplete selectedCity={this.state.city} cityChanged={this.cityChanged} citySelected={this.citySelected} />
-         </div>
-         <Button onClick={this.search} style={{position:"fixed", zIndex:"2", top:"0", right:"0",border:"none", backgroundColor:"#49A3DC", width:"50px", height:"50px", color:"#FFFFFF"}}><i className="fa fa-search"/></Button>
+  render() {
+    {/* styles to use when on mobile to give sharp edges on top bar, round edges stick out */}
+    const mobileMenuButtonStyle = {height:"50px", borderColor:"#CCCCCC", borderRadius: "0", borderTop:"none", borderLeft:"none", borderBottom:"none"};
+    const mobileSearchBarStyle = {height:"50px", borderColor:"#CCCCCC", borderRadius: "0", borderTop:"none", borderLeft:"none", borderBottom:"none"};
+    const mobileSearchButtonStyle = {height:"50px", borderColor:"#49A3DC", backgroundColor:"#49A3DC", borderRadius: "0", borderTop:"none", borderRight:"none", borderBottom:"none"};
+    return(
+      <div>
+        <InputGroup className="searchBar" style={{borderRadius: "0px", padding: this.props.noPadding ? "0px" : "20px 10px 0px 10px", height:"50px", width:"100%"}}>
+          {/* <InputGroup.Button className="hidden-md hidden-lg"><Button style={this.props.noPadding ? mobileMenuButtonStyle : {height:"50px", borderColor:"#CCCCCC"}}>&nbsp;&nbsp;<i className="fa fa-list" style={{color:"#49A3DC"}}/>&nbsp;&nbsp;</Button></InputGroup.Button> */}
+          <GooglePlacesTypeahead
+            onChange={(e) => e[0] != null ? this.props.onSearch(e[0].display) : false}
+            placeHolder={"Enter a City"} 
+            value={this.props.value} />
+          <InputGroup.Button><Button style={this.props.noPadding ? mobileSearchButtonStyle : {height:"50px", borderColor:"#49A3DC", backgroundColor:"#49A3DC"}}>&nbsp;&nbsp;<i className="fa fa-search" style={{color:"#FFFFFF"}}/>&nbsp;&nbsp;</Button></InputGroup.Button>
+        </InputGroup>
+        {this.props.noPadding ?
+          <div style={{width:"100%", height:"1px", borderTop:"solid thin #CCCCCC"}} />
+        :
+          false
+        }
       </div>
     );
   }

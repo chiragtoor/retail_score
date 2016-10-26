@@ -2,23 +2,20 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { connect } from "react-redux";
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
-import { Row, Col, InputGroup, FormGroup, ButtonGroup, Button, FormControl, DropdownButton, MenuItem, Pagination } from 'react-bootstrap';
+import { Row, Col, InputGroup, ButtonGroup, Button, DropdownButton, MenuItem, Pagination } from 'react-bootstrap';
 
 
 import * as Actions from '../actions';
 import * as Util from '../Util';
 
+import AppBar from '../components/AppBar';
+import SearchBar from '../components/SearchBar';
 import GoogleMap from '../components/GoogleMap';
 
 // size of pages when splitting property tiles for pagination
 const PAGE_SIZE = 20;
 // flag for showing filters in secondary content
 const SECONDARY_FILTERS = 0;
-
-// constants for storage of contact info for one tap contact
-const CONTACT_NAME = 'name';
-const CONTACT_EMAIL = 'email';
-const BUSINESS_TYPE = 'business_type';
 
 export class Test extends React.Component {
 
@@ -54,7 +51,6 @@ export class Test extends React.Component {
     this.searchCity = this.searchCity.bind(this);
     this.submitContact = this.submitContact.bind(this);
     this.propertyClick = this.propertyClick.bind(this);
-    this.sortByRetailScore = this.sortByRetailScore.bind(this);
     this.goHome = this.goHome.bind(this);
 
     // get the properties for the current city
@@ -66,29 +62,6 @@ export class Test extends React.Component {
     this._propertyTiles = new Map();
     // timeout used for only performing computations on end of mobile scroll
     this._scrollTimeout = null;
-
-    // check if contact info is stored in localStorage, if so we are in one tap contact mode
-    var oneTapContact = false;
-    if (typeof(Storage) !== "undefined") {
-      if(localStorage.getItem(CONTACT_NAME) && localStorage.getItem(CONTACT_EMAIL)){
-        oneTapContact = true;
-      }
-
-      var business = localStorage.getItem(BUSINESS_TYPE);
-
-      if(business != null) {
-        if(business.match(/\b(restaurant|mexican|indian|chinese|food|drinks|juice|bar|coffee|cafe)/i)) {
-          // this.context.mixpanel.track('srp_initial_score_type', {'type': 'Food'});
-          this.props.scoreByRestaurant();
-        } else if(business.match(/\b(salon|spa|nails|hair|barber|massage|beauty|skin)/i)) {
-          // this.context.mixpanel.track('srp_initial_score_type', {'type': 'Wellness'});
-          this.props.scoreByWellness();
-        } else {
-          // this.context.mixpanel.track('srp_initial_score_type', {'type': 'Fashion'});
-          this.props.scoreByFashion();
-        }
-      }
-    }
 
     this.state = {
       mounted: false,
@@ -111,8 +84,6 @@ export class Test extends React.Component {
       currentPage: 1,
       // propertyId to contact -> for contact from SRP page functionality
       propertyToContact: null,
-      // flag for if we are in one tap contact mode
-      oneTapContact: oneTapContact,
       // contact agent name
       currentContactAgentName: "",
       currentContactAgentCompany: ""
@@ -168,12 +139,6 @@ export class Test extends React.Component {
     });
     this.setState({propertyToContact: null, secondaryContent: null, mobileShowSecondaryContent: false});
 
-    // if not in one tap contact mode, store info and set to one tap contact mode
-    if(!this.state.oneTapContact) {
-      localStorage.setItem(CONTACT_NAME, name);
-      localStorage.setItem(CONTACT_EMAIL, email);
-      this.setState({oneTapContact: true});
-    }
   }
 
   // method is called on mobile when the listingsDiv (which contains all tiles horizontally) is scrolled
@@ -212,56 +177,6 @@ export class Test extends React.Component {
       // use helper method to update current main index based on pagination
       this.updateMainProperty(minTuple.index);
     }, 50);
-  }
-
-  sortByRetailScore(properties) {
-    // no property will have a null retail score, so sort by just comparing the two values
-    // < because we want to go from high to low
-    return properties.sort((propertyA, propertyB) => {
-
-      var compareA = propertyA.food_count;
-      var compareB = propertyB.food_count;
-
-      if(compareA <= compareB) {
-        return 1;
-      } else {
-        return -1;
-      }
-    });
-  }
-
-  sortByPrice(properties) {
-    // properties can have null values for price, need to account for that and concat the filtered out ones
-    var popertiesToSort = properties.filter(property => property.rental_rate_min != null);
-    var popertiesToConcat = properties.filter(property => property.rental_rate_min == null);
-
-    // > because we want to go from low to high
-    popertiesToSort.sort((propertyA, propertyB) => {
-      if(propertyA.rental_rate_min >= propertyB.rental_rate_min) {
-        return 1;
-      } else {
-        return -1;
-      }
-    });
-    // add the properties with nothing to sort by to the end, their place was unknown
-    return popertiesToSort.concat(popertiesToConcat);
-  }
-
-  sortBySqFt(properties) {
-    // properties can have null values for price, need to account for that and concat the filtered out ones
-    var propertiesToSort = properties.filter(property => property.min_sq_feet != null);
-    var propertiesToConcat = properties.filter(property => property.min_sq_feet == null);
-
-    // > because we want to go from low to high
-    propertiesToSort.sort((propertyA, propertyB) => {
-      if(propertyA.min_sq_feet >= propertyB.min_sq_feet) {
-        return 1;
-      } else {
-        return -1;
-      }
-    });
-    // add the properties with nothing to sort by to the end, their place was unknown
-    return propertiesToSort.concat(propertiesToConcat);
   }
 
   // if minFlag is true this will filter with price as a lower bound, otherwise upper bound
@@ -391,23 +306,6 @@ export class Test extends React.Component {
       properties = this.filterBySqFt(properties, this.state.filterSqFtMax, false);
     }
 
-    // Sorting has to be done after the filtering, otherwise it wont be in proper order
-    // sort properties by the current selected sort method 
-    switch(this.state.currentSort) {
-      // sort by retail score
-      case Actions.SORT_RS:
-        properties = this.sortByRetailScore(properties);
-        break;
-      // sort by price
-      case Actions.SORT_PRICE:
-        properties = this.sortByPrice(properties);
-        break;
-      // sort by sq feet
-      case Actions.SORT_SQ_FT:
-        properties = this.sortBySqFt(properties);
-        break;
-    }
-
     // Paginate remaining properties in blocks of PAGE_SIZE so UI does not freeze up for the listings section, map will still have all properties up
     var numPages = Math.floor(properties.length / PAGE_SIZE);
     if(properties.length % PAGE_SIZE != 0) {
@@ -422,7 +320,6 @@ export class Test extends React.Component {
     // current main property, this is the one that is highlighted on the UI -> this is used by the map to enlarge corresponding pin
     // have to look in full properties, not the cut out propertyTiles from above
     var mainProperty = properties[this.state.selectedPropertyIndex];
-
 
     var secondaryContent = false;
     switch(this.state.secondaryContent) {
@@ -450,9 +347,7 @@ export class Test extends React.Component {
         {/* Use flex-box so that we can automatically resize the content below the desktop only header bar when it dissapears on mobile */}
         {/* header bar that has the logo and app color, only visible on desktop and larger sizes */}
         <div>
-          <div className="hidden-sm hidden-xs" style={{color:"#FFFFFF", backgroundColor:"#49A3DC", paddingTop:"5px", paddingBottom:"5px", boxShadow:"0px 1px 3px 1px #7f8c8d", position:"relative", zIndex:"10"}}>
-            <img style={{height:"45px", marginLeft:"15px"}} src="https://s3-us-west-2.amazonaws.com/homepage-image-assets/retail_score_logo_white.png" />
-          </div>
+          <AppBar className="hidden-sm hidden-xs" />
           <div className="hidden-md hidden-lg" style={{backgroundColor:"#49A3DC"}}>
             <SearchBar noPadding={true} value={this.state.currentCity} onSearch={this.searchCity} />
           </div>
@@ -514,7 +409,7 @@ export class Test extends React.Component {
                 {/* Bootstrap hidden is using display:none, so performance of doing this should not be a issue. But even so with pagination we should be avoiding any perfomance problem with many tiles */}
                 <div ref="desktopListingsDiv" className="listingsDiv hidden-sm hidden-xs">
                   {propertyTiles.map((property, index) => {
-                    return <PropertyTile scoreType={this.props.scoreType} onClick={this.propertyClick} oneTapContact={this.state.oneTapContact} property={property} mobile={false} key={index} index={index} onHover={(index) => this.updateMainProperty(index)} selected={this.isMainProperty(index)} style={{flexShrink: "1"}}/>
+                    return <PropertyTile onClick={this.propertyClick} oneTapContact={this.state.oneTapContact} property={property} mobile={false} key={index} index={index} onHover={(index) => this.updateMainProperty(index)} selected={this.isMainProperty(index)} style={{flexShrink: "1"}}/>
                   })}
                   {numPages >= 2 ?
                     <div style={{width:"100%", height:"80px", display:"flex", justifyContent:"center", alignItems:"center"}}>
@@ -539,7 +434,7 @@ export class Test extends React.Component {
                   }
                   {propertyTiles.map((property, index) => {
                     {/* Add the ref of this to the mobile tiles ref storage, this is used for calculating which element is in the main scroll position */}
-                    return <PropertyTile scoreType={this.props.scoreType} onClick={this.propertyClick} oneTapContact={this.state.oneTapContact} property={property} mobile={true} key={index} index={index} selected={this.isMainProperty(index)} style={{flexShrink: "1"}} ref={c => this._propertyTiles.set(index, c)}/>
+                    return <PropertyTile onClick={this.propertyClick} oneTapContact={this.state.oneTapContact} property={property} mobile={true} key={index} index={index} selected={this.isMainProperty(index)} style={{flexShrink: "1"}} ref={c => this._propertyTiles.set(index, c)}/>
                   })}
                   {(numPages >= 2 && this.state.currentPage != numPages) ?
                     <div style={{display:"flex", flexDirection:"column", justifyContent:"center"}}>
@@ -587,7 +482,7 @@ class PropertyTile extends React.Component {
     // properties will either have null for both, only a min, or a min and max value
     //  will never have a max and no min
     if(property.rental_rate_min == null) {
-      return "Rent Unavailable"
+      return "Unavailable"
     } else if(property.rental_rate_min != null && property.rental_rate_max == null) {
       return "$" + Actions.numberToString(property.rental_rate_min) + "/mo"; 
     } else if(property.rental_rate_min == property.rental_rate_max){
@@ -601,7 +496,7 @@ class PropertyTile extends React.Component {
     // properties will either have null for both, only a min, or a min and max value
     //  will never have a max and no min
     if(property.min_sq_feet == null) {
-      return "Sqft Unavailable"
+      return "Unavailable"
     } else if(property.min_sq_feet != null && property.max_sq_feet == null) {
       return Actions.numberToString(property.rental_rate_min) + " Sq.Ft."; 
     } else if(property.min_sq_feet == property.max_sq_feet) {
@@ -620,37 +515,6 @@ class PropertyTile extends React.Component {
     const selectedPanelContainerStyle = {display:"flex", flexDirection:"column", borderColor:"#49A3DC", borderWidth:"2px", boxShadow:"0 0 2px #49A3DC", marginBottom:"0px"};
     const panelBordersColor = this.props.selected ? "#49A3DC" : "#CCCCCC";
 
-    {/* Below code gets the correct RS color and stars depending on score value */}
-    var retailScore = false;
-    var retailScoreValue = 0;
-    var retailScoreText = "";
-
-    var count = this.props.property.food_count;
-
-    if(count <= 57) {
-      retailScoreValue = 1;
-    } else if (count <= 98) {
-      retailScoreValue = 2;
-    } else if (count <= 125) {
-      retailScoreValue = 3;
-    } else if (count <= 175) {
-      retailScoreValue = 4;
-    } else {
-      retailScoreValue = 5;
-    }
-
-    if(retailScoreValue == 5) {
-      retailScore = <span><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/></span>;
-    } else if(retailScoreValue == 4) {
-      retailScore = <span><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/></span>;
-    } else if(retailScoreValue == 3) {
-      retailScore = <span><i className="fa fa-star"/><i className="fa fa-star"/><i className="fa fa-star"/></span>;
-    } else if(retailScoreValue == 2) {
-      retailScore = <span><i className="fa fa-star"/><i className="fa fa-star"/></span>;
-    } else {
-      retailScore = <span><i className="fa fa-star"/></span>;
-    }
-
     return(
       <div className="propertyTileContainer" onMouseOver={() => this.props.mobile ? false : this.props.onHover(this.props.index)} onClick={() => this.props.onClick(this.props.property)}>
       {/* For desktop we want hover to put this panel in focus, so check flag and call prop function if needed */}
@@ -666,8 +530,7 @@ class PropertyTile extends React.Component {
           {/* If CP given we have a RS for each property, otherwise we add a button  */}
           {true ?
             <div className="panel-body bt" style={{padding:"2px", borderColor: panelBordersColor}}>
-              {/* RS and explanation, explanation uses CSS text cutoof technique on smaller devices with varying # of lines depending on screen width */}
-              <span style={{color:"#CFB53B", fontSize:"16px"}}>{retailScore}</span>
+              <p style={{margin:"0px"}}>{this.props.property.street_address}</p>
             </div>
           :
             <div className="panel-body bt tileRetailScore" style={{padding:"0px", borderColor: panelBordersColor}}>
@@ -686,32 +549,6 @@ class PropertyTile extends React.Component {
             </Row>
           </div>
         </div>
-      </div>
-    );
-  }
-}
-class SearchBar extends React.Component {
-  render() {
-    {/* styles to use when on mobile to give sharp edges on top bar, round edges stick out */}
-    const mobileMenuButtonStyle = {height:"50px", borderColor:"#CCCCCC", borderRadius: "0", borderTop:"none", borderLeft:"none", borderBottom:"none"};
-    const mobileSearchBarStyle = {height:"50px", borderColor:"#CCCCCC", borderRadius: "0", borderTop:"none", borderLeft:"none", borderBottom:"none"};
-    const mobileSearchButtonStyle = {height:"50px", borderColor:"#49A3DC", backgroundColor:"#49A3DC", borderRadius: "0", borderTop:"none", borderRight:"none", borderBottom:"none"};
-    return(
-      <div>
-        <InputGroup className="searchBar" style={{borderRadius: "0", padding: this.props.noPadding ? "0px" : "20px 10px 0px 10px", height:"50px", width:"100%", backgroundColor:"#FFFFFF"}}>
-          {/* <InputGroup.Button className="hidden-md hidden-lg"><Button style={this.props.noPadding ? mobileMenuButtonStyle : {height:"50px", borderColor:"#CCCCCC"}}>&nbsp;&nbsp;<i className="fa fa-list" style={{color:"#49A3DC"}}/>&nbsp;&nbsp;</Button></InputGroup.Button> */}
-          {/* <FormControl type="text" style={this.props.noPadding ? mobileSearchBarStyle : {height:"50px"}}/> */}
-          <GooglePlacesTypeahead
-            onChange={(e) => e[0] != null ? this.props.onSearch(e[0].display) : false}
-            placeHolder={"Enter a City"} 
-            value={this.props.value} />
-          <InputGroup.Button><Button style={this.props.noPadding ? mobileSearchButtonStyle : {height:"50px", borderColor:"#49A3DC", backgroundColor:"#49A3DC"}}>&nbsp;&nbsp;<i className="fa fa-search" style={{color:"#FFFFFF"}}/>&nbsp;&nbsp;</Button></InputGroup.Button>
-        </InputGroup>
-        {this.props.noPadding ?
-          <div style={{width:"100%", height:"1px", borderTop:"solid thin #CCCCCC"}} />
-        :
-          false
-        }
       </div>
     );
   }
@@ -841,122 +678,13 @@ class Filters extends React.Component {
   }
 }
 
-import TypeAhead from 'react-bootstrap-typeahead';
-
-class GooglePlacesTypeahead extends React.Component {
-
-  constructor(props) {
-    super(props);
-
-    this.handleInputChange = this.handleInputChange.bind(this);
-
-    this.state = {
-      cities: this.props.value ? [this.props.value] : [],
-      neighborhoods: []
-    };
-  }
-
-  componentDidMount() {
-    var googleMaps = this.props.googleMaps
-      || (google && google.maps) || this.googleMaps;
-
-    if (!googleMaps) {
-      console.error('Google map api was not found in the page.');
-    } else {
-      this.googleMaps = googleMaps;
-    }
-
-    this.autocompleteService = new googleMaps.places.AutocompleteService();
-
-  }
-
-  handleInputChange(input) {
-    this.setState({hideMenu: false});
-
-    if(input === "") {
-      return;
-    }
-
-    /*
-     * Querying just cities makes it so something like Venice, CA does not show up, so we query for cities
-     *  and neighborhoods from a general geocode query -> filter out what does not qualify and concatenate
-     *  the two to make it so we have a full dropdown of possible places
-     */
-
-    var options = {
-      input: input,
-      componentRestrictions: {country: "us"},
-      types: ['(cities)']
-    };
-    this.autocompleteService.getPlacePredictions(
-      options,
-      function(suggestsGoogle) {
-        if(suggestsGoogle == null) {
-          return null;
-        }
-
-        var cities = suggestsGoogle.map((place) => {
-          return place.terms[0].value + ", " + place.terms[1].value;
-        });
-
-        this.setState({cities: cities});
-      }.bind(this)
-    );
-
-    options = {
-      input: input,
-      componentRestrictions: {country: "us"},
-      types: ['geocode']
-    };
-    this.autocompleteService.getPlacePredictions(
-      options,
-      function(suggestsGoogle) {
-
-        if(suggestsGoogle == null) {
-          return null;
-        }
-
-        var neighborhoods = suggestsGoogle.map((place, i) => {
-          if(place.types.includes("neighborhood")) {
-            return place.terms[0].value + ", " + place.terms[2].value;
-          } else {
-            return null;
-          }
-        }).filter((place) => place != null);
-
-        this.setState({neighborhoods: neighborhoods});
-      }.bind(this)
-    );
-  }
-
-  render() {
-    // concatenate the two sources so autocomplete displays full options
-    const dataSource = this.state.neighborhoods.concat(this.state.cities).map((place, index) => {
-      return {id: index, display: place};
-    });
-    return (
-      <TypeAhead
-        className="typeahead_css"
-        labelKey="display"
-        selected={this.props.value ? [{display: this.props.value}] : []}
-        emptyLabel="Select one option"
-        onInputChange={this.handleInputChange}
-        onChange={this.props.onChange}
-        options={dataSource}
-        placeholder={"Enter a City"}/>
-    );
-  }
-}
-
 Test.contextTypes = {
   mixpanel: React.PropTypes.object.isRequired
 };
 
 const mapStateToProps = (state) => {
   return {
-    server_side: state.server_side,
-    properties: state.properties,
-    scoreType: state.score_type
+    properties: state.properties
   };
 };
 

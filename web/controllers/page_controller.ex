@@ -7,7 +7,7 @@ defmodule RetailScore.PageController do
   alias RetailScore.Crypto
 
   def index(conn, _params) do
-    initial_state = %{"server_side" => true}
+    initial_state = %{}
     props = %{
       "location" => conn.request_path,
       "initial_state" => initial_state
@@ -49,7 +49,7 @@ defmodule RetailScore.PageController do
       rental_rate_min: PropertySpace.get_rental_rate_min(property.spaces),
       rental_rate_max: PropertySpace.get_rental_rate_max(property.spaces)}
 
-    initial_state = %{"property" => propertyData, "server_side" => true}
+    initial_state = %{"property" => propertyData}
     props = %{
       "location" => conn.request_path,
       "initial_state" => initial_state
@@ -93,7 +93,7 @@ defmodule RetailScore.PageController do
         rental_rate_max: PropertySpace.get_rental_rate_max(property.spaces)}
      end)
 
-    # initial_state = %{"properties" => properties, "server_side" => true}
+    # initial_state = %{"properties" => properties}
 
     # props = %{
     #   "location" => conn.request_path,
