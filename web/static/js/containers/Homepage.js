@@ -30,7 +30,7 @@ export class Homepage extends React.Component {
 
   renderLocationTile(city) {
     var imageSource = imageMap[city];
-    return <div className="homepageTile-container" onClick={e => false}>
+    return <div className="homepageTile-container" onClick={e => this.props.history.push('/retail-space-for-lease/' + city + ', CA')}>
             <div className="homepageTile">
               <h4 className="homepageTileText" >{city}</h4>
             </div>
@@ -47,7 +47,7 @@ export class Homepage extends React.Component {
           <div className="homepageGlassContainer" style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
             <h1 style={{color:"#FFFFFF", marginBottom:"40px", marginLeft:"40px", marginRight:"40px", textAlign:"center"}}>Search Retail Spaces for Free</h1>
             <div style={{width:"80%"}}>
-              <SearchBar value={""} onSearch={() => false} />
+              <SearchBar value={""} onSearch={(city) => this.props.history.push('/retail-space-for-lease/' + city)} />
             </div>
             <h2 style={{color:"#FFFFFF", marginTop:"40px", marginLeft:"40px", marginRight:"40px", textAlign:"center"}}>Find the Retail Space with the traffic your business needs</h2>
           </div>
