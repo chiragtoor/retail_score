@@ -18,9 +18,9 @@ defmodule RetailScore.PageController do
       props: props,
     })
 
-    # render(conn, "index.html", html: result["html"], props: initial_state)
+    render(conn, "index.html", html: result["html"], props: initial_state)
 
-    render(conn, "index.html", html: [], props: %{})
+    # render(conn, "index.html", html: [], props: %{})
   end
 
   def pdp_page(conn, %{"propertyId" => id}) do
@@ -70,7 +70,7 @@ defmodule RetailScore.PageController do
     |> where([p], p.city == ^city)
     |> where([p], p.state == ^state)
     |> where([p], p.active == true)
-    |> limit(20)
+    |> limit(10)
     |> Repo.all
     |> Repo.preload(:spaces)
     |> Enum.map(fn(property) ->
@@ -84,7 +84,6 @@ defmodule RetailScore.PageController do
         image_lat: property.image_lat,
         image_lng: property.image_lng,
         image_heading: property.image_heading,
-        # description: property.description,
         retail_score: property.retail_score,
         spaces: Enum.count(PropertySpace.get_spaces_for_property_preloaded(property.spaces)),
         min_sq_feet: PropertySpace.get_min_sq_feet(property.spaces),
@@ -93,20 +92,20 @@ defmodule RetailScore.PageController do
         rental_rate_max: PropertySpace.get_rental_rate_max(property.spaces)}
      end)
 
-    # initial_state = %{"properties" => properties}
+    initial_state = %{"properties" => properties}
 
-    # props = %{
-    #   "location" => conn.request_path,
-    #   "initial_state" => initial_state
-    # }
+    props = %{
+      "location" => conn.request_path,
+      "initial_state" => initial_state
+    }
 
-    # result = RetailScore.ReactIO.json_call!(%{
-    #   component: "./priv/static/js/server.js",
-    #   props: props,
-    # })
+    result = RetailScore.ReactIO.json_call!(%{
+      component: "./priv/static/js/server.js",
+      props: props,
+    })
 
-    # render(conn, "index.html", html: result["html"], props: initial_state)
+    render(conn, "index.html", html: result["html"], props: initial_state)
 
-    render(conn, "index.html", html: [], props: %{})
+    # render(conn, "index.html", html: [], props: %{})
   end
 end

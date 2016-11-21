@@ -16,15 +16,7 @@ defmodule RetailScore.Router do
   scope "/", RetailScore do
     pipe_through :browser # Use the default browser stack
 
-    get "/homepage", PageController, :index
     get "/", PageController, :index
-    get "/customer", PageController, :index
-    get "/targetcustomer/1", PageController, :index
-    get "/targetcustomer/2", PageController, :index
-    get "/scoreproperties", PageController, :index
-    get "/test", PageController, :index
-    get "/test/:city", PageController, :srp_page
-    get "/homepage", PageController, :index
     get "/retail-space-for-lease/:city", PageController, :srp_page
     get "/properties/:propertyId", PageController, :pdp_page
   end

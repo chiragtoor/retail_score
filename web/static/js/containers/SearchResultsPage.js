@@ -4,7 +4,6 @@ import { connect } from "react-redux";
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 import { Row, Col, InputGroup, ButtonGroup, Button, DropdownButton, MenuItem, Pagination } from 'react-bootstrap';
 
-
 import * as Actions from '../actions';
 import * as Util from '../Util';
 
@@ -17,7 +16,7 @@ const PAGE_SIZE = 20;
 // flag for showing filters in secondary content
 const SECONDARY_FILTERS = 0;
 
-export class Test extends React.Component {
+export class SearchResultsPage extends React.Component {
 
   /*
    * Using bootstrap and css media queries, desktop and mobile share the same layout, but there are parts of the logic that are
@@ -94,7 +93,13 @@ export class Test extends React.Component {
     // used for flag on animations, on mount animations don't work if they are rendered, so we wait till mount to run animation
     this.setState({mounted: true});
 
-    this.context.mixpanel.track('srp_mounted');
+    this.trackCall(() => this.context.mixpanel.track('srp_mounted'));
+  }
+
+  trackCall(callIfTrackable) {
+    if(this.context.mixpanel) {
+      callIfTrackable();
+    }
   }
 
   // search and get properties for a city
@@ -105,14 +110,14 @@ export class Test extends React.Component {
     // update local state to keep track of where SRP is
     this.setState({currentCity: city});
 
-    this.context.mixpanel.track('srp_city_changed', {'city': cityParts[0], 'state': cityParts[1]});
+    this.trackCall(() => this.context.mixpanel.track('srp_city_changed', {'city': cityParts[0], 'state': cityParts[1]}));
   }
 
   // mobile secondary content helper function to bring up the correct modal
   showSecondaryContent(content) {
     switch (content) {
       case SECONDARY_FILTERS:
-        this.context.mixpanel.track('srp_filters_button_clicked');
+        this.trackCall(() => this.context.mixpanel.track('srp_filters_button_clicked'));
         this.setState({
           mobileShowSecondaryContent: true,
           secondaryContent: SECONDARY_FILTERS
@@ -122,12 +127,12 @@ export class Test extends React.Component {
   }
 
   propertyClick(property) {
-    this.context.mixpanel.track('property_clicked', {'property_id': property.id});
+    this.trackCall(() => this.context.mixpanel.track('property_clicked', {'property_id': property.id}));
     this.props.history.push('/properties/' + property.id);
   }
 
   submitContact(name, email, message, propertyId) {
-    this.context.mixpanel.track('srp_contact', {'property_id': propertyId, 'name': name, 'email': email, 'message': message});
+    this.trackCall(() => this.context.mixpanel.track('srp_contact', {'property_id': propertyId, 'name': name, 'email': email, 'message': message}));
 
     this.props.submitContact({
       "message":{
@@ -249,7 +254,7 @@ export class Test extends React.Component {
 
   // handle when user selects another page from pagination, passed as prop to listings component
   pageSelect(page, mobileFlag) {
-    this.context.mixpanel.track('srp_page_changed', {'page': page});
+    this.trackCall(() => this.context.mixpanel.track('srp_page_changed', {'page': page}));
     // update the current page
     this.setState({currentPage: page});
     // update the current main property, will be the first one on this page
@@ -330,12 +335,12 @@ export class Test extends React.Component {
                                 filterPriceMax={this.state.filterPriceMax}
                                 filterSqFtMin={this.state.filterSqFtMin}
                                 filterSqFtMax={this.state.filterSqFtMax}
-                                onUpdatePriceMin={(value) => {this.context.mixpanel.track('srp_filter_changed', {'min_price': value}); this.setState({filterPriceMin: value, currentPage: 1});}}
-                                onUpdatePriceMax={(value) => {this.context.mixpanel.track('srp_filter_changed', {'max_price': value}); this.setState({filterPriceMax: value, currentPage: 1});}}
-                                onUpdateSqFtMin={(value) => {this.context.mixpanel.track('srp_filter_changed', {'min_sqft': value}); this.setState({filterSqFtMin: value, currentPage: 1});}}
-                                onUpdateSqFtMax={(value) => {this.context.mixpanel.track('srp_filter_changed', {'max_sqft': value}); this.setState({filterSqFtMax: value, currentPage: 1});}}
+                                onUpdatePriceMin={(value) => {this.trackCall(() => this.context.mixpanel.track('srp_filter_changed', {'min_price': value})); this.setState({filterPriceMin: value, currentPage: 1});}}
+                                onUpdatePriceMax={(value) => {this.trackCall(() => this.context.mixpanel.track('srp_filter_changed', {'max_price': value})); this.setState({filterPriceMax: value, currentPage: 1});}}
+                                onUpdateSqFtMin={(value) => {this.trackCall(() => this.context.mixpanel.track('srp_filter_changed', {'min_sqft': value})); this.setState({filterSqFtMin: value, currentPage: 1});}}
+                                onUpdateSqFtMax={(value) => {this.trackCall(() => this.context.mixpanel.track('srp_filter_changed', {'max_sqft': value})); this.setState({filterSqFtMax: value, currentPage: 1});}}
                                 selectedSort={this.state.currentSort} 
-                                onUpdateSort={(newValue) => {this.context.mixpanel.track('srp_sort_type_changed', {'sort_by': newValue}); this.setState({currentSort: newValue, currentPage: 1});}}
+                                onUpdateSort={(newValue) => {this.trackCall(() => this.context.mixpanel.track('srp_sort_type_changed', {'sort_by': newValue})); this.setState({currentSort: newValue, currentPage: 1});}}
                                 onSave={() => this.setState({mobileShowSecondaryContent: false})} 
                                 padded={true} />
                             </div>;
@@ -473,6 +478,8 @@ export class Test extends React.Component {
     );
   }
 }
+
+/* PropertyTile component is only used in this Container */
 class PropertyTile extends React.Component {
   constructor(props) {
     super(props);
@@ -554,6 +561,7 @@ class PropertyTile extends React.Component {
   }
 }
 
+/* Filters component is only used in this Container */
 class Filters extends React.Component {
   // price and sq foot options are stored in the Util.js file
   render() {
@@ -678,14 +686,10 @@ class Filters extends React.Component {
   }
 }
 
-Test.contextTypes = {
-  mixpanel: React.PropTypes.object.isRequired
-};
-
 const mapStateToProps = (state) => {
   return {
     properties: state.properties
   };
 };
 
-export default connect(mapStateToProps, Actions)(Test);
+export default connect(mapStateToProps, Actions)(SearchResultsPage);

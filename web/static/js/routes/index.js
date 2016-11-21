@@ -4,14 +4,14 @@ import { Route, IndexRoute } from "react-router";
 import Base from "../containers/Base";
 
 import HomepageContainer from "../containers/Homepage";
-import Test from "../containers/Test";
+import SearchResultsPage from "../containers/SearchResultsPage";
 
 export default (
 	<Route path="/">
 	  <IndexRoute component={HomepageContainer} />
 
 	  <Route path="/" component={HomepageContainer} />
-	  <Route path='/retail-space-for-lease/:city' component={Test} />
+	  <Route path='/retail-space-for-lease/:city' component={SearchResultsPage} />
 	</Route>
 );
 

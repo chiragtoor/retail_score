@@ -78,7 +78,6 @@ defmodule RetailScore.PropertyView do
   defp filter_businesses(businesses, values) do
     businesses
     |> Enum.filter(fn(business) ->
-      IO.inspect business
       values
       |> Enum.reduce(false, fn(value, passes) ->
         case passes do
