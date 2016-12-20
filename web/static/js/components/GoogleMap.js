@@ -37,22 +37,6 @@ export default class GoogleMap extends Component {
       }]
     });
 
-    // var moonMapType = new google.maps.ImageMapType({
-    //   getTileUrl: function(coord, zoom) {
-    //     if(zoom < 8) {
-    //       return null;
-    //     }
-    //     return 'https://s3-us-west-2.amazonaws.com/retailscoretiles/' + zoom + '/' + coord.x + '/' + coord.y + '/tile.png'
-    //   },
-    //   tileSize: new google.maps.Size(256, 256),
-    //   maxZoom: 17,
-    //   minZoom: 8,
-    //   radius: 1738000,
-    //   name: 'RetailScore'
-    // });
-
-    // map.overlayMapTypes.push(moonMapType);
-
     var me = this;
 
     google.maps.event.addListener(map, 'zoom_changed', function() {
@@ -91,10 +75,6 @@ export default class GoogleMap extends Component {
 
     this.setState(this.state);
 
-    if(this.props.properties) {
-      // this.drawPropertyMarkers(this.props.properties);
-    }
-
     if(this.props.currentPropertyMarker){
       this.highlightMarker(this.props.currentPropertyMarker);
     }
@@ -122,8 +102,6 @@ export default class GoogleMap extends Component {
   }
 
   drawPropertyMarkers(properties, me) {
-
-    //resetting the property ids
     me.state.propertyIds = {};
 
     properties.map((property) => {
@@ -175,26 +153,6 @@ export default class GoogleMap extends Component {
   }
 
   componentWillReceiveProps(nextProps){
-
-    // if(nextProps.city && (this.state.city != nextProps.city)){
-
-    //   this.state.city = nextProps.city;
-    //   this.setState(this.state);
-
-    //   var geocoder = new google.maps.Geocoder();
-    //   var me = this;
-
-    //   geocoder.geocode({
-    //       'address': nextProps.city
-    //   }, function(results, status) {
-    //       if (status == google.maps.GeocoderStatus.OK) {
-    //         me.state.map.setCenter(results[0].geometry.location);
-    //         me.setState(me.state);
-    //       }
-    //   });
-    // }
-    
-
     if(nextProps.currentPropertyMarker){
       if(this.state.highlightedId != nextProps.currentPropertyMarker.id) {
         this.state.map.setCenter({lat: nextProps.currentPropertyMarker.lat, lng: nextProps.currentPropertyMarker.lng});

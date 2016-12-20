@@ -921,8 +921,6 @@ defmodule RetailScore.Demographic do
       @study_area_options <> "&f=pjson&forStorage=true" <>
       "&analysisVariables=[%22" <> variables <> "%22]" 
 
-    IO.inspect query_url
-
     case HTTPoison.post(query_url, "", [], [{:timeout, :infinity}, {:recv_timeout, :infinity}]) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         extract_esri_variables(Poison.Parser.parse!(body))

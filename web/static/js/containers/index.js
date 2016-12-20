@@ -7,8 +7,6 @@ import configureStore from "../store";
 import routes from "../routes";
 import MixpanelProvider from 'react-mixpanel';
 
-var env = process.env.MIX_ENV || 'dev';
-
 const isBrowser = typeof window !== 'undefined';
 
 export default class Index extends React.Component {
@@ -21,9 +19,6 @@ export default class Index extends React.Component {
         if (props) {
           router = <RouterContext { ...props } />;
         }
-        // Since it's a very basic app, we don't handle any errors, however in real app you will have do this.
-        // Please, refer to https://github.com/reactjs/react-router/blob/master/docs/guides/ServerRendering.md
-        // to find more relevant information.
         const store = configureStore(initialState);
         component = <Provider store={store}>
                       {router}
@@ -31,21 +26,7 @@ export default class Index extends React.Component {
       });
     } else {
       const mixpanel = require('mixpanel-browser');
-      
-      var mix_token;
-
-      //if not SSR
-      if(isBrowser) {
-        if(window.location.hostname == 'localhost') {
-          mix_token = "87fc08fe6d7679baf9840478c022ef91";
-        } else {
-          mix_token = "ae0fd077786c8096959a7c297b28d99b";
-        }
-      } else {
-        mix_token = "87fc08fe6d7679baf9840478c022ef91";
-      }
-
-      mixpanel.init(mix_token);
+      mixpanel.init("87fc08fe6d7679baf9840478c022ef91");
 
       initialState = window.__INITIAL_STATE__;
       history = browserHistory;

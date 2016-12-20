@@ -96,6 +96,12 @@ export class SearchResultsPage extends React.Component {
     this.trackCall(() => this.context.mixpanel.track('srp_mounted'));
   }
 
+  /* 
+   * When rendered on the server there is no mixpanel, the library relies on the browser so we cannot use MixPanelProvider.
+   *  Because of this some calls to mixpanel.track could be errors because mixpanel will be undefined, so this function wraps
+   *  all calls to mixpanel and makes sure it is able to be called. Without this we have issues rendering server side because of
+   *  tracking calls made on page load in componentDidMount, etc.
+   */
   trackCall(callIfTrackable) {
     if(this.context.mixpanel) {
       callIfTrackable();

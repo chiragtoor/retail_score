@@ -7,26 +7,10 @@ import SearchBar from '../components/SearchBar';
 const imageMap = {
   "Los Angeles": "https://s3-us-west-2.amazonaws.com/zamatics-images/los-angeles-downtown.jpg",
   "San Francisco": "https://s3-us-west-2.amazonaws.com/zamatics-images/san-francisco-downtown.jpg",
-  "New York City": "https://s3-us-west-2.amazonaws.com/zamatics-images/new-york-downtown.jpg",
-  "Boston": "https://s3-us-west-2.amazonaws.com/zamatics-images/boston-downtown.jpg",
-  "Seattle": "https://s3-us-west-2.amazonaws.com/zamatics-images/seattle-downtown.jpg",
-  "Chicago": "https://s3-us-west-2.amazonaws.com/zamatics-images/chicago-downtown.jpg",
-  "San Diego": "https://s3-us-west-2.amazonaws.com/homepage-image-assets/san-diego-skyline.jpg",
-  "San Jose" : "https://s3-us-west-2.amazonaws.com/homepage-image-assets/san-jose.jpg",
-  "Sacramento" : "https://s3-us-west-2.amazonaws.com/homepage-image-assets/sacramento.jpg",
-  "Fresno" : "https://s3-us-west-2.amazonaws.com/homepage-image-assets/sacramento.jpg",
-  "Santa Monica" : "https://media.xogrp.com/images/c3d8109c-69fb-4589-a30b-ada0a395ec8e",
-  "Long Beach" : "http://i1.trekearth.com/photos/8086/imgp1131.jpg",
-  "Hollywood" : "http://redlinegrouptravel.com/wp-content/uploads/2013/08/Hollywood-Highland.jpg",
-  "Beverly Hills": "http://rodeodrive-shop.com/images/SlideShow_Front/Rodeo-Drive-0799.jpg"
+  "Santa Monica" : "https://media.xogrp.com/images/c3d8109c-69fb-4589-a30b-ada0a395ec8e"
 }
 
 export class Homepage extends React.Component {
-
-  constructor(props) {
-    super(props);
-
-  }
 
   renderLocationTile(city) {
     var imageSource = imageMap[city];
