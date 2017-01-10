@@ -7,6 +7,7 @@
     "phoenix": "file:deps/phoenix",
     "react": "^15.3.0",
     "react-addons-css-transition-group": "^15.2.1",
+    "react-autocomplete": "^1.4.0",
     "react-bootstrap": "^0.30.0-rc.2",
     "react-bootstrap-typeahead": "^0.9.1",
     "react-dom": "^15.3.0",
