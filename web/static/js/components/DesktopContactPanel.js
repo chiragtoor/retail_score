@@ -76,9 +76,6 @@ export default class DesktopContactPanel extends Component {
                   <div className="panel b m0">
                      <div className="panel-heading" >
                         <div className="media mt0">
-                           <center>
-                            <img src="https://lh3.googleusercontent.com/-znTaTDKLflU/AAAAAAAAAAI/AAAAAAAAAAA/i5PcDmAQPF8/photo.jpg" alt="Image" className="media-object img-circle thumb48" />
-                           </center>
                            <div className="media-body media-middle">
                             <center>
                               <h4 className="media-heading m0 text-bold">{agent ? agent.name : "Unavailable"}</h4>
@@ -118,7 +115,7 @@ export default class DesktopContactPanel extends Component {
                             </FormGroup>
                             <center>
                               <Button style={{color:"#FFFFFF", width:"100%", fontSize:"18px", backgroundColor:"#49A3DC", textAlign:"left"}} onClick={this.submitContact} bsClass="btn btn-labeled mr">
-                                <span className="btn-label"><i className="fa fa-comment"></i></span>Contact Agent
+                                <span className="btn-label"><i className="fa fa-comment"></i></span> Contact Agent
                               </Button>
                             </center>
                        </div>

@@ -7,24 +7,18 @@ import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
 
 import RetailScoreExplanation from '../components/RetailScoreExplanation';
 import ContactModal from '../components/ContactModal';
-import PeoplePanel from '../components/PeoplePanel';
-import BusinessDetails from '../components/BusinessDetails';
 import RetailScorePanel from '../components/RetailScorePanel';
 import DemographicPanel from '../components/DemographicPanel';
-import CompetitionPanel from '../components/CompetitionPanel';
 
 import MobilePropertySummary from '../components/MobilePropertySummary';
 
 import DesktopPropertySummary from '../components/DesktopPropertySummary';
-import DesktopDemographicPanel from '../components/DesktopDemographicPanel';
-import DesktopCompetitionPanel from '../components/DesktopCompetitionPanel';
-import DesktopRetailCompetitionPanel from '../components/DesktopRetailCompetitionPanel';
 
 import { Grid, Row, Col, Panel, Button, ButtonGroup, Modal, FormGroup, ControlLabel, FormControl, InputGroup, Carousel, CarouselItem } from 'react-bootstrap';
 
 class PDP extends React.Component {
 
-    constructor(props){
+    constructor(props) {
       super(props);
 
       this.showRetailScoreExpalanation = this.showRetailScoreExpalanation.bind(this);
@@ -34,11 +28,8 @@ class PDP extends React.Component {
       this.submitContact = this.submitContact.bind(this);
       this.desktopContactFailed = this.desktopContactFailed.bind(this);
       this.mobileContactFailed = this.mobileContactFailed.bind(this);
-      this.showBusinessDetailsModal  = this.showBusinessDetailsModal.bind(this);
-      this.hideBusinessDetails = this.hideBusinessDetails.bind(this);
 
-      this.state= 
-      { 
+      this.state = { 
         dimDiv: null,
         modal: null,
         desktopContactSuccess: false,
@@ -74,7 +65,6 @@ class PDP extends React.Component {
           }
         });
       } else if(this.props.property.agents) {
-        console.log("show the modal");
         this.state.modal = <div style={{height:"300px", width:"100%", backgroundColor:"#FFFFFF", position:"fixed", zIndex:"3", bottom:"0", right:"0"}}>
                       <ContactModal contactFailed={this.mobileContactFailed} submitContact={this.submitContactAndHideModal} propertyId={this.props.property.id} agent={this.props.property.agents[0]} mixpanel={this.context.mixpanel} />
                      </div>;
@@ -93,7 +83,6 @@ class PDP extends React.Component {
     }
 
     submitContactAndHideModal(data) {
-      console.log("in pdp");
       this.props.submitContact(data);
       this.hideModals();
     }
@@ -103,19 +92,6 @@ class PDP extends React.Component {
                     <RetailScoreExplanation hide={this.hideFilters} mixpanel={this.context.mixpanel} />
                    </div>;
       this.state.dimDiv = <div className="PDPDimDiv" onClick={this.hideModals}></div>;
-      this.setState(this.state);
-    }
-
-    showBusinessDetailsModal(data, label) {
-
-      this.state.businessDetailsModal = <div style={{height:"100%", width:"100%", position:"fixed", zIndex:"5", bottom:"0", top:"0"}}> 
-      <BusinessDetails  businesses={data} label={label} hideBusinessDetails={this.hideBusinessDetails} />
-      </div>;
-      this.setState(this.state);
-    }
-
-    hideBusinessDetails(){
-      this.state.businessDetailsModal = null;
       this.setState(this.state);
     }
 
@@ -206,10 +182,8 @@ class PDP extends React.Component {
                 <div className="hidden-md hidden-lg"  style={{backgroundColor:"#FFFFFF"}} className="p-lg">
                     <Row>
                         <Col className="col-sm-offset-1 hidden-md hidden-lg" lg={ 12 } md={ 10 } sm={ 10 } xs={12}>
-                          {property ? <RetailScorePanel scoreType={this.props.scoreType} showModal={this.showRetailScoreExpalanation} showBusinessDetails={this.showBusinessDetailsModal} property={property} /> : null }
+                          {property ? <RetailScorePanel scoreType={this.props.scoreType} showModal={this.showRetailScoreExpalanation} property={property} /> : null }
                           { demographics ? <DemographicPanel data={demographics} mixpanel={this.context.mixpanel} /> : null}
-                          {property.lat ? <CompetitionPanel property={property} mixpanel={this.context.mixpanel} /> : null}
-                          { tapestry ? <PeoplePanel people={tapestry}/> : null}
                         </Col>
                         
                         <Col className="hidden-md hidden-lg">
@@ -219,57 +193,31 @@ class PDP extends React.Component {
                           <ReactCSSTransitionGroup {...filterTransitionOptions} >
                             {this.state.modal}
                           </ReactCSSTransitionGroup>
-                          <ReactCSSTransitionGroup {...businessDetailsOptions}>
-                            {this.state.businessDetailsModal}
-                          </ReactCSSTransitionGroup>
 
                         </Col>
                     </Row>
                     <div className="hidden-md hidden-lg" style={{width:"100%", height:"50px"}}/>
                     <Button className="hidden-md hidden-lg" onClick={this.showContactModal} style={{width:"100%", height:"50px", fontSize:"20px", fontWeight:"300px", backgroundColor:"#49A3DC", color:"#FFFFFF", position:"fixed", bottom:"0", left:"0", zIndex:"2"}}>{contactButtonText}</Button>
                 </div>
-
                 {/*DESKTOP HTML*/}
-
                 <div className="hidden-xs hidden-sm hidden-md" style={{width:"100%", backgroundColor:"#FFFFFF"}}>
                   <Row>
                     <Col className="col-lg-offset-1 " lg={ 10 } >
                       { property ? <DesktopPropertySummary scoreType={this.props.scoreType} submitContact={this.submitContact} contactFailed={this.desktopContactFailed} property={property} mixpanel={this.context.mixpanel} /> : null}
                     </Col>
-                    <Col className="col-lg-offset-1" lg={10}>
-                      {property.lat ? <DesktopRetailCompetitionPanel property={property} mixpanel={this.context.mixpanel} tag={"largeRetailCompetition"}/> : null }
-                    </Col>                  
                     <Col className="col-lg-offset-1 " lg={ 10 } >
-                      { demographics ? <DesktopDemographicPanel data={demographics} mixpanel={this.context.mixpanel} tag={"largeDemographics"} /> : null}
+                      { demographics ? <DemographicPanel data={demographics} mixpanel={this.context.mixpanel} tag={"largeDemographics"} /> : null}
                     </Col>
                   </Row>
                 </div>
-
                 <div className="hidden-xs hidden-sm hidden-lg" style={{width:"100%", backgroundColor:"#FFFFFF"}}>
                   <Row>
                     <Col md={ 12 } >
                       { property ? <DesktopPropertySummary submitContact={this.submitContact} contactFailed={this.desktopContactFailed} property={property} mixpanel={this.context.mixpanel} /> : null}
                     </Col>
                     <Col md={ 12 } >
-                      {property.lat ? <DesktopRetailCompetitionPanel property={property} mixpanel={this.context.mixpanel} tag={"mediumRetailCompetition"}/> : null }
+                      { demographics != null ? <DemographicPanel data={demographics} mixpanel={this.context.mixpanel} tag={"mediumDemographics"}/> : null}
                     </Col>
-                    <Col md={ 12 } >
-                      { demographics != null ? <DesktopDemographicPanel data={demographics} mixpanel={this.context.mixpanel} tag={"mediumDemographics"}/> : null}
-                    </Col>
-
-                    <Modal className="hidden-sm hidden-xs" show={this.state.desktopContactSuccess}>
-                      <Modal.Body style={{textAlign:"center"}}>
-                        <p style={{fontSize:"18px", fontWeight:"400px", textAlign:"center"}}>Your message has been sent. Expect a response soon!</p>
-                        <Button style={{backgroundColor:"#49A3DC", color:"#FFFFFF"}} onClick={this.hideModals}>Awesome</Button>
-                      </Modal.Body>
-                    </Modal>
-
-                     <Modal className="hidden-sm hidden-xs" show={this.state.desktopContactFailure}>
-                      <Modal.Body style={{textAlign:"center"}}>
-                        <p style={{fontSize:"18px", fontWeight:"400px", textAlign:"center"}}>Please provide your Name, E-Mail and a Message for the broker.</p>
-                        <Button style={{backgroundColor:"#49A3DC", color:"#FFFFFF"}} onClick={this.hideModals}>Ok</Button>
-                      </Modal.Body>
-                    </Modal>
                   </Row>
                 </div>
 
@@ -285,7 +233,6 @@ PDP.contextTypes = {
 
 const mapStateToProps = (state) => {
   return {
-    server_side: state.server_side,
     property: state.property,
     scoreType: state.score_type
   };

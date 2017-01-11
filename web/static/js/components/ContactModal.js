@@ -77,9 +77,6 @@ export default class ContactModal extends Component {
                   <div className="panel b m0">
                      <div className="panel-heading">
                         <div className="media mt0">
-                           <div className="media-left">
-                            <img src="https://lh3.googleusercontent.com/-znTaTDKLflU/AAAAAAAAAAI/AAAAAAAAAAA/i5PcDmAQPF8/photo.jpg" alt="Image" className="media-object img-circle thumb48" />
-                           </div>
                            <div className="media-body media-middle">
                             <center>
                               <h5 className="media-heading m0 text-bold">{agent.name}</h5>

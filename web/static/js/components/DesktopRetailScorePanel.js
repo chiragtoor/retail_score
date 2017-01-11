@@ -23,19 +23,24 @@ export default class DesktopRetailScorePanel extends Component {
 
     var retailScoreValue = 1;
 
+
+
     switch(this.props.scoreType) {
       case Actions.SCORE_FASHION:
-
+        console.log("FASHION");
         var allBusinesses =  this.props.property.fashion_businesses ? this.props.property.fashion_businesses : {};;
 
         for(var i = 0; i < allBusinesses.length; i++) {
           if(allBusinesses[i].clothing_store) {
+            console.log("Clothing");
             firstArr.push(allBusinesses[i]);
           }
           if(allBusinesses[i].shoe_store) {
+            console.log("Shoe");
             secondArr.push(allBusinesses[i]);
           }
           if(allBusinesses[i].jewelry_store) {
+            console.log("Jewelry");
             thirdArr.push(allBusinesses[i]);
           }
         }
@@ -45,6 +50,8 @@ export default class DesktopRetailScorePanel extends Component {
         thirdLabel = thirdArr.length == 1 ? "Jewelry Store" : "Jewelry Stores";
 
         var count = this.props.property.fashion_count ;
+
+        console.log(this.props.property.fashion_count);
 
         if(count <= 1) {
           retailScoreValue = 1;
@@ -60,7 +67,7 @@ export default class DesktopRetailScorePanel extends Component {
 
         break;
       case Actions.SCORE_WELLNESS:
-
+        console.log("WELLNESS");
         var allBusinesses = this.props.property.wellness_businesses ? this.props.property.wellness_businesses : {};
 
         for(var i = 0; i < allBusinesses.length; i++) {
@@ -95,7 +102,7 @@ export default class DesktopRetailScorePanel extends Component {
 
         break;
       case Actions.SCORE_RESTAURANT:
-
+        console.log("RESTAURANT");
         var allBusinesses = this.props.property.food_businesses ? this.props.property.food_businesses : {};
 
         for(var i = 0; i < allBusinesses.length; i++) {
@@ -155,37 +162,16 @@ export default class DesktopRetailScorePanel extends Component {
       <div style={{height:"100%", width:"100%", marginTop:"10px"}}>
         <div className="row-masonry">
           <div className="col-masonry">
-              <div className="panel b m0">
-                 <div className="panel-heading">
-                    <div className="media mt0">
-                      <center>
-                        <h2 style={{color:"#E6C200"}} className="media-heading m0 text-bold">{stars}</h2>
-                        <h3>{text}</h3>
-                      </center>
-                       <div className="media-body media-middle hidden">
-                        <center>
-                          <h5 className="media-heading m0 text-bold">{text}</h5>
-                          <h5>Within walking distance there are:</h5>
-                        </center>
-                       </div>
-                    </div>
-                 </div>
-                 <div className="panel-body hidden">
-                    <div className="row">
-                      <div className="col-lg-12">
-                        <div style={{height:"40px", backgroundColor:"#ecf0f1", fontSize:"16px"}}>
-                         <span style={{float:"left", marginLeft:"5px"}}>{firstArr.length} {firstLabel}</span>
-                        </div>
-                        <div style={{height:"40px", fontSize:"16px"}}>
-                         <span style={{float:"left", marginLeft:"5px"}}>{secondArr.length} {secondLabel}</span>
-                        </div>
-                        <div style={{height:"40px", fontSize:"16px", backgroundColor:"#ecf0f1"}}>
-                         <span style={{float:"left", marginLeft:"5px"}}>{thirdArr.length} {thirdLabel}</span>
-                        </div>
-                      </div>
-                    </div>
-                 </div>
+            <div className="panel b m0">
+              <div className="panel-heading">
+                <div className="media mt0">
+                  <center>
+                    <h2 style={{color:"#E6C200"}} className="media-heading m0 text-bold">{stars}</h2>
+                    <h3>{text}</h3>
+                  </center>
+                </div>
               </div>
+            </div>
           </div>
         </div>       
       </div>

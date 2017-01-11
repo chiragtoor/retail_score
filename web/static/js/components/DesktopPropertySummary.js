@@ -1,6 +1,6 @@
 import {default as React, Component} from "react";
 import {Glyphicon,Modal, Button, FormGroup, ControlLabel, FormControl, InputGroup, Panel, Nav, NavItem, Row, Col} from "react-bootstrap";
-import DesktopSpacesPanels from './DesktopSpacesPanels';
+import SpacesPanels from './SpacesPanels';
 import DesktopRetailScorePanel from './DesktopRetailScorePanel';
 import DesktopContactPanel from '../components/DesktopContactPanel';
 
@@ -17,13 +17,11 @@ export default class DesktopPropertySummary extends Component {
   }
 
   getImageUrl(lat, lng, heading) {
-   var width = isBrowser ? window.innerWidth : 640;
-  var height = 450;
+    var width = isBrowser ? window.innerWidth : 640;
+    var height = 450;
 
     if(width > 770) {
       width = 640;
-    } else if (width > 640) {
-      height = 350;
     } else {
       height = 300;
     }
@@ -83,7 +81,7 @@ export default class DesktopPropertySummary extends Component {
                   <h4 className="m0">{styledSqft}</h4>
                   <h4 className="m0">{styledPrice}</h4>
                 </div>
-                {showSpaces && this.props.property.spaces ? <DesktopSpacesPanels spaces={this.props.property.spaces} /> : false}
+                {showSpaces && this.props.property.spaces ? <SpacesPanels spaces={this.props.property.spaces} /> : false}
               </Col>
 
               <Col xs={6} className="text-center" style={{backgroundColor:"#FFFFFF", marginTop:"5px"}}>

@@ -165,11 +165,9 @@ export default class DemographicPanel extends Component {
 
     return (
       <div style={{height:"100%", width:"100%", marginTop:"10px"}}>
-        
-        <div className="row-masonry row-masonry-lg-2">
+        <div className="row-masonry">
           <div className="col-masonry">
               <div className="panel b m0">
-
                  <div className="panel-heading">
                     <div className="media mt0">
                        <div style={{fontSize:"25px"}} className="media-left">
@@ -182,18 +180,26 @@ export default class DemographicPanel extends Component {
                        </div>
                     </div>
                  </div>
-
                  <div className="panel-body">
-                    <div style={{fontSize:"18px", fontWeight:"400", textAlign:"center"}}>{title}</div>
+
                     <div className="row">
-                      <div className="col-lg-8">
-                            <center>
-                                <div id="testchart" />
-                            </center>
-                            <Chart data={data} element='testchart' type='pie' options={options}/>
+                      <div className="col-md-6 col-sm-12">
+                        <div style={{fontSize:"22px", fontWeight:"400", textAlign:"center"}}>
+                          Who lives in this area?
+                        </div>
+                        <div style={{fontSize:"18px", fontWeight:"100", textAlign:"center"}}> 
+                          <br />
+                          {this.props.data.tapestry}
+                        </div>
                       </div>
-                      <div>
+                      <div className="hidden-md hidden-lg col-sm-12">
                         <center>
+                          <div style={{fontSize:"18px", fontWeight:"400", textAlign:"center"}}>{title}</div>
+                          <div id="testchart" />
+                        </center>
+                        <Chart data={data} element='mobilechart' type='pie' options={options}/>
+                        <div>
+                          <center>
                             <ButtonGroup style={{border:"solid thin #333333", marginTop:"5px", borderRadius:"5px"}}>
                                 <Button style={{color:(incomeFont), width:"50px", backgroundColor:(incomeBackground),border:"none", borderRight:"solid thin #333333"}} onClick={e => this.setDemographicIndex(0)}><em className="fa fa-usd"></em></Button>
                                 <Button style={{color:(ethnicFont), width:"50px", backgroundColor:(ethnicBackground),border:"none", borderRight:"solid thin #333333"}} onClick={e => this.setDemographicIndex(1)}><em className="fa fa-globe"></em></Button>
@@ -202,13 +208,31 @@ export default class DemographicPanel extends Component {
                                 <Button style={{color:(genderFont),width:"50px", backgroundColor:(genderBackground),border:"none"}} onClick={e => this.setDemographicIndex(4)}><em className="fa fa-venus-mars"></em></Button>
                             </ButtonGroup>
                           </center>
+                        </div>
+                      </div>
+                      <div className="hidden-xs hidden-sm col-md-6"> 
+                        <center>
+                          <div style={{fontSize:"18px", fontWeight:"400", textAlign:"center"}}>{title}</div>
+                          <div id='desktopchart' />
+                        </center>
+                        <Chart data={data} element={this.props.tag} type='pie' options={options}/>
+                        <div>
+                          <center>
+                            <ButtonGroup style={{border:"solid thin #333333", marginTop:"5px", borderRadius:"5px"}}>
+                                <Button style={{color:(incomeFont), width:"50px", backgroundColor:(incomeBackground),border:"none", borderRight:"solid thin #333333"}} onClick={e => this.setDemographicIndex(0)}><em className="fa fa-usd"></em></Button>
+                                <Button style={{color:(ethnicFont), width:"50px", backgroundColor:(ethnicBackground),border:"none", borderRight:"solid thin #333333"}} onClick={e => this.setDemographicIndex(1)}><em className="fa fa-globe"></em></Button>
+                                <Button style={{color:(maritalFont),width:"50px", backgroundColor:(maritalBackground), border:"none", borderRight:"solid thin #333333"}} onClick={e => this.setDemographicIndex(2)}><em className="fa fa-heart"></em></Button>
+                                <Button style={{color:(ageFont),width:"50px", backgroundColor:(ageBackground),border:"none", borderRight:"solid thin #333333"}} onClick={e => this.setDemographicIndex(3)}><em className="fa fa-user"></em></Button>
+                                <Button style={{color:(genderFont),width:"50px", backgroundColor:(genderBackground),border:"none"}} onClick={e => this.setDemographicIndex(4)}><em className="fa fa-venus-mars"></em></Button>
+                            </ButtonGroup>
+                          </center>
+                        </div>
                       </div>
                     </div>
                  </div>
               </div>
           </div>
         </div>
-
       </div>
     );
 
