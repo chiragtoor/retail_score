@@ -11,15 +11,6 @@ let options = {
   labels: true,
 };
 
-let data = {
-  columns: [
-    ['Male', 250],
-    ['Female', 500],
-    ['Other', 100],
-    ['Test', 0]
-  ]
-};
-
 import Chart from '../components/Chart';
 
 export default class DemographicPanel extends Component {

@@ -15,7 +15,7 @@ import { Grid, Row, Col, Panel, Button, ButtonGroup, Modal, FormGroup, ControlLa
 
 const isBrowser = typeof window !== 'undefined';
 
-class PDP extends React.Component {
+class PropertyDetailsPage extends React.Component {
 
     constructor(props) {
       super(props);
@@ -233,7 +233,7 @@ class PDP extends React.Component {
 
 }
 
-PDP.contextTypes = {
+PropertyDetailsPage.contextTypes = {
     mixpanel: React.PropTypes.object.isRequired
 };
 
@@ -243,4 +243,4 @@ const mapStateToProps = (state) => {
     scoreType: state.score_type
   };
 };
-export default connect(mapStateToProps, Actions)(PDP);
+export default connect(mapStateToProps, Actions)(PropertyDetailsPage);
