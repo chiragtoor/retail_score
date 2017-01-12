@@ -189,6 +189,13 @@ transform-origin: 70px 0%;
   height: 50px;
 }
 
+.containerWrapper {
+  width: 100%;
+  height: 100%;
+  margin: 0px;
+  padding: 0px;
+}
+
 .button {
   background-color: #FFFFFF;
   color: #49A3DC;
@@ -293,6 +300,10 @@ transform-origin: 70px 0%;
   overflow: scroll;
 }
 
+.pdpPadding {
+
+}
+
 /* on smaller width mobile phones (iPhone 4 and 5) we cannot fit a lot of text or the contact button */
 @media(max-width: 320px) {
   /* on all devices split the width of filter sort buttons equally */
@@ -331,6 +342,11 @@ transform-origin: 70px 0%;
 
 /* larger mobile devices, tablets */
 @media(min-width: 768px) {
+
+  .pdpPadding {
+    margin-left: 10px;
+    margin-right: 10px;
+  }
 
   /* for tablet devices split the map and listings 50/50 since there is enough space for both */
   .srpMapSection {

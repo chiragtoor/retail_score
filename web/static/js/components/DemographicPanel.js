@@ -181,7 +181,6 @@ export default class DemographicPanel extends Component {
                     </div>
                  </div>
                  <div className="panel-body">
-
                     <div className="row">
                       <div className="col-md-6 col-sm-12">
                         <div style={{fontSize:"22px", fontWeight:"400", textAlign:"center"}}>
@@ -192,30 +191,12 @@ export default class DemographicPanel extends Component {
                           {this.props.data.tapestry}
                         </div>
                       </div>
-                      <div className="hidden-md hidden-lg col-sm-12">
+                      <div className="col-md-6 col-sm-12">
                         <center>
                           <div style={{fontSize:"18px", fontWeight:"400", textAlign:"center"}}>{title}</div>
                           <div id="testchart" />
                         </center>
                         <Chart data={data} element='mobilechart' type='pie' options={options}/>
-                        <div>
-                          <center>
-                            <ButtonGroup style={{border:"solid thin #333333", marginTop:"5px", borderRadius:"5px"}}>
-                                <Button style={{color:(incomeFont), width:"50px", backgroundColor:(incomeBackground),border:"none", borderRight:"solid thin #333333"}} onClick={e => this.setDemographicIndex(0)}><em className="fa fa-usd"></em></Button>
-                                <Button style={{color:(ethnicFont), width:"50px", backgroundColor:(ethnicBackground),border:"none", borderRight:"solid thin #333333"}} onClick={e => this.setDemographicIndex(1)}><em className="fa fa-globe"></em></Button>
-                                <Button style={{color:(maritalFont),width:"50px", backgroundColor:(maritalBackground), border:"none", borderRight:"solid thin #333333"}} onClick={e => this.setDemographicIndex(2)}><em className="fa fa-heart"></em></Button>
-                                <Button style={{color:(ageFont),width:"50px", backgroundColor:(ageBackground),border:"none", borderRight:"solid thin #333333"}} onClick={e => this.setDemographicIndex(3)}><em className="fa fa-user"></em></Button>
-                                <Button style={{color:(genderFont),width:"50px", backgroundColor:(genderBackground),border:"none"}} onClick={e => this.setDemographicIndex(4)}><em className="fa fa-venus-mars"></em></Button>
-                            </ButtonGroup>
-                          </center>
-                        </div>
-                      </div>
-                      <div className="hidden-xs hidden-sm col-md-6"> 
-                        <center>
-                          <div style={{fontSize:"18px", fontWeight:"400", textAlign:"center"}}>{title}</div>
-                          <div id='desktopchart' />
-                        </center>
-                        <Chart data={data} element={this.props.tag} type='pie' options={options}/>
                         <div>
                           <center>
                             <ButtonGroup style={{border:"solid thin #333333", marginTop:"5px", borderRadius:"5px"}}>

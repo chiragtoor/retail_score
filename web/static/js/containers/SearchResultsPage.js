@@ -354,7 +354,7 @@ export class SearchResultsPage extends React.Component {
     }
 
     return(
-      <div style={{width:"100%", height:"100%", margin:"0px", padding:"0px"}}>
+      <div className="containerWrapper">
         {/* Use flex-box so that we can automatically resize the content below the desktop only header bar when it dissapears on mobile */}
         {/* header bar that has the logo and app color, only visible on desktop and larger sizes */}
         <div>
@@ -598,32 +598,8 @@ class Filters extends React.Component {
     return(
       <div style={{backgroundColor:"#FFFFFF", width:"100%", height:"100%", padding: this.props.padded ? "10px" : "0", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
         {/* Filters label */}
-        {/* Use bootstrap responsive columns to arrange filters section differently for mobile and desktop */}
-        
+        {/* Use bootstrap responsive columns to arrange filters section differently for mobile and desktop */}   
         <Row>
-          {/* On mobile we want this label on the left side, on desktop we want it on top of the corresponding dropdowns */}
-          {/* Use flexbox to center the label vertically, <center> tag to center it horizontally in the column */}
-
-          <Col className="hidden-xs hidden-sm hidden-md hidden-lg" xs={12} sm={12} md={12}>
-            <Row style={{marginLeft:"0px", marginRight:"0px", marginTop:"5px", marginBottom:"20px", width:"100%"}}>
-              {/* Use flexbox to center the label vertically, <center> tag to center it horizontally in the column */}
-              <Col xs={12} sm={12} md={12} style={{display:"flex", flexDirection:"column", justifyContent:"center", height:"40px"}}>
-                <label className="control-label" style={{fontSize:"16px", textAlign:"center", color:"#656565"}}>Sort By</label>
-              </Col>
-              <Col xs={12} sm={12} md={12} style={{paddingRight:"10px"}}>
-                <ButtonGroup style={{width:"100%", height:"40px"}}>
-                  <Button onClick={() => this.props.onUpdateSort(Actions.SORT_RS)} className="filterSortButtonWidthRS" style={this.props.selectedSort == Actions.SORT_RS ? selectedSortButtonStyle : sortButtonStyle}>Retail Score</Button>
-                  <Button onClick={() => this.props.onUpdateSort(Actions.SORT_PRICE)} className="filterSortButtonWidthPrice" style={this.props.selectedSort == Actions.SORT_PRICE ? selectedSortButtonStyle : sortButtonStyle}>Price</Button>
-                  <Button onClick={() => this.props.onUpdateSort(Actions.SORT_SQ_FT)} className="filterSortButtonWidthSq" style={this.props.selectedSort == Actions.SORT_SQ_FT ? selectedSortButtonStyle : sortButtonStyle}>Sq. Feet</Button>
-                </ButtonGroup>
-              </Col>
-              {/* If on Mobile add a Save/Done button since cannot see the changes reflected easily, user needs way to dismiss the slide out */}
-            </Row>
-          </Col>
-
-          {/* Bootstrap column pushing/pulling doesn't work when wrapping columns, so using hidden-[size], for this one label only */}
-          {/* Use flexbox to center the label vertically, <center> tag to center it horizontally in the column */}
-
           {/* On desktop this will be under a label and sharing space with the Sq Ft dropdowns, so half space there and majority space on mobile where it will be in its own row with just a label */}
           <Col xs={12} sm={12} md={6}>
             <InputGroup style={{padding:"10px", height:"40px", width:"100%", marginTop:"10px"}}>
