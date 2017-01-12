@@ -64,12 +64,42 @@ MOVE TO SRP.CSS AFTER
 /* UI REFACTOR CSS */
 /* Mobile First CSS -> setup CSS for mobile and then use media queries to edit for larger devices */
 
+.mb40 {
+  margin-bottom: 40px;
+}
+
+.mt40 {
+  margin-top: 40px;
+}
+
+.ml40 {
+  margin-left: 40px;
+}
+
+.mr40 {
+  margin-right: 40px;
+}
+
 .homepageGlassContainer {
   width: 100%;
   height: -webkit-calc(100% - 55px);
   position: absolute;
   z-index: 1;
   background-color: rgba(44, 62, 80, 0.4);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.homepageSearchBar {
+  width: 80%;
+}
+
+.homepageHeadline {
+  color: #FFFFFF;
+  margin: 40px;
+  text-align: center;
 }
 
 .homepageBackground {
@@ -84,6 +114,28 @@ MOVE TO SRP.CSS AFTER
   -moz-background-size: cover;
   -o-background-size: cover;
   background-size: cover;
+}
+
+.rsColor {
+  color: #49A3DC
+}
+
+.homepageFeature {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 150px;
+  height: 150px;
+  border-width: 3px;
+  border-style: solid;
+  border-radius: 100px;
+  border-color: #49A3DC
+}
+
+.homepageFeaturesText {
+  text-align: center;
+  margin-top: 10px;
+  margin-bottom: 20px;
 }
 
 .crossThrough:after{

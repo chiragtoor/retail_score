@@ -24,53 +24,71 @@ export class Homepage extends React.Component {
 
   render() {
     return(
-      <div style={{width:"100%", height:"100%", margin:"0px", padding:"0px"}}>
+      <div className="containerWrapper">
         <AppBar noShadow={true}/>
-        <div style={{width:"100%", height:"100%"}}>
+        <div className="fullWidth fullHeight">
           <div className="homepageBackground" />
-          <div className="homepageGlassContainer" style={{display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
-            <h1 style={{color:"#FFFFFF", marginBottom:"40px", marginLeft:"40px", marginRight:"40px", textAlign:"center"}}>Search Retail Spaces for Free</h1>
+          <div className="homepageGlassContainer">
+            <h1 className="homepageHeadline">Search Retail Spaces for Free</h1>
             <div style={{width:"80%"}}>
               <SearchBar value={""} onSearch={(city) => this.props.history.push('/retail-space-for-lease/' + city)} />
             </div>
-            <h2 style={{color:"#FFFFFF", marginTop:"40px", marginLeft:"40px", marginRight:"40px", textAlign:"center"}}>Find the Retail Space with the traffic your business needs</h2>
+            <h2 className="homepageHeadline">Find the Retail Space with the traffic your business needs</h2>
           </div>
         </div>
         <div className="container-fluid" style={{margin:"0px", padding:"0px"}}>
           <Row style={{width:"100%", margin:"0px", marginBottom:"20px"}}>
-            <Col md={4} style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
-              <div style={{width:"100%", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
-                <div style={{display:"flex", justifyContent:"center", alignItems:"center", width:"150px", height:"150px", borderWidth:"3px", borderStyle:"solid", borderRadius:"100px", borderColor:"#49A3DC"}}>
-                  <i className="fa fa-users fa-5x" style={{color: "#49A3DC"}}/>
+            <Col md={4}>
+              <center>
+                <div>
+                  <div className="homepageFeature">
+                    <i className="fa fa-users fa-5x rsColor"/>
+                  </div>
+                  <h2>Retail Traffic Drivers</h2>
+                  <p className="homepageFeaturesText">
+                    The right Retail Space has access to the type of traffic you are 
+                    looking for, stop spending hours scouting locations in person. RetailScore 
+                    provides you with detailed info on the traffic drivers of each retail space.
+                  </p>
                 </div>
-                <h2>Retail Traffic Drivers</h2>
-                <p style={{textAlign:"center", marginTop:"10px", marginBottom:"20px"}}>The right Retail Space has access to the type of traffic you are looking for, stop spending hours scouting locations in person. RetailScore provides you with detailed info on the traffic drivers of each retail space.</p>
-              </div>
+              </center>
             </Col>
-            <Col md={4} style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
-              <div style={{width:"100%", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
-                <div className="crossThrough" style={{display:"flex", justifyContent:"center", alignItems:"center", width:"150px", height:"150px", borderWidth:"3px", borderStyle:"solid", borderRadius:"100px", borderColor:"#49A3DC"}}>
-                  <i className="fa fa-usd fa-5x" style={{color: "#49A3DC"}}/>
+            <Col md={4}>
+              <center>
+                <div>
+                  <div className="crossThrough homepageFeature">
+                    <i className="fa fa-usd fa-5x rsColor"/>
+                  </div>
+                  <h2>Free to Search</h2>
+                  <p className="homepageFeaturesText">
+                    You have enough to do to get your business up and running, with us
+                    there are no hidden listings or data, get all the info you need to
+                    find and contact a compatible space for your business for no charge.
+                  </p>
                 </div>
-                <h2>Free to Search</h2>
-                <p style={{textAlign:"center", marginTop:"10px", marginBottom:"20px"}}>You have enough to do to get your business up and running, with us there are no hidden listings or data, get all the info you need to find and contact a compatible space for your business for no charge.</p>
-              </div>
+              </center>
             </Col>
-            <Col md={4} style={{display:"flex", justifyContent:"center", alignItems:"center"}}>
-              <div style={{width:"100%", display:"flex", flexDirection:"column", justifyContent:"center", alignItems:"center"}}>
-                <div style={{display:"flex", justifyContent:"center", alignItems:"center", width:"150px", height:"150px", borderWidth:"3px", borderStyle:"solid", borderRadius:"100px", borderColor:"#49A3DC"}}>
-                  <i className="fa fa-pie-chart fa-5x" style={{color: "#49A3DC"}}/>
+            <Col md={4}>
+              <center>
+                <div>
+                  <div className="homepageFeature">
+                    <i className="fa fa-pie-chart fa-5x rsColor"/>
+                  </div>
+                  <h2>Demographics</h2>
+                  <p className="homepageFeaturesText">
+                    Understand who lives around each retail space and be sure they 
+                    match your target market. With up-to-date demographic information 
+                    (provided by Esri), you will be able to make an informed decision.
+                  </p>
                 </div>
-                <h2>Demographics</h2>
-                <p style={{textAlign:"center", marginTop:"10px", marginBottom:"20px"}}>Understand who lives around each retail space and be sure they match your target market. With up-to-date demographic information (provided by Esri), you will be able to make an informed decision.</p>
-              </div>
+              </center>
             </Col>
           </Row>
-          <hr style={{marginLeft:"40px", marginRight:"40px"}}/>
+          <hr className="ml40 mr40"/>
           <center>
             <h3>Popular Cities</h3>
           </center>
-          <div className="row" style={{marginBottom:"40px"}}>
+          <div className="row mb40">
             <div className="homepageMidSectionPadding">
               <div className="col-lg-4 col-md-4 col-sm-12 col-xs-12">
                 <center>
