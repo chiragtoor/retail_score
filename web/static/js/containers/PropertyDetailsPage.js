@@ -4,14 +4,11 @@ import { connect } from "react-redux";
 import * as Actions from '../actions';
 
 import ReactCSSTransitionGroup from 'react-addons-css-transition-group';
+import { Row, Col, Button, Modal } from 'react-bootstrap';
 
-import ContactModal from '../components/ContactModal';
+import ContactForm from '../components/ContactForm';
 import DemographicPanel from '../components/DemographicPanel';
 import RetailScorePanel from '../components/RetailScorePanel';
-
-import DesktopContactPanel from '../components/DesktopContactPanel';
-
-import { Grid, Row, Col, Panel, Button, ButtonGroup, Modal, FormGroup, ControlLabel, FormControl, InputGroup, Carousel, CarouselItem } from 'react-bootstrap';
 
 const isBrowser = typeof window !== 'undefined';
 
@@ -24,60 +21,25 @@ class PropertyDetailsPage extends React.Component {
       this.showContactModal = this.showContactModal.bind(this);
       this.submitContactAndHideModal = this.submitContactAndHideModal.bind(this);
       this.submitContact = this.submitContact.bind(this);
-      this.desktopContactFailed = this.desktopContactFailed.bind(this);
-      this.mobileContactFailed = this.mobileContactFailed.bind(this);
 
       this.state = { 
         dimDiv: null,
         modal: null,
-        desktopContactSuccess: false,
-        desktopContactFailure: false,
-        mobileContactSuccess: false,
-        businessDetailsModal: null
+        contactSuccess: false
       }
     }
 
     showContactModal(){
-
-      var name;
-      var email;
-      var message;
-
-      if (typeof(Storage) !== "undefined") {
-        name = localStorage.getItem('name');
-        email = localStorage.getItem('email');
-        message = localStorage.getItem('message');
-      }
-
-      //if we already have the data we need to contact then 1-tap contact
-      if(name && email){
-        if(!message) {
-          message = "Hello, I am interested in this property and want some more information.";
-        }
-        this.submitContact({
-          "message":{
-            "contact_name": name,
-            "contact_email_address": email,
-            "body": message,
-            "property_id": this.props.property.id
-          }
-        });
-      } else if(this.props.property.agents) {
-        this.state.modal = <div style={{height:"300px", width:"100%", backgroundColor:"#FFFFFF", position:"fixed", zIndex:"3", bottom:"0", right:"0"}}>
-                      <ContactModal contactFailed={this.mobileContactFailed} submitContact={this.submitContactAndHideModal} propertyId={this.props.property.id} agent={this.props.property.agents[0]} mixpanel={this.context.mixpanel} />
-                     </div>;
-        this.state.dimDiv = <div className="PDPDimDiv" onClick={this.hideModals}></div>;
-        this.setState(this.state);
-
-        this.context.mixpanel.track('Show Mobile Contact Modal');
-      }
+      this.state.modal = <div style={{height:"300px", width:"100%", backgroundColor:"#FFFFFF", position:"fixed", zIndex:"3", bottom:"0", right:"0"}}>
+                          <ContactForm submitContact={this.submitContactAndHideModal} propertyId={this.props.property.id} agent={this.props.property.agents[0]} />
+                        </div>;
+      this.state.dimDiv = <div className="PDPDimDiv" onClick={this.hideModals}></div>;
+      this.setState(this.state);
     }
 
     submitContact(data){
       this.props.submitContact(data);
-      this.state.desktopContactSuccess = true;
-      this.state.mobileContactSuccess = true;
-      this.setState(this.state);
+      this.setState({contactSuccess: true});
     }
 
     submitContactAndHideModal(data) {
@@ -85,25 +47,9 @@ class PropertyDetailsPage extends React.Component {
       this.hideModals();
     }
 
-    mobileContactFailed() {
-      this.state.modal = <div style={{height:"200px", width:"100%", textAlign:"center", backgroundColor:"#FFFFFF", position:"fixed", zIndex:"3", bottom:"0", right:"0"}}>
-                        <p style={{fontSize:"18px", fontWeight:"400px", textAlign:"center", marginTop:"10px"}}>Please provide your Name, E-Mail and a Message for the broker.</p>
-                        <Button style={{backgroundColor:"#49A3DC", color:"#FFFFFF", fontSize:"18px"}} onClick={this.showContactModal}>Got it</Button>
-                   </div>;
-      this.state.dimDiv = <div className="PDPDimDiv" onClick={this.hideModals}></div>;
-      this.setState(this.state);
-    }
-
-    desktopContactFailed() {
-      this.state.desktopContactFailure = true;
-      this.setState(this.state);
-    }
-
     hideModals() {
       this.state.modal = null;
       this.state.dimDiv = null;
-      this.state.desktopContactSuccess = false;
-      this.state.desktopContactFailure = false;
       this.setState(this.state);
     }
 
@@ -123,11 +69,6 @@ class PropertyDetailsPage extends React.Component {
 
 
         var demographics = this.props.property.demographics;
-        var tapestry;
-
-        if(demographics) {
-          tapestry = demographics.tapestry;
-        }
 
         var filterTransitionOptions = {
           transitionName: "contactFade",
@@ -146,19 +87,6 @@ class PropertyDetailsPage extends React.Component {
           transitionEnterTimeout: 500,
           transitionLeaveTimeout: 500
         };
-
-
-        var contactButtonText = "I want more information";
-
-        if (typeof(Storage) !== "undefined") {
-          if(localStorage.getItem('name') && localStorage.getItem('email')){
-            contactButtonText = "1-Tap Contact";
-          }
-        } 
-
-        if(this.state.mobileContactSuccess == true){
-          contactButtonText = "Expect to hear back soon!";
-        }
 
         var styledPrice;
         var styledSqft;
@@ -189,7 +117,7 @@ class PropertyDetailsPage extends React.Component {
             </div>
             <div className="row pdpPadding">
               <div className="col-md-3 hidden-sm hidden-xs">
-                {property.agents ? <DesktopContactPanel contactFailed={this.props.contactFailed} submitContact={this.props.submitContact} agent={property.agents[0]} propertyId={property.id} mixpanel={this.context.mixpanel} /> : null}
+                {property.agents ? <ContactForm submitContact={this.props.submitContact} agent={property.agents[0]} propertyId={property.id} /> : null}
               </div>
               <div className="col-md-9 col-sm-12">
                 <img className="propertyImageSize" src={this.getImageUrl(property.image_lat, property.image_lng, property.image_heading)} />
@@ -225,8 +153,14 @@ class PropertyDetailsPage extends React.Component {
                   </Col>
               </Row>
               <div className="hidden-md hidden-lg" style={{width:"100%", height:"50px"}}/>
-              <Button className="hidden-md hidden-lg" onClick={this.showContactModal} style={{width:"100%", height:"50px", fontSize:"20px", fontWeight:"300px", backgroundColor:"#49A3DC", color:"#FFFFFF", position:"fixed", bottom:"0", left:"0", zIndex:"2"}}>{contactButtonText}</Button>
+              <Button className="hidden-md hidden-lg" onClick={this.showContactModal} style={{width:"100%", height:"50px", fontSize:"20px", fontWeight:"300px", backgroundColor:"#49A3DC", color:"#FFFFFF", position:"fixed", bottom:"0", left:"0", zIndex:"2"}}>I want more information</Button>
             </div>
+            <Modal className="hidden-sm hidden-xs" show={this.state.contactSuccess}>
+              <Modal.Body style={{textAlign:"center"}}>
+                <p style={{fontSize:"18px", fontWeight:"400px", textAlign:"center"}}>Your message has been sent. Expect a response soon!</p>
+                <Button style={{backgroundColor:"#49A3DC", color:"#FFFFFF"}} onClick={this.hideModals}>Awesome</Button>
+              </Modal.Body>
+            </Modal>
           </div>
         );
     }
